@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS USERS (
     phone VARCHAR(50),
     lastName VARCHAR(255),
     firstName VARCHAR(255),
-    avatar VARCHAR(255) DEFAULT NULL
+    avatar VARCHAR(255) DEFAULT NULL,
+    role_id VARCHAR(50) NOT NULL,
+    FOREIGN KEY (role_id) REFERENCES ROLES(name) ON DELETE CASCADE
     );
