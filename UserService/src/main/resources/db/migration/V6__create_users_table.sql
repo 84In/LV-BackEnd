@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS USERS (
+    id VARCHAR(255) NOT NULL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    isActive BOOLEAN DEFAULT true,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(50),
+    lastName VARCHAR(255),
+    firstName VARCHAR(255),
+    avatar VARCHAR(255) DEFAULT NULL
+    );

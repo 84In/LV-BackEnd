@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS DISTRICTS(
+    code INT NOT NULL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    codeName VARCHAR(75) NOT NULL,
+    divisionType VARCHAR(100) NOT NULL,
+    isActive BOOLEAN DEFAULT true,
+    province_id INT NOT NULL,
+    FOREIGN KEY (province_id) REFERENCES PROVINCES(code) ON DELETE CASCADE
+    );

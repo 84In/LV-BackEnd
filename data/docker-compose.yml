@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+ userservicedb:
+  image: mysql:8.0
+  container_name: userservicedb
+  environment:
+   MYSQL_ROOT_PASSWORD: shop2425
+   MYSQL_USER: userservice
+   MYSQL_PASSWORD: userservice2425
+   MYSQL_DATABASE: userservicedb
+  ports:
+   - "3306:3306"
+  volumes:
+   - userservicedb_data:/var/lib/mysql
+   - ./init-scripts/userservice:/docker-entrypoint-initdb.d
+volumes:
+  userservicedb_data:

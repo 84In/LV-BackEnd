@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS WARDS(
+    code INT NOT NULL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    codeName VARCHAR(75) NOT NULL,
+    divisionType VARCHAR(100) NOT NULL,
+    isActive BOOLEAN DEFAULT true,
+    district_id INT NOT NULL,
+    FOREIGN KEY (district_id) REFERENCES DISTRICTS(code) ON DELETE CASCADE
+    );
