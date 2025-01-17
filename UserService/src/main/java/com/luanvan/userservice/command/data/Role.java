@@ -17,7 +17,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Role {
     @Id
+    @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(name = "description",length = 255)
     private String description;
 }

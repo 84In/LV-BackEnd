@@ -2,8 +2,11 @@ package com.luanvan.userservice.command.data;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -14,12 +17,19 @@ import java.util.Objects;
 @NoArgsConstructor
 public class UserAddress {
 
-    @Data
+    @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserAddressId implements Serializable {
+
+        @Column(name = "user_id", nullable = false, length = 36)
         private String userId;
+
+        @Column(name = "address_id", nullable = false, length = 36)
         private String addressId;
 
-        // Override equals() and hashCode()
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -34,16 +44,25 @@ public class UserAddress {
         }
     }
 
-    @Id
+    @EmbeddedId
     private UserAddressId id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Address address;
 
+    @Column(name = "is_default", nullable = false)
     private boolean isDefault = false;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }
