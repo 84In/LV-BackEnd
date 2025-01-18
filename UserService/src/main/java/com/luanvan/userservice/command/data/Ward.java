@@ -1,60 +1,33 @@
-package com.luanvan.userservice.command.data;
+    package com.luanvan.userservice.command.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.luanvan.userservice.configuare.DistrictDeserializer;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+    import jakarta.persistence.*;
+    import lombok.AllArgsConstructor;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.Setter;
+    import org.springframework.stereotype.Component;
 
-import java.util.List;
+    @Entity
+    @Table(name = "wards")
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public class Ward {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Integer id;
 
-@Entity
-@Table(name = "wards")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Ward {
+        @Column(name = "code_name", nullable = false, length = 50)
+        private String codeName;
 
-    @Id
-    @Column(name = "ward_code")
-    @JsonProperty("WardCode")
-    private String wardCode;
+        @Column(name = "name", nullable = false, length = 50)
+        private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "district_id", referencedColumnName = "district_id")
-    @JsonProperty("DistrictID")
-    @JsonDeserialize(using = DistrictDeserializer.class)
-    private District district;
+        @Column(name = "division_type", nullable = false, length = 50)
+        private String divisionType;
 
-    @Column(name = "ward_name")
-    @JsonProperty("WardName")
-    private String wardName;
-
-    @ElementCollection
-    @CollectionTable(name = "ward_name_extensions", joinColumns = @JoinColumn(name = "ward_code"))
-    @Column(name = "name_extension")
-    @JsonProperty("NameExtension")
-    private List<String> nameExtension;
-
-    @Column(name = "is_enable")
-    @JsonProperty("IsEnable")
-    private Boolean isEnable;
-
-    @Column(name = "can_update_cod")
-    @JsonProperty("CanUpdateCOD")
-    private Boolean canUpdateCod;
-
-    @JsonProperty("CreatedAt")
-    @Column(name = "created_at")
-    private String createdAt;
-
-    @JsonProperty("UpdatedAt")
-    @Column(name = "updated_at")
-    private String updatedAt;
-}
+        @ManyToOne
+        @JoinColumn(name = "district", nullable = false)
+        private District district;
+    }

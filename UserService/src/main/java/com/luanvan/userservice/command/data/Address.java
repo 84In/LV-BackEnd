@@ -31,15 +31,15 @@ public class Address {
     private String houseNumberAndStreet;
 
     @ManyToOne
-    @JoinColumn(name = "province_id", nullable = false, referencedColumnName = "province_id")
+    @JoinColumn(name = "province_id", nullable = false)
     private Province province;
 
     @ManyToOne
-    @JoinColumn(name = "district_id", nullable = false, referencedColumnName = "district_id")
+    @JoinColumn(name = "district_id", nullable = false)
     private District district;
 
     @ManyToOne
-    @JoinColumn(name = "ward_id", referencedColumnName = "ward_code") // Dùng khóa ngoại là `ward_code` của Ward
+    @JoinColumn(name = "ward_id") // Dùng khóa ngoại là `ward_code` của Ward
     private Ward ward;
 
 
@@ -51,16 +51,4 @@ public class Address {
     @Column(name = "updated_at") // Tự động cập nhật khi có thay đổi
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    @PreUpdate
-    private void validateAddress() {
-        // Nếu ward không thuộc district hoặc district không thuộc province, ném lỗi.
-        if (ward != null && !ward.getDistrict().getDistrictId().equals(district.getDistrictId())) {
-            throw new IllegalArgumentException("Ward không thuộc District!");
-        }
-
-        if (!district.getDistrictId().equals(province.getProvinceId())) {
-            throw new IllegalArgumentException("District không thuộc Province!");
-        }
-    }
 }

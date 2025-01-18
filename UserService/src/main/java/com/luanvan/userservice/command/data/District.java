@@ -1,16 +1,13 @@
 package com.luanvan.userservice.command.data;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.luanvan.userservice.configuare.ProvinceDeserializer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "districts")
@@ -18,44 +15,25 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class District {
 
     @Id
-    @JsonProperty("DistrictID")
-    @Column(name = "district_id")
-    private Integer districtId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @JsonProperty("ProvinceID")
+    @Column(name = "code_name", nullable = false, length = 50)
+    private String codeName;
+
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
+
+    @Column(name = "division_type", nullable = false, length = 50)
+    private String divisionType;
+
     @ManyToOne
-    @JoinColumn(name = "province_id")
-    @JsonDeserialize(using = ProvinceDeserializer.class)
+    @JoinColumn(name = "province_id", nullable = false)
     private Province province;
 
-    @JsonProperty("DistrictName")
-    @Column(name = "district_name")
-    private String districtName;
-
-    @JsonProperty("NameExtension")
-    @ElementCollection
-    @CollectionTable(name = "district_name_extensions", joinColumns = @JoinColumn(name = "district_id"))
-    @Column(name = "name_extension")
-    private List<String> nameExtension;
-
-    @JsonProperty("IsEnable")
-    @Column(name = "is_enable")
-    private Boolean isEnable;
-
-    @JsonProperty("CanUpdateCOD")
-    @Column(name = "can_update_cod")
-    private Boolean canUpdateCod;
-
-    @JsonProperty("CreatedAt")
-    @Column(name = "created_at")
-    private String createdAt;
-
-    @JsonProperty("UpdatedAt")
-    @Column(name = "updated_at")
-    private String updatedAt;
-
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Ward> wards = new HashSet<>();
 }
