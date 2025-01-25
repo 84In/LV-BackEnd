@@ -1,29 +1,23 @@
 package com.luanvan.userservice.command.command;
 
-import com.luanvan.userservice.command.data.UserAddress;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
-import java.util.List;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateUserCommand {
+public class CreateAddressCommand {
     @TargetAggregateIdentifier
     private String id;
-    private String username;
-    private String password;
-    private Boolean active;
-    private String email;
+    private Boolean isActive;
     private String phone;
-    private String lastName;
-    private String firstName;
-    private String avatar;
-    private String roleName;
-
+    private String houseNumberAndStreet;
+    private Integer provinceId;
+    private Integer districtId;
+    private Integer wardId;
+    private String userId;
 }

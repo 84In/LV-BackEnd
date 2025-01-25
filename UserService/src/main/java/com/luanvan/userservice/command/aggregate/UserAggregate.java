@@ -1,10 +1,10 @@
 package com.luanvan.userservice.command.aggregate;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
+import com.luanvan.userservice.command.data.Address;
+import com.luanvan.userservice.command.data.UserAddress;
 import com.luanvan.userservice.command.event.UserCreatedEvent;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -12,6 +12,8 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
+
+import java.util.List;
 
 
 @Slf4j

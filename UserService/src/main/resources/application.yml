@@ -27,5 +27,4 @@ logging:
     org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
     org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
     org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: INFO                    # Kiểm soát log của Spring
-    root: WARN                                   # Mức log mặc định
+    org.springframework: ERROR                    # Kiểm soát log của Spring

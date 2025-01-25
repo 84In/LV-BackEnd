@@ -22,7 +22,7 @@ public class UserCommandController {
                 UUID.randomUUID().toString(),
                 model.getUsername(),
                 model.getPassword(),
-                model.getActive(),
+                true,
                 model.getEmail(),
                 model.getPhone(),
                 model.getLastName(),

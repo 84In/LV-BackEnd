@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID) // Sử dụng kiểu số tự động tăng
     private String id;
 
     @Column(name = "is_active", nullable = false)
