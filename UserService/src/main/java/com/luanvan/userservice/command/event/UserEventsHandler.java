@@ -33,7 +33,6 @@ public class UserEventsHandler {
                     user.setUsername(event.getUsername());
                     user.setPassword(event.getPassword());
                     user.setEmail(event.getEmail());
-                    user.setAvatar(event.getAvatar());
                     user.setPhone(event.getPhone());
                     user.setFirstName(event.getFirstName());
                     user.setLastName(event.getLastName());
@@ -53,4 +52,39 @@ public class UserEventsHandler {
         }
 
     }
+
+    @EventHandler
+    public void on(UserUpdatedEvent event) {
+        try {
+            User user = userRepository.findById(event.getId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            Optional.ofNullable(event.getUsername()).ifPresent(username -> {
+                if (!userRepository.existsByUsername(username)) {
+                    user.setUsername(username);
+                } else {
+                    throw new RuntimeException("Username already exists");
+                }
+            });
+
+            Optional.ofNullable(event.getPassword()).ifPresent(user::setPassword);
+            Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
+            Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
+            Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);
+            Optional.ofNullable(event.getLastName()).ifPresent(user::setLastName);
+            Optional.ofNullable(event.getActive()).ifPresent(user::setActive);
+
+            Optional.ofNullable(event.getRoleName()).ifPresent(roleName -> {
+                Role role = roleRepository.findById(roleName)
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+                user.setRole(role);
+            });
+
+            userRepository.save(user);
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
 }

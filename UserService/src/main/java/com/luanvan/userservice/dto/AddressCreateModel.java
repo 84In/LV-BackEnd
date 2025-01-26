@@ -14,4 +14,5 @@ public class AddressCreateModel {
     private Integer districtId;
     private Integer wardId;
     private String userId;
+    private Boolean isDefault;
 }

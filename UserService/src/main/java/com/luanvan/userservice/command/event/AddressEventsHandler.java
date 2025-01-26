@@ -7,7 +7,6 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -59,6 +58,9 @@ public class AddressEventsHandler {
             UserAddress userAddress = new UserAddress();
             userAddress.setId(new UserAddress.UserAddressId(user.getId(), addressResponse.getId()));
             userAddress.setAddress(addressResponse);
+            if (event.getIsDefault() != null) {
+                userAddress.setDefault(event.getIsDefault());
+            }
             userAddress.setUser(user);
             userAddressRepository.save(userAddress);
         } catch (Exception e) {

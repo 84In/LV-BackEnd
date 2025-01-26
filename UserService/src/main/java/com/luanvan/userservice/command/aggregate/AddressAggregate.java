@@ -1,15 +1,8 @@
 package com.luanvan.userservice.command.aggregate;
 
 import com.luanvan.userservice.command.command.CreateAddressCommand;
-import com.luanvan.userservice.command.data.District;
-import com.luanvan.userservice.command.data.Province;
-import com.luanvan.userservice.command.data.Ward;
 import com.luanvan.userservice.command.event.AddressCreatedEvent;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.NoArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -32,6 +25,7 @@ public class AddressAggregate {
     private Integer districtId;
     private Integer wardId;
     private String userId;
+    private Boolean isDefault;
 
 
     @CommandHandler
@@ -52,5 +46,6 @@ public class AddressAggregate {
         this.districtId = event.getDistrictId();
         this.wardId = event.getWardId();
         this.userId = event.getUserId();
+        this.isDefault = event.getIsDefault();
     }
 }

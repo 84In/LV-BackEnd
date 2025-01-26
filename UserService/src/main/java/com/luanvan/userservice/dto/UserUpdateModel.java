@@ -1,20 +1,13 @@
-package com.luanvan.userservice.command.event;
+package com.luanvan.userservice.dto;
 
-import com.luanvan.userservice.command.data.UserAddress;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.List;
-
-
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserCreatedEvent {
-    private String id;
+public class UserUpdateModel {
     private String username;
     private String password;
     private Boolean active;

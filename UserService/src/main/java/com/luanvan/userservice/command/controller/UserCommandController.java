@@ -1,7 +1,9 @@
 package com.luanvan.userservice.command.controller;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
+import com.luanvan.userservice.command.command.UpdateUserCommand;
 import com.luanvan.userservice.dto.UserCreateModel;
+import com.luanvan.userservice.dto.UserUpdateModel;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,24 @@ public class UserCommandController {
                 model.getPhone(),
                 model.getLastName(),
                 model.getFirstName(),
-                model.getAvatar(),
                 model.getRoleName());
+        log.info("Send command to {}", command);
+        return commandGateway.sendAndWait(command);
+    }
+
+    @PutMapping("/{userId}")
+    public String updateUser(@PathVariable String userId, @RequestBody UserUpdateModel model) {
+        UpdateUserCommand command = new UpdateUserCommand(
+                userId,
+                model.getUsername(),
+                model.getPassword(),
+                model.getActive(),
+                model.getEmail(),
+                model.getPhone(),
+                model.getLastName(),
+                model.getFirstName(),
+                model.getRoleName()
+        );
         log.info("Send command to {}", command);
         return commandGateway.sendAndWait(command);
     }

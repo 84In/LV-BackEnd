@@ -10,15 +10,16 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAddressCommand {
+public class UpdateUserCommand {
     @TargetAggregateIdentifier
     private String id;
-    private Boolean isActive;
+    private String username;
+    private String password;
+    private Boolean active;
+    private String email;
     private String phone;
-    private String houseNumberAndStreet;
-    private Integer provinceId;
-    private Integer districtId;
-    private Integer wardId;
-    private String userId;
-    private Boolean isDefault;
+    private String lastName;
+    private String firstName;
+    private String roleName;
+
 }

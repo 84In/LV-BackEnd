@@ -15,6 +15,5 @@ public class UserCreateModel {
     private String phone;
     private String lastName;
     private String firstName;
-    private String avatar;
     private String roleName;
 }

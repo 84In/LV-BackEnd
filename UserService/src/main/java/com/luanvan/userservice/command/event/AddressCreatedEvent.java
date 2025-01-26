@@ -18,4 +18,5 @@ public class AddressCreatedEvent {
     private Integer districtId;
     private Integer wardId;
     private String userId;
+    private Boolean isDefault;
 }

@@ -26,7 +26,8 @@ public class AddressCommandController {
                 model.getProvinceId(),
                 model.getDistrictId(),
                 model.getWardId(),
-                model.getUserId()
+                model.getUserId(),
+                model.getIsDefault()
         );
         log.info("Created command Address: {}", command);
         return commandGateway.sendAndWait(command);
