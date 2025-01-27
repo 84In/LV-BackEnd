@@ -87,4 +87,12 @@ public class UserEventsHandler {
         }
     }
 
+    @EventHandler
+    public void on(AvatarUploadedEvent event) {
+        User user = userRepository.findById(event.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setAvatar(event.getAvatarUrl());
+        userRepository.save(user);
+        log.info("Avatar URL updated for User ID: {}", event.getUserId());
+    }
+
 }
