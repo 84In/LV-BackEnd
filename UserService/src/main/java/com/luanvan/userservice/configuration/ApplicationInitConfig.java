@@ -1,4 +1,4 @@
-package com.luanvan.userservice.configure;
+package com.luanvan.userservice.configuration;
 
 import com.luanvan.userservice.service.DataLoaderService;
 import lombok.RequiredArgsConstructor;

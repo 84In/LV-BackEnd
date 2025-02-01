@@ -1,4 +1,4 @@
-package com.luanvan.mediaservice.command.event;
+package com.luanvan.commonservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
