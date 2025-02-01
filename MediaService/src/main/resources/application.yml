@@ -1,0 +1,9 @@
+server:
+  port: 9001
+
+cloudinary:
+  cloudName: ${CLOUDINARY_CLOUD_NAME}
+  apiKey: ${CLOUDINARY_API_KEY}
+  apiSecret: ${CLOUDINARY_API_SECRET}
+  uploadAssetsName: ${CLOUDINARY_UPLOAD_ASSETS_NAME}
+
