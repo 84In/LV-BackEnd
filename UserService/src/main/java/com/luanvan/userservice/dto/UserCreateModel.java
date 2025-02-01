@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class UserCreateModel {
     private String username;
     private String password;
-    private Boolean active;
     private String email;
     private String phone;
     private String lastName;
