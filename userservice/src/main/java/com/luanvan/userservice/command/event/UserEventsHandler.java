@@ -1,6 +1,5 @@
 package com.luanvan.userservice.command.event;
 
-import com.luanvan.commonservice.event.AvatarUploadedEvent;
 import com.luanvan.userservice.command.data.Role;
 import com.luanvan.userservice.command.data.User;
 import com.luanvan.userservice.command.data.repository.RoleRepository;
@@ -8,8 +7,6 @@ import com.luanvan.userservice.command.data.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -88,14 +85,6 @@ public class UserEventsHandler {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-    }
-
-    @KafkaListener(topics = "avatar-uploaded-topic", groupId = "user-group")
-    public void on(@Payload AvatarUploadedEvent event) {
-        User user = userRepository.findById(event.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setAvatar(event.getAvatarUrl());
-        userRepository.save(user);
-        log.info("Avatar URL updated for User ID: {}", event.getUserId());
     }
 
 }

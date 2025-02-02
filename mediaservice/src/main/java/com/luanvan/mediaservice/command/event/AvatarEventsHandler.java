@@ -1,12 +1,12 @@
 package com.luanvan.mediaservice.command.event;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.luanvan.commonservice.event.AvatarUploadedEvent;
 import com.luanvan.commonservice.services.KafkaService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -17,7 +17,7 @@ public class AvatarEventsHandler {
     private KafkaService kafkaService;
 
     @EventHandler
-    public void on(AvatarUploadedEvent event) {
+    public void on(AvatarUploadedEvent event) throws JsonProcessingException {
         log.info(event.toString());
         kafkaService.sendMessage("avatar-uploaded-topic", event);
     }

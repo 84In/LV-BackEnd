@@ -1,5 +1,7 @@
 package com.luanvan.commonservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -9,7 +11,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaService {
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * Sends a message to the specified Kafka topic.
@@ -17,8 +22,9 @@ public class KafkaService {
      * @param topic the name of the Kafka topic to which the message will be sent
      * @param message the message content to be sent
      */
-    public void sendMessage(String topic, Object message) {
-        kafkaTemplate.send(topic, message);
+    public void sendMessage(String topic, Object message) throws JsonProcessingException {
+
+        kafkaTemplate.send(topic, objectMapper.writeValueAsString(message));
         log.info("Message sent to topic: {}",topic);
     }
 }
