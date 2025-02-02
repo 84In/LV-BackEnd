@@ -10,14 +10,15 @@ import org.springframework.stereotype.Service;
 public class KafkaService {
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
+
     /**
-     * Sends a message to the specified Kafka topic
+     * Sends a message to the specified Kafka topic.
      *
-     * @Param topic the name of the Kafka topic to which the message will be sent
-     * @Param message the message content to be sent
+     * @param topic the name of the Kafka topic to which the message will be sent
+     * @param message the message content to be sent
      */
     public void sendMessage(String topic, Object message) {
         kafkaTemplate.send(topic, message);
-        log.info("send message:{}", message);
+        log.info("Message sent to topic: {}",topic);
     }
 }

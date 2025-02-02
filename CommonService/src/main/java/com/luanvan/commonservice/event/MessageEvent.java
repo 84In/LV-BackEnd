@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-public class AvatarUploadedEvent {
-    private String id;
-    private String userId;
-    private String avatarUrl;
+public class MessageEvent {
+    String key;
+    String message;
 }

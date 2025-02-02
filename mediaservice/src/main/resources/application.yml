@@ -1,0 +1,23 @@
+server:
+  port: 9001
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+cloudinary:
+  cloudName: ${CLOUDINARY_CLOUD_NAME}
+  apiKey: ${CLOUDINARY_API_KEY}
+  apiSecret: ${CLOUDINARY_API_SECRET}
+  uploadAssetsName: ${CLOUDINARY_UPLOAD_ASSETS_NAME}
+
+
+logging:
+  level:
+    org.springframework: DEBUG
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: upload-group
