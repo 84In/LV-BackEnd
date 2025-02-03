@@ -2,9 +2,8 @@ package com.luanvan.mediaservice.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import io.github.cdimascio.dotenv.Dotenv;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
@@ -12,7 +11,7 @@ import java.util.Map;
 @Service
 public class CloudinaryService {
 
-    public String uploadAvatar(byte[] avatar, String userId) {
+    public String uploadAvatar(MultipartFile avatar, String userId) {
 
         String cloudName = System.getProperty("cloudinary.cloudName");
         String apiKey = System.getProperty("cloudinary.apiKey");
@@ -34,7 +33,7 @@ public class CloudinaryService {
                     "resource_type", "image"
             );
 
-            Map uploadResult = cloudinary.uploader().upload(avatar, params);
+            Map uploadResult = cloudinary.uploader().upload(avatar.getBytes(), params);
             return (String) uploadResult.get("url");
         } catch (IOException e) {
             throw new RuntimeException("Upload avatar failed", e);
