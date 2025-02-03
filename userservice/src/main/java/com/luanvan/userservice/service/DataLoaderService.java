@@ -2,18 +2,19 @@ package com.luanvan.userservice.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luanvan.userservice.command.data.District;
-import com.luanvan.userservice.command.data.Province;
-import com.luanvan.userservice.command.data.Role;
-import com.luanvan.userservice.command.data.Ward;
-import com.luanvan.userservice.command.data.repository.DistrictRepository;
-import com.luanvan.userservice.command.data.repository.ProvinceRepository;
-import com.luanvan.userservice.command.data.repository.RoleRepository;
-import com.luanvan.userservice.command.data.repository.WardRepository;
+import com.luanvan.userservice.entity.District;
+import com.luanvan.userservice.entity.Province;
+import com.luanvan.userservice.entity.Role;
+import com.luanvan.userservice.entity.Ward;
+import com.luanvan.userservice.repository.DistrictRepository;
+import com.luanvan.userservice.repository.ProvinceRepository;
+import com.luanvan.userservice.repository.RoleRepository;
+import com.luanvan.userservice.repository.WardRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,11 +26,15 @@ import java.io.InputStream;
 @Slf4j
 public class DataLoaderService {
 
-    ProvinceRepository provinceRepository;
-    DistrictRepository districtRepository;
-    WardRepository wardRepository;
+    @Autowired
+    private ProvinceRepository provinceRepository;
+    @Autowired
+    private DistrictRepository districtRepository;
+    @Autowired
+    private WardRepository wardRepository;
 
-    RoleRepository roleRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     public void loadDataLocationFromJson(InputStream inputStream) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();

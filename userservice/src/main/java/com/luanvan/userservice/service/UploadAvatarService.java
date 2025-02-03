@@ -3,8 +3,8 @@ package com.luanvan.userservice.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.event.AvatarUploadedEvent;
-import com.luanvan.userservice.command.data.User;
-import com.luanvan.userservice.command.data.repository.UserRepository;
+import com.luanvan.userservice.entity.User;
+import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -25,7 +25,7 @@ public class UploadAvatarService {
 
         System.out.println(message);
 
-        AvatarUploadedEvent event = new ObjectMapper().readValue(message, AvatarUploadedEvent.class);
+        AvatarUploadedEvent event = objectMapper.readValue(message, AvatarUploadedEvent.class);
         User user = userRepository.findById(((AvatarUploadedEvent) event).getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
         user.setAvatar(((AvatarUploadedEvent) event).getAvatarUrl());
         userRepository.save(user);

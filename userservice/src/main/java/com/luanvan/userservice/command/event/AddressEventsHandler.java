@@ -1,7 +1,7 @@
 package com.luanvan.userservice.command.event;
 
-import com.luanvan.userservice.command.data.*;
-import com.luanvan.userservice.command.data.repository.*;
+import com.luanvan.userservice.entity.*;
+import com.luanvan.userservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;

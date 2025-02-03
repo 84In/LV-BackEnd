@@ -1,4 +1,4 @@
-package com.luanvan.userservice.command.data;
+package com.luanvan.userservice.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

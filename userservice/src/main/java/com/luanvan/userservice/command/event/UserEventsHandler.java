@@ -1,9 +1,9 @@
 package com.luanvan.userservice.command.event;
 
-import com.luanvan.userservice.command.data.Role;
-import com.luanvan.userservice.command.data.User;
-import com.luanvan.userservice.command.data.repository.RoleRepository;
-import com.luanvan.userservice.command.data.repository.UserRepository;
+import com.luanvan.userservice.entity.Role;
+import com.luanvan.userservice.entity.User;
+import com.luanvan.userservice.repository.RoleRepository;
+import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ public class UserEventsHandler {
 
     @EventHandler
     public void on(UserCreatedEvent event) {
+        log.info("User created user event handler");
         try {
             if(!userRepository.existsByUsername(event.getUsername())){
 
@@ -48,7 +49,7 @@ public class UserEventsHandler {
                 throw new Exception("User already exists");
             }
         }catch (Exception e){
-            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
 
     }

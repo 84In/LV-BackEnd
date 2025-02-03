@@ -1,6 +1,6 @@
-package com.luanvan.userservice.command.data.repository;
+package com.luanvan.userservice.repository;
 
-import com.luanvan.userservice.command.data.Province;
+import com.luanvan.userservice.entity.Province;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

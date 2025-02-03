@@ -1,13 +1,10 @@
 package com.luanvan.userservice.command.command;
 
-import com.luanvan.userservice.command.data.UserAddress;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
-import java.util.List;
 
 @Getter
 @Setter
@@ -24,5 +21,4 @@ public class CreateUserCommand {
     private String lastName;
     private String firstName;
     private String roleName;
-
 }

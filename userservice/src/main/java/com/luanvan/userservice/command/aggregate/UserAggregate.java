@@ -33,7 +33,7 @@ public class UserAggregate {
     public UserAggregate(CreateUserCommand command) {
         UserCreatedEvent event = new UserCreatedEvent();
         BeanUtils.copyProperties(command, event);
-        log.info("UserCreatedEvent: {}", event);
+        log.info("UserAggregate - UserCreatedEvent: {}", event);
         AggregateLifecycle.apply(event);
     }
 
@@ -58,7 +58,7 @@ public class UserAggregate {
         this.firstName = event.getFirstName();
         this.roleName = event.getRoleName();
 
-        log.info("UserCreatedEventHandler: {}", event);
+        log.info("UserCreatedEventSourcingHandler: {}", event);
 
     }
 

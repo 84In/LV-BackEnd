@@ -2,8 +2,8 @@ package com.luanvan.userservice.command.controller;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
 import com.luanvan.userservice.command.command.UpdateUserCommand;
-import com.luanvan.userservice.dto.UserCreateModel;
-import com.luanvan.userservice.dto.UserUpdateModel;
+import com.luanvan.userservice.command.model.UserCreateModel;
+import com.luanvan.userservice.command.model.UserUpdateModel;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
