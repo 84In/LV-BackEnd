@@ -2,7 +2,7 @@ package com.luanvan.userservice.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.luanvan.commonservice.event.AvatarUploadedEvent;
+import com.luanvan.commonservice.model.AvatarUpdateModel;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,16 +21,19 @@ public class UploadAvatarService {
     private ObjectMapper objectMapper;
 
     @KafkaListener(topics = "avatar-uploaded-topic", groupId = "user-group")
-    public void on(String message) throws JsonProcessingException {
+    public void on(String message){
 
         System.out.println(message);
 
-        AvatarUploadedEvent event = objectMapper.readValue(message, AvatarUploadedEvent.class);
-        User user = userRepository.findById(((AvatarUploadedEvent) event).getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-        user.setAvatar(((AvatarUploadedEvent) event).getAvatarUrl());
-        userRepository.save(user);
-        log.info("Avatar URL updated for User ID: {}", ((AvatarUploadedEvent) event).getUserId());
-
+        try {
+            AvatarUpdateModel model = objectMapper.readValue(message, AvatarUpdateModel.class);
+            User user = userRepository.findById(model.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+            user.setAvatar(model.getAvatarUrl());
+            userRepository.save(user);
+            log.info("Avatar URL updated for User ID: {}", model.getUserId());
+        }catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
 
     }
 }
