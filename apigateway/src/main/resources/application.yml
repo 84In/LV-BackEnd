@@ -1,0 +1,70 @@
+server:
+  port: 8080
+
+#keycloak:
+#  auth-server-url: http://localhost:8181/realms/spring-microservices-security-realm
+#  realm: spring-microservices-security-realm
+#  resource: api-gateway
+#  credentials:
+#    secret: your-client-secret #tạo trong keycloak
+#  public-client: true
+#  use-resource-role-mappings: true
+
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: userservice
+          uri: lb://userservice
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10 #trong 1s nap lai 10 token
+                redis-rate-limiter.burstCapacity: 20 #toi da 20 packega token
+                redis-rate-limiter.requestedTokens: 1 # so luong request tieu thu n token
+            - KeyAuthFilter
+        - id: mediaservice
+          uri: lb://mediaservice
+          predicates:
+            - Path=/api/v1/upload/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10 #trong 1s nap lai 10 token
+                redis-rate-limiter.burstCapacity: 20 #toi da 20 packega token
+                redis-rate-limiter.requestedTokens: 1 # so luong request tieu thu n token
+            - KeyAuthFilter
+    eureka:
+      client:
+        serviceUrl:
+          defaultZone: http://localhost:8761/eureka/
+        fetchRegistry: true
+        registerWithEureka: true
+  data:
+    redis:
+      port: 6379
+      host: localhost
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/spring-microservices-security-realm
+          jwk-set-uri: http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/certs
+logging:
+  level:
+    org.springframework.security: DEBUG
+eureka:
+  instance:
+    hostname: discoverserver
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://discoverserver:8761/eureka/

@@ -7,6 +7,8 @@ import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -23,6 +25,7 @@ public class UserEventsHandler {
     @EventHandler
     public void on(UserCreatedEvent event) {
         log.info("User created user event handler");
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         try {
             if(!userRepository.existsByUsername(event.getUsername())){
 
@@ -32,7 +35,7 @@ public class UserEventsHandler {
                     User user = new User();
                     user.setId(event.getId());
                     user.setUsername(event.getUsername());
-                    user.setPassword(event.getPassword());
+                    user.setPassword(passwordEncoder.encode(event.getPassword()));
                     user.setEmail(event.getEmail());
                     user.setPhone(event.getPhone());
                     user.setFirstName(event.getFirstName());

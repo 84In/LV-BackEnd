@@ -1,0 +1,24 @@
+keycloak:
+  auth-server-url: http://localhost:8181/realms/spring-microservices-security-realm
+  token-uri: http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/token
+  public-key-uri: http://localhost:8181/realms/spring-microservices-security-realm/protocol/openid-connect/certs
+  realm: spring-microservices-security-realm
+  resource: api-gateway
+  credentials:
+    secret: your-client-secret
+  public-client: true
+  use-resource-role-mappings: true
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: api-gateway
+            client-secret: your-client-secret
+            provider: keycloak
+            scope: openid, profile, email
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8181/realms/spring-microservices-security-realm
