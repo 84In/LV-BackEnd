@@ -11,8 +11,8 @@
 	<groupId>com.luanvan</groupId>
 	<artifactId>userservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>UserService</name>
-	<description>UserService</description>
+	<name>userservice</name>
+	<description>userservice</description>
 	<url/>
 	<licenses>
 		<license/>

@@ -11,8 +11,8 @@
     <groupId>com.luanvan</groupId>
     <artifactId>discoveryserver</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>DiscoveryServer</name>
-    <description>DiscoveryServer</description>
+    <name>discoveryserver</name>
+    <description>discoveryserver</description>
     <url/>
     <licenses>
         <license/>
