@@ -7,6 +7,7 @@ import com.luanvan.userservice.command.model.UserUpdateModel;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,6 +18,9 @@ import java.util.UUID;
 public class UserCommandController {
     @Autowired
     private CommandGateway commandGateway;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
     @PostMapping
     public String createUser(@RequestBody UserCreateModel model) {
@@ -31,6 +35,7 @@ public class UserCommandController {
                 model.getFirstName(),
                 model.getRoleName());
         log.info("Send command to {}", command);
+        kafkaTemplate.send("login-create-keycloak",model.getUsername(),model.getPassword());
         return commandGateway.sendAndWait(command);
     }
 

@@ -5,6 +5,7 @@ import com.luanvan.commonservice.model.UserResponseModel;
 import com.luanvan.commonservice.queries.GetUserQuery;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -40,7 +42,14 @@ public class AuthenticationService {
     @Value("${keycloak.public-key-uri}")
     private String publicKeyUri;
 
-    private final String keycloakAdminUrl = "http://localhost:8080/auth/admin/realms/{realm}/users";
+    @Value("${keycloak.realm}")
+    private String realm;
+
+    @Value("${keycloak.credentials.secret}")
+    private String secret;
+
+
+    private final String keycloakAdminUrl = "http://localhost:8181/admin/master/console/#/spring-microservices-security-realm/users/add-user";
 
     @Autowired
     private QueryGateway queryGateway;
@@ -64,6 +73,7 @@ public class AuthenticationService {
 
         // Gửi yêu cầu xác thực tới Keycloak và lấy token
         Map<String, Object> tokens = authenticateWithKeycloak(loginRequest);
+        log.info(tokens.toString());
 
         // Lưu refresh token vào cookie
         saveRefreshTokenToCookie(tokens, response);
@@ -81,7 +91,7 @@ public class AuthenticationService {
         String requestBody = String.format(
                 "grant_type=password&client_id=%s&client_secret=%s&username=%s&password=%s",
                 "api-gateway", // Client ID
-                "your-client-secret", // Client Secret
+                secret, // Client Secret
                 loginRequest.getUsername(),
                 loginRequest.getPassword()
         );
@@ -168,7 +178,7 @@ public class AuthenticationService {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.exchange(
-                keycloakAdminUrl, HttpMethod.POST, request, String.class, "your-realm");
+                keycloakAdminUrl, HttpMethod.POST, request, String.class, realm);
 
         if (response.getStatusCode() == HttpStatus.CREATED) {
             System.out.println("User created successfully in Keycloak.");
