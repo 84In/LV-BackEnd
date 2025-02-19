@@ -1,8 +1,12 @@
 package com.luanvan.userservice.command.aggregate;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
+import com.luanvan.userservice.command.command.DeleteUserCommand;
+import com.luanvan.userservice.command.command.RemoveUserCommand;
 import com.luanvan.userservice.command.command.UpdateUserCommand;
 import com.luanvan.userservice.command.event.UserCreatedEvent;
+import com.luanvan.userservice.command.event.UserDeletedEvent;
+import com.luanvan.userservice.command.event.UserRemoveEvent;
 import com.luanvan.userservice.command.event.UserUpdatedEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,23 +33,6 @@ public class UserAggregate {
     private String firstName;
     private String roleName;
 
-    @CommandHandler
-    public UserAggregate(CreateUserCommand command) {
-        UserCreatedEvent event = new UserCreatedEvent();
-        BeanUtils.copyProperties(command, event);
-        log.info("UserAggregate - UserCreatedEvent: {}", event);
-        AggregateLifecycle.apply(event);
-    }
-
-    @CommandHandler
-    public void handle(UpdateUserCommand command) {
-        UserUpdatedEvent event = new UserUpdatedEvent();
-        BeanUtils.copyProperties(command, event);
-        log.info("UserUpdatedEvent: {}", event);
-        AggregateLifecycle.apply(event);
-    }
-
-
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         this.id = event.getId();
@@ -65,7 +52,6 @@ public class UserAggregate {
     @EventSourcingHandler
     public void on(UserUpdatedEvent event) {
         this.id = event.getId();
-        this.username = event.getUsername();
         this.password = event.getPassword();
         this.active = event.getActive();
         this.email = event.getEmail();
@@ -74,6 +60,17 @@ public class UserAggregate {
         this.firstName = event.getFirstName();
         this.roleName = event.getRoleName();
         log.info("UserUpdatedEventHandler: {}", event);
+    }
+
+    @EventSourcingHandler
+    public void on(UserDeletedEvent event) {
+        this.id = event.getId();
+    }
+
+    @EventSourcingHandler
+    public void on(UserRemoveEvent event) {
+        this.id = event.getId();
+        this.active = event.getActive();
     }
 
 }

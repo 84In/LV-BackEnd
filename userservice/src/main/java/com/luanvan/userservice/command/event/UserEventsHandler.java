@@ -4,7 +4,9 @@ import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,45 +15,29 @@ import java.util.Optional;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UserEventsHandler {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @EventHandler
-    public void on(UserCreatedEvent event) {
+    public void on(UserCreatedEvent event) throws Exception {
         log.info("User created user event handler");
-        try {
-            if(!userRepository.existsByUsername(event.getUsername())){
 
-                Optional<Role> roles = roleRepository.findById(event.getRoleName());
-                if(roles.isPresent()){
-                    log.info(roles.toString());
-                    User user = new User();
-                    user.setId(event.getId());
-                    user.setUsername(event.getUsername());
-                    user.setPassword(event.getPassword());
-                    user.setEmail(event.getEmail());
-                    user.setPhone(event.getPhone());
-                    user.setFirstName(event.getFirstName());
-                    user.setLastName(event.getLastName());
-                    user.setActive(event.getActive());
-                    user.setRole(roles.get());
-                    userRepository.save(user);
-                    log.info("User created successfully");
-                }else {
-                    throw new Exception("Role not found");
-                }
+        Role role = roleRepository.findById(event.getRoleName()).orElseThrow(() -> new RuntimeException("Role not found"));
 
-            }else {
-                throw new Exception("User already exists");
-            }
-        }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
-        }
-
+        User user = new User();
+        user.setId(event.getId());
+        user.setUsername(event.getUsername());
+        user.setPassword(event.getPassword());
+        user.setEmail(event.getEmail());
+        user.setPhone(event.getPhone());
+        user.setFirstName(event.getFirstName());
+        user.setLastName(event.getLastName());
+        user.setActive(event.getActive());
+        user.setRole(role);
+        userRepository.save(user);
+        log.info("User created successfully");
     }
 
     @EventHandler
@@ -59,14 +45,6 @@ public class UserEventsHandler {
         try {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-
-            Optional.ofNullable(event.getUsername()).ifPresent(username -> {
-                if (!userRepository.existsByUsername(username)) {
-                    user.setUsername(username);
-                } else {
-                    throw new RuntimeException("Username already exists");
-                }
-            });
 
             Optional.ofNullable(event.getPassword()).ifPresent(user::setPassword);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
@@ -86,6 +64,17 @@ public class UserEventsHandler {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+    }
+
+    @EventHandler
+    public void on(UserDeletedEvent event) {
+        userRepository.deleteById(event.getId());
+    }
+
+    @EventHandler
+    public void on(UserRemoveEvent event) {
+        User user = userRepository.findById(event.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.deleteById(event.getId());
     }
 
 }

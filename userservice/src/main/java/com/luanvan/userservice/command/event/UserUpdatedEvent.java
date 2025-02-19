@@ -12,7 +12,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserUpdatedEvent {
     private String id;
-    private String username;
     private String password;
     private Boolean active;
     private String email;
