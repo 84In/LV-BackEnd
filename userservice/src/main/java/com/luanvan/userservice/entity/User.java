@@ -43,7 +43,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Boolean active = false;
+    private Boolean active = true;
 
     @Email
     @Size(max = 100)
