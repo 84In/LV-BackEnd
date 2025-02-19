@@ -8,28 +8,30 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "products" )
+@Table(name = "colors" )
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+public class Color {
     @Id
     private String id;
 
-    @Column(length = 255)
+    @Column(name = "name", length = 255)
     private String name;
 
-    @Lob
-    @Column
-    private String image;
+    @Column(name = "code_name", length = 255)
+    private String codeName;
 
-    @Column(length = 255)
+    @Column(name = "color_code", length = 255)
+    private String colorCode;
+
+    @Column(name = "description", length = 255)
     private String description;
 
-    @Column(nullable = false)
-    private Boolean isActive;
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isActive = true;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

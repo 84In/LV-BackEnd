@@ -1,9 +1,6 @@
 package com.luanvan.productservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -11,30 +8,28 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "category" )
+@Table(name = "products" )
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class Product {
     @Id
     private String id;
 
-    @Column(length = 255)
+    @Column(name = "name", length = 255)
     private String name;
 
-    @Column(length = 255)
-    private String codeName;
+    @Lob
+    @Column(name = "images")
+    private String images;
 
-    @Column(length = 255)
-    private String image;
-
-    @Column(length = 255)
+    @Column(name = "description", length = 255)
     private String description;
 
-    @Column(nullable = false)
-    private Boolean isActive;
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isActive = true;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

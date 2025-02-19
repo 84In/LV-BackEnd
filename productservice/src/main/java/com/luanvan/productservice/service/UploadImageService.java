@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UploadCategoryImageService {
+public class UploadImageService {
 
     private final CategoryRepository categoryRepository;
 

@@ -5,34 +5,33 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "categories" )
+@Table(name = "product_color" )
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class ProductColor {
     @Id
     private String id;
 
-    @Column(length = 255)
-    private String name;
+    @Column(name = "price")
+    private BigDecimal price;
 
-    @Column(length = 255)
-    private String codeName;
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isActive = true;
 
-    @Lob
-    @Column
-    private String image;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Product product;
 
-    @Column(length = 255)
-    private String description;
-
-    @Column(nullable = false)
-    private Boolean isActive;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "color_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Color color;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

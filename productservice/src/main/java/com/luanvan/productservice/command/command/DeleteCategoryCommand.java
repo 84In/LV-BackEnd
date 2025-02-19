@@ -8,12 +8,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCategoryCommand {
+public class DeleteCategoryCommand {
     @TargetAggregateIdentifier
     private String id;
-    private String name;
-    private String codeName;
-    private String description;
-    private String images;
-    private Boolean isActive;
 }

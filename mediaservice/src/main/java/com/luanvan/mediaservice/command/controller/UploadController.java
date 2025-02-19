@@ -1,11 +1,13 @@
 package com.luanvan.mediaservice.command.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.model.AvatarUpdateModel;
+import com.luanvan.commonservice.model.CategoryImageUpdateModel;
 import com.luanvan.commonservice.services.KafkaService;
 import com.luanvan.mediaservice.services.CloudinaryService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,18 +17,16 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/upload")
-public class AvatarController {
+@RequiredArgsConstructor
+public class UploadController {
+    private final CloudinaryService cloudinaryService;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
-
-    @Autowired
-    private KafkaService kafkaService;
+    private final KafkaService kafkaService;
 
     @PostMapping("avatar/{userId}")
-    public ResponseEntity uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
+    public ResponseEntity<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
 
-        log.info("Đã vào được: ", userId);
+        log.info("Đã vào được uploadAvatar: {}", userId);
         AvatarUpdateModel avatarUpdateModel = new AvatarUpdateModel();
 
         avatarUpdateModel.setUserId(userId);
@@ -40,4 +40,20 @@ public class AvatarController {
         return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
     }
 
+    @PostMapping("categories/{categoryId}")
+    public ResponseEntity<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) {
+
+        log.info("Đã vào được uploadCategoriesImage: {}", categoryId);
+        CategoryImageUpdateModel categoryImageUpdateModel = new CategoryImageUpdateModel();
+
+        categoryImageUpdateModel.setCategoryId(categoryId);
+        categoryImageUpdateModel.setCategoryUrl(cloudinaryService.uploadCategoryImage(images, categoryId));
+
+        log.info("Send message to kafka topic category-uploaded-topic with categoryId {}", categoryId);
+
+        kafkaService.sendMessage("category-uploaded-topic", categoryImageUpdateModel);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
+    }
 }

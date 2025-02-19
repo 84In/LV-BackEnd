@@ -8,7 +8,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateCategoryCommand {
+public class UpdateCategoryCommand {
     @TargetAggregateIdentifier
     private String id;
     private String name;

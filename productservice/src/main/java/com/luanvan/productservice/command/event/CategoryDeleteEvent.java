@@ -7,11 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryUpdateEvent {
+public class CategoryDeleteEvent {
     private String id;
-    private String name;
-    private String codeName;
-    private String description;
-    private String images;
-    private Boolean isActive;
 }

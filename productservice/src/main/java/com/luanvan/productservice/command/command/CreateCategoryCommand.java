@@ -1,15 +1,19 @@
-package com.luanvan.productservice.command.model;
+package com.luanvan.productservice.command.command;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
-@Data
+@Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryCreateModel {
+public class CreateCategoryCommand {
+    @TargetAggregateIdentifier
+    private String id;
     private String name;
     private String codeName;
     private String description;
     private String images;
+    private Boolean isActive;
 }

@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryCreateModel {
+public class CategoryUpdateModel {
     private String name;
     private String codeName;
     private String description;
     private String images;
+    private Boolean isActive;
 }
