@@ -1,5 +1,6 @@
 package com.luanvan.productservice.command.controller;
 
+import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.productservice.command.command.CreateCategoryCommand;
 import com.luanvan.productservice.command.command.DeleteCategoryCommand;
 import com.luanvan.productservice.command.command.UpdateCategoryCommand;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 @Slf4j
@@ -20,7 +22,7 @@ public class CategoryCommandController {
     private final CommandGateway commandGateway;
 
     @PostMapping
-    public String saveCategory(@RequestBody CategoryCreateModel model) {
+    public ApiResponse<?> saveCategory(@RequestBody CategoryCreateModel model) {
         CreateCategoryCommand command = CreateCategoryCommand
                 .builder()
                 .id(UUID.randomUUID().toString())
@@ -30,11 +32,15 @@ public class CategoryCommandController {
                 .images(model.getImages())
                 .isActive(true)
                 .build();
-        return commandGateway.sendAndWait(command);
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return ApiResponse.builder()
+                .data(result)
+                .build();
     }
 
     @PutMapping("/{categoryId}")
-    public String updateCategory(@PathVariable String categoryId, @RequestBody CategoryUpdateModel model) {
+    public ApiResponse<?> updateCategory(@PathVariable String categoryId, @RequestBody CategoryUpdateModel model) {
         UpdateCategoryCommand command = UpdateCategoryCommand.builder()
                 .id(categoryId)
                 .name(model.getName())
@@ -43,15 +49,22 @@ public class CategoryCommandController {
                 .images(model.getImages())
                 .isActive(model.getIsActive())
                 .build();
-        return commandGateway.sendAndWait(command);
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return ApiResponse.builder()
+                .data(result)
+                .build();
     }
 
     @DeleteMapping("/{categoryId}")
-    public String deleteCategory(@PathVariable String categoryId) {
+    public ApiResponse<?> deleteCategory(@PathVariable String categoryId) {
         DeleteCategoryCommand command = DeleteCategoryCommand.builder()
                 .id(categoryId)
                 .build();
-        return commandGateway.sendAndWait(command);
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return ApiResponse.builder()
+                .build();
     }
 
 }

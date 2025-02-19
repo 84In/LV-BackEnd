@@ -23,16 +23,17 @@ public class CategoryEventHandler {
         try {
             if(categoryRepository.existsByName(event.getName())){
                 throw new AppException(ErrorCode.CATEGORY_EXISTED);
+            }else {
+                var category = Category.builder()
+                        .id(event.getId())
+                        .name(event.getName())
+                        .codeName(event.getCodeName())
+                        .description(event.getDescription())
+                        .images(event.getImages())
+                        .isActive(event.getIsActive())
+                        .build();
+                categoryRepository.save(category);
             }
-            var category = Category.builder()
-                    .id(event.getId())
-                    .name(event.getName())
-                    .codeName(event.getCodeName())
-                    .description(event.getDescription())
-                    .images(event.getImages())
-                    .isActive(event.getIsActive())
-                    .build();
-            categoryRepository.save(category);
         }catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

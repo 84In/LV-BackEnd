@@ -14,6 +14,8 @@ public enum ErrorCode {
     // Lỗi hệ thống
     UNAUTHORIZED(101, "Bạn không có quyền truy cập", HttpStatus.FORBIDDEN),
     UNAUTHENTICATED(102, "Chưa xác thực", HttpStatus.UNAUTHORIZED),
+    QUERY_ERROR(103, "Truy vấn thất bại", HttpStatus.BAD_REQUEST),
+    COMMAND_ERROR(104, "Lệnh thực hiện thất bại", HttpStatus.BAD_REQUEST),
 
     // Lỗi xác thực
     INVALID_KEY(201, "Khóa không hợp lệ", HttpStatus.BAD_REQUEST),

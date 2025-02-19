@@ -31,7 +31,7 @@ public class ExceptionAdvice {
     ResponseEntity<ApiResponse<?>> handlingRuntimeException(RuntimeException ex) {
         ApiResponse<?> response = new ApiResponse<>();
         response.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        response.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage() + ex.getMessage());
+        response.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage() + " " + ex.getMessage());
         return ResponseEntity.badRequest().body(response);
     }
 
