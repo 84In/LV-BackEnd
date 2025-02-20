@@ -65,9 +65,9 @@ public class UserCommandService {
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
         }
 
+
         UpdateUserCommand command = new UpdateUserCommand(
                 userId,
-                model.getPassword(),
                 model.getEmail(),
                 model.getPhone(),
                 model.getLastName(),

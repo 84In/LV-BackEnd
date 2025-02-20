@@ -13,7 +13,6 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 public class UpdateUserCommand {
     @TargetAggregateIdentifier
     private String id;
-    private String password;
     private String email;
     private String phone;
     private String lastName;

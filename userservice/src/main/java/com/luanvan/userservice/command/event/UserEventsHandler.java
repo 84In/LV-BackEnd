@@ -4,20 +4,26 @@ import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class UserEventsHandler {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @EventHandler
     public void on(UserCreatedEvent event) {
@@ -29,7 +35,7 @@ public class UserEventsHandler {
             User user = new User();
             user.setId(event.getId());
             user.setUsername(event.getUsername());
-            user.setPassword(event.getPassword());
+            user.setPassword(passwordEncoder.encode(event.getPassword()));
             user.setEmail(event.getEmail());
             user.setPhone(event.getPhone());
             user.setFirstName(event.getFirstName());
@@ -49,7 +55,6 @@ public class UserEventsHandler {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            Optional.ofNullable(event.getPassword()).ifPresent(user::setPassword);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);
