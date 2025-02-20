@@ -28,6 +28,8 @@ public class ProductVariant {
     @Column(name = "sold")
     private Integer sold;
 
+
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

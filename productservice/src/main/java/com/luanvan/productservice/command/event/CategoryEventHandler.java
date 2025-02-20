@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.DisallowReplay;
 import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -18,41 +17,29 @@ public class CategoryEventHandler {
     private final CategoryRepository categoryRepository;
 
     @EventHandler
-    public void on(CategoryCreateEvent event) {
+    public void on(CategoryCreateEvent event) throws Exception {
         log.info("Category created");
-        try {
-            if(categoryRepository.existsByName(event.getName())){
-                throw new AppException(ErrorCode.CATEGORY_EXISTED);
-            }else {
-                var category = Category.builder()
-                        .id(event.getId())
-                        .name(event.getName())
-                        .codeName(event.getCodeName())
-                        .description(event.getDescription())
-                        .images(event.getImages())
-                        .isActive(event.getIsActive())
-                        .build();
-                categoryRepository.save(category);
-            }
-        }catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        var category = Category.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .codeName(event.getCodeName())
+                .description(event.getDescription())
+                .images(event.getImages())
+                .isActive(event.getIsActive())
+                .build();
+        categoryRepository.save(category);
     }
 
     @EventHandler
     public void on(CategoryUpdateEvent event) {
         log.info("Category updated");
-        try {
-            var category = categoryRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-            category.setName(event.getName());
-            category.setCodeName(event.getCodeName());
-            category.setDescription(event.getDescription());
-            category.setImages(event.getImages());
-            category.setIsActive(event.getIsActive());
-            categoryRepository.save(category);
-        }catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        var category = categoryRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        category.setName(event.getName());
+        category.setCodeName(event.getCodeName());
+        category.setDescription(event.getDescription());
+        category.setImages(event.getImages());
+        category.setIsActive(event.getIsActive());
+        categoryRepository.save(category);
     }
 
     @EventHandler

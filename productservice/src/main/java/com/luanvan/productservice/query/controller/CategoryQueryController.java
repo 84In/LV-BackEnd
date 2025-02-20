@@ -39,18 +39,16 @@ public class CategoryQueryController {
                 sortDirection = order.getDirection();
             }
         }
-
         GetAllCategoryQuery query = new GetAllCategoryQuery(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 sortBy,
                 sortDirection
         );
-
         List<CategoryResponseModel> response = queryGateway
                 .query(query, ResponseTypes.multipleInstancesOf(CategoryResponseModel.class))
+                .exceptionally((ex) -> {throw new AppException(ErrorCode.QUERY_ERROR);})
                 .join();
-
         // Tạo Page<CategoryResponseModel> từ List<CategoryResponseModel>
         Page<CategoryResponseModel> pageResponse = new PageImpl<>(response, pageable, response.size());
         return ApiResponse.<Page<CategoryResponseModel>>builder()
