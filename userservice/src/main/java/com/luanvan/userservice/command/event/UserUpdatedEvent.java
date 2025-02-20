@@ -13,7 +13,6 @@ import lombok.Setter;
 public class UserUpdatedEvent {
     private String id;
     private String password;
-    private Boolean active;
     private String email;
     private String phone;
     private String lastName;

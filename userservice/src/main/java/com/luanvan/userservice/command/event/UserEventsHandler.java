@@ -6,9 +6,7 @@ import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.commandhandling.CommandExecutionException;
 import org.axonframework.eventhandling.EventHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -17,27 +15,32 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class UserEventsHandler {
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
     @EventHandler
-    public void on(UserCreatedEvent event) throws Exception {
-        log.info("User created user event handler");
+    public void on(UserCreatedEvent event) {
+        try {
+            log.info("User created user event handler");
 
-        Role role = roleRepository.findById(event.getRoleName()).orElseThrow(() -> new RuntimeException("Role not found"));
-
-        User user = new User();
-        user.setId(event.getId());
-        user.setUsername(event.getUsername());
-        user.setPassword(event.getPassword());
-        user.setEmail(event.getEmail());
-        user.setPhone(event.getPhone());
-        user.setFirstName(event.getFirstName());
-        user.setLastName(event.getLastName());
-        user.setActive(event.getActive());
-        user.setRole(role);
-        userRepository.save(user);
-        log.info("User created successfully");
+            Role role = roleRepository.findById(event.getRoleName()).orElseThrow(() -> new RuntimeException("Role not found"));
+            log.info("User created role event handler");
+            User user = new User();
+            user.setId(event.getId());
+            user.setUsername(event.getUsername());
+            user.setPassword(event.getPassword());
+            user.setEmail(event.getEmail());
+            user.setPhone(event.getPhone());
+            user.setFirstName(event.getFirstName());
+            user.setLastName(event.getLastName());
+            user.setActive(event.getActive());
+            user.setRole(role);
+            userRepository.save(user);
+            log.info("User created successfully");
+        }catch (Exception e) {
+            log.info(e.getMessage());
+        }
     }
 
     @EventHandler
@@ -51,7 +54,6 @@ public class UserEventsHandler {
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);
             Optional.ofNullable(event.getLastName()).ifPresent(user::setLastName);
-            Optional.ofNullable(event.getActive()).ifPresent(user::setActive);
 
             Optional.ofNullable(event.getRoleName()).ifPresent(roleName -> {
                 Role role = roleRepository.findById(roleName)
@@ -72,9 +74,10 @@ public class UserEventsHandler {
     }
 
     @EventHandler
-    public void on(UserRemoveEvent event) {
-        User user = userRepository.findById(event.getId()).orElseThrow(() -> new RuntimeException("User not found"));
-        userRepository.deleteById(event.getId());
+    public void on(UserChangeStatusEvent event) {
+        User user = userRepository.findByUserId(event.getId());
+        user.setActive(event.getActive());
+        userRepository.save(user);
     }
 
 }

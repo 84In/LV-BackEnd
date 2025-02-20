@@ -30,6 +30,9 @@ public enum ErrorCode {
     EMAIL_EXISTED(305, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
     ACCOUNT_LOCKED(306, "Tài khoản bị khóa", HttpStatus.FORBIDDEN),
 
+    //Lỗi vai trò
+    ROLE_NOT_EXISTED(355, "Vai trò không tồn tại", HttpStatus.BAD_REQUEST),
+
     // Lỗi ứng dụng
     CATEGORY_NOT_EXISTED(1, "Danh mục không tồn tại", HttpStatus.BAD_REQUEST),
     CATEGORY_EXISTED(2, "Danh mục đã tồn tại", HttpStatus.BAD_REQUEST),
