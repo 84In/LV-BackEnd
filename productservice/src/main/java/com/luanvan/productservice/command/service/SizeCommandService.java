@@ -2,12 +2,13 @@ package com.luanvan.productservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.command.CreateCategoryCommand;
-import com.luanvan.productservice.command.command.DeleteCategoryCommand;
-import com.luanvan.productservice.command.command.UpdateCategoryCommand;
+import com.luanvan.productservice.command.command.*;
 import com.luanvan.productservice.command.model.CategoryCreateModel;
 import com.luanvan.productservice.command.model.CategoryUpdateModel;
+import com.luanvan.productservice.command.model.SizeCreateModel;
+import com.luanvan.productservice.command.model.SizeUpdateModel;
 import com.luanvan.productservice.repository.CategoryRepository;
+import com.luanvan.productservice.repository.SizeRepository;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,23 +18,21 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @Service
-public class CategoryCommandService {
+public class SizeCommandService {
     @Autowired
-    private  CategoryRepository categoryRepository;
+    private SizeRepository sizeRepository;
     @Autowired
     private  CommandGateway commandGateway;
 
-    public HashMap<?, ?> save(CategoryCreateModel model) throws AppException {
-        if (categoryRepository.existsByName(model.getName())) {
-            throw new AppException(ErrorCode.CATEGORY_EXISTED);
+    public HashMap<?, ?> save(SizeCreateModel model) throws AppException {
+        if (sizeRepository.existsByName(model.getName())) {
+            throw new AppException(ErrorCode.SIZE_EXISTED);
         } else {
-            CreateCategoryCommand command = CreateCategoryCommand
+            CreateSizeCommand command = CreateSizeCommand
                     .builder()
                     .id(UUID.randomUUID().toString())
                     .name(model.getName())
                     .codeName(model.getCodeName())
-                    .description(model.getDescription())
-                    .images(model.getImages())
                     .isActive(true)
                     .build();
             var result = new HashMap<>();
@@ -42,16 +41,14 @@ public class CategoryCommandService {
         }
     }
 
-    public HashMap<?, ?> update(String categoryId, CategoryUpdateModel model) throws AppException {
-        if(!categoryRepository.existsById(categoryId)) {
-            throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+    public HashMap<?, ?> update(String id, SizeUpdateModel model) throws AppException {
+        if(!sizeRepository.existsById(id)) {
+            throw new AppException(ErrorCode.SIZE_NOT_EXISTED);
         }
-        UpdateCategoryCommand command = UpdateCategoryCommand.builder()
-                .id(categoryId)
+        UpdateSizeCommand command = UpdateSizeCommand.builder()
+                .id(id)
                 .name(model.getName())
                 .codeName(model.getCodeName())
-                .description(model.getDescription())
-                .images(model.getImages())
                 .isActive(model.getIsActive())
                 .build();
         var result = new HashMap<>();
@@ -59,12 +56,12 @@ public class CategoryCommandService {
         return result;
     }
 
-    public HashMap<?, ?> delete(String categoryId) throws AppException {
-        if(!categoryRepository.existsById(categoryId)) {
-            throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+    public HashMap<?, ?> delete(String id) throws AppException {
+        if(!sizeRepository.existsById(id)) {
+            throw new AppException(ErrorCode.SIZE_NOT_EXISTED);
         }
-        DeleteCategoryCommand command = DeleteCategoryCommand.builder()
-                .id(categoryId)
+        DeleteSizeCommand command = DeleteSizeCommand.builder()
+                .id(id)
                 .build();
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));

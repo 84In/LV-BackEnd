@@ -1,9 +1,11 @@
 package com.luanvan.productservice.command.controller;
 
 import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.command.model.CategoryCreateModel;
 import com.luanvan.productservice.command.model.CategoryUpdateModel;
+import com.luanvan.productservice.command.model.SizeCreateModel;
+import com.luanvan.productservice.command.model.SizeUpdateModel;
 import com.luanvan.productservice.command.service.CategoryCommandService;
+import com.luanvan.productservice.command.service.SizeCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,32 +13,32 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/categories")
-public class CategoryCommandController {
+@RequestMapping("/api/v1/sizes")
+public class SizeCommandController {
     @Autowired
     private  CommandGateway commandGateway;
     @Autowired
-    private  CategoryCommandService categoryCommandService;
+    private SizeCommandService sizeCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestBody CategoryCreateModel model) {
-        var response = categoryCommandService.save(model);
+    public ApiResponse<?> save(@RequestBody SizeCreateModel model) {
+        var response = sizeCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)
                 .build();
     }
 
-    @PutMapping("/{categoryId}")
-    public ApiResponse<?> update(@PathVariable String categoryId, @RequestBody CategoryUpdateModel model) {
-        var response = categoryCommandService.update(categoryId, model);
+    @PutMapping("/{sizeId}")
+    public ApiResponse<?> update(@PathVariable String sizeId, @RequestBody SizeUpdateModel model) {
+        var response = sizeCommandService.update(sizeId, model);
         return ApiResponse.builder()
                 .data(response)
                 .build();
     }
 
-    @DeleteMapping("/{categoryId}")
-    public ApiResponse<?> delete(@PathVariable String categoryId) {
-        var response = categoryCommandService.delete(categoryId);
+    @DeleteMapping("/{sizeId}")
+    public ApiResponse<?> delete(@PathVariable String sizeId) {
+        var response = sizeCommandService.delete(sizeId);
         return ApiResponse.builder()
                 .build();
     }

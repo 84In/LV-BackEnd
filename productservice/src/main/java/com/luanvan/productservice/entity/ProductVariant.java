@@ -1,9 +1,6 @@
 package com.luanvan.productservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -28,7 +25,13 @@ public class ProductVariant {
     @Column(name = "sold")
     private Integer sold;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_color_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private ProductColor productColor;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Size size;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
