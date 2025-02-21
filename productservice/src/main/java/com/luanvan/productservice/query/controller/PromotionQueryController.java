@@ -1,8 +1,8 @@
 package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.query.model.CategoryResponseModel;
-import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
+import com.luanvan.productservice.query.model.PromotionResponseModel;
+import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
@@ -18,30 +18,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("/api/v1/promotions")
 @RequiredArgsConstructor
-public class CategoryQueryController {
+public class PromotionQueryController {
     private final QueryGateway queryGateway;
 
     @GetMapping
-    public ApiResponse<Page<CategoryResponseModel>> getAll(
+    public ApiResponse<Page<PromotionResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "") List<String> sorts) {
 
         ArrayList<String> sortOrder = new ArrayList<>(sorts);
 
-        GetAllCategoryQuery query = new GetAllCategoryQuery(page, size, sortOrder);
+        GetAllPromotionQuery query = new GetAllPromotionQuery(page, size, sortOrder);
 
-        List<CategoryResponseModel> response;
+        List<PromotionResponseModel> response;
         try {
-            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(CategoryResponseModel.class)).join();
+            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(PromotionResponseModel.class)).join();
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        Page<CategoryResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
+        Page<PromotionResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
 
-        return ApiResponse.<Page<CategoryResponseModel>>builder()
+        return ApiResponse.<Page<PromotionResponseModel>>builder()
                 .data(pageResponse)
                 .build();
     }

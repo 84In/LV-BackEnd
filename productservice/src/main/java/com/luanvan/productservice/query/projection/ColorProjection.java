@@ -1,9 +1,9 @@
 package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.utils.SearchParamsUtils;
-import com.luanvan.productservice.query.model.CategoryResponseModel;
-import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
-import com.luanvan.productservice.repository.CategoryRepository;
+import com.luanvan.productservice.query.model.ColorResponseModel;
+import com.luanvan.productservice.query.queries.GetAllColorQuery;
+import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
@@ -19,25 +19,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CategoryProjection {
-    private final CategoryRepository categoryRepository;
+public class ColorProjection {
+    private final ColorRepository colorRepository;
 
     @QueryHandler
-    public List<CategoryResponseModel> handle(GetAllCategoryQuery query) {
-        // Tạo PageRequest từ các tham số
+    public List<ColorResponseModel> handle(GetAllColorQuery query) {
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
-        var categoryPage = categoryRepository.findAll(pageable);
+        var colorPage = colorRepository.findAll(pageable);
 
-        return categoryPage.getContent().stream()
-                .map(category -> {
-                    CategoryResponseModel response = new CategoryResponseModel();
-                    BeanUtils.copyProperties(category, response);
+        return colorPage.getContent().stream()
+                .map(color -> {
+                    ColorResponseModel response = new ColorResponseModel();
+                    BeanUtils.copyProperties(color, response);
                     return response;
                 })
                 .collect(Collectors.toList());
     }
+
 
 }

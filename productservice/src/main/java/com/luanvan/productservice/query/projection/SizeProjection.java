@@ -1,5 +1,6 @@
 package com.luanvan.productservice.query.projection;
 
+import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.query.model.CategoryResponseModel;
 import com.luanvan.productservice.query.model.SizeResponseModel;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
@@ -27,11 +28,9 @@ public class SizeProjection {
     @QueryHandler
     public List<SizeResponseModel> handle(GetAllSizeQuery query) {
         // Tạo PageRequest từ các tham số
-        Pageable pageable = PageRequest.of(
-                query.getPage(),
-                query.getSize(),
-                Sort.by(query.getSortDirection(), query.getSortBy())
-        );
+        Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
+
+        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
         var sizePage = sizeRepository.findAll(pageable);
 

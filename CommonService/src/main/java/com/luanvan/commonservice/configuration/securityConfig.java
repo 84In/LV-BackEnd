@@ -12,13 +12,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        return http
+                .csrf(csrf -> csrf.disable()) // Tắt CSRF nếu cần
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Cho phép tất cả request
+                        .requestMatchers("/**").permitAll() // Cho phép tất cả request
                 )
-                .csrf(csrf -> csrf.disable()); // Tắt CSRF nếu cần
-
-        return http.build();
+                .build();
     }
 
     @Bean

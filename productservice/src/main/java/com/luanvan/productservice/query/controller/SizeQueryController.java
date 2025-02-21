@@ -4,21 +4,22 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.productservice.query.model.CategoryResponseModel;
+import com.luanvan.productservice.query.model.ColorResponseModel;
 import com.luanvan.productservice.query.model.SizeResponseModel;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
+import com.luanvan.productservice.query.queries.GetAllColorQuery;
 import com.luanvan.productservice.query.queries.GetAllSizeQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,29 +30,22 @@ public class SizeQueryController {
 
     @GetMapping
     public ApiResponse<Page<SizeResponseModel>> getAll(
-            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") List<String> sorts) {
 
-        String sortBy = "createdAt";
-        Sort.Direction sortDirection = Sort.Direction.DESC;
+        ArrayList<String> sortOrder = new ArrayList<>(sorts);
 
-        if (pageable.getSort().isSorted()) {
-            Sort.Order order = pageable.getSort().get().findFirst().orElse(null);
-            if (order != null) {
-                sortBy = order.getProperty();
-                sortDirection = order.getDirection();
-            }
+        GetAllSizeQuery query = new GetAllSizeQuery(page, size, sortOrder);
+
+        List<SizeResponseModel> response;
+        try {
+            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(SizeResponseModel.class)).join();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
-        GetAllSizeQuery query = new GetAllSizeQuery(
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                sortBy,
-                sortDirection
-        );
-        List<SizeResponseModel> response = queryGateway
-                .query(query, ResponseTypes.multipleInstancesOf(SizeResponseModel.class))
-                .exceptionally((ex) -> {throw new AppException(ErrorCode.QUERY_ERROR);})
-                .join();
-        Page<SizeResponseModel> pageResponse = new PageImpl<>(response, pageable, response.size());
+        Page<SizeResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
+
         return ApiResponse.<Page<SizeResponseModel>>builder()
                 .data(pageResponse)
                 .build();

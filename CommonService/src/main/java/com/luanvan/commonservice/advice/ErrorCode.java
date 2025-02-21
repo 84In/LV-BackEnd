@@ -52,6 +52,8 @@ public enum ErrorCode {
     REVIEW_EXISTED(16, "Đánh giá đã tồn tại", HttpStatus.BAD_REQUEST),
     SIZE_NOT_EXISTED(17, "Kích thước không tồn tại", HttpStatus.BAD_REQUEST),
     SIZE_EXISTED(18, "Kích thước đã tồn tại", HttpStatus.BAD_REQUEST),
+    COLOR_NOT_EXISTED(19, "Màu sắc không tồn tại", HttpStatus.BAD_REQUEST),
+    COLOR_EXISTED(20, "Màu sắc đã tồn tại", HttpStatus.BAD_REQUEST),
 
     // Lỗi thanh toán
     PAYMENT_METHOD_EXISTED(51, "Phương thức thanh toán đã tồn tại", HttpStatus.BAD_REQUEST),

@@ -1,7 +1,10 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.event.CategoryCreateEvent;
+import com.luanvan.productservice.command.event.CategoryDeleteEvent;
+import com.luanvan.productservice.command.event.CategoryUpdateEvent;
 import com.luanvan.productservice.entity.Category;
 import com.luanvan.productservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
