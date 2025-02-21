@@ -6,9 +6,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Entity
-@Table(name = "products" )
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +32,13 @@ public class Product {
 
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private Collection<ProductColor> productColors;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

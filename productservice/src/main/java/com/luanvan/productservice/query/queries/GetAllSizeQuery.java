@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllSizeQuery {
     private int page;
     private int size;
-    private String sortBy;
-    private Sort.Direction sortDirection;
+    private ArrayList<String> sortOrder;
 }

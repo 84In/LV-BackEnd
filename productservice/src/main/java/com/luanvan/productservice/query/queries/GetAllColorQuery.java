@@ -3,15 +3,15 @@ package com.luanvan.productservice.query.queries;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllCategoryQuery {
+public class GetAllColorQuery {
     private int page;
     private int size;
     private ArrayList<String> sortOrder;

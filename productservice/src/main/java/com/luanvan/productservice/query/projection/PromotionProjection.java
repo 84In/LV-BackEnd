@@ -1,9 +1,10 @@
 package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.utils.SearchParamsUtils;
-import com.luanvan.productservice.query.model.CategoryResponseModel;
-import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
-import com.luanvan.productservice.repository.CategoryRepository;
+import com.luanvan.productservice.query.model.PromotionResponseModel;
+import com.luanvan.productservice.query.model.SizeResponseModel;
+import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
+import com.luanvan.productservice.repository.PromotionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
@@ -19,22 +20,22 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class CategoryProjection {
-    private final CategoryRepository categoryRepository;
+public class PromotionProjection {
+    private final PromotionRepository promotionRepository;
 
     @QueryHandler
-    public List<CategoryResponseModel> handle(GetAllCategoryQuery query) {
+    public List<PromotionResponseModel> handle(GetAllPromotionQuery query) {
         // Tạo PageRequest từ các tham số
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
 
-        var categoryPage = categoryRepository.findAll(pageable);
+        var promotionPage = promotionRepository.findAll(pageable);
 
-        return categoryPage.getContent().stream()
-                .map(category -> {
-                    CategoryResponseModel response = new CategoryResponseModel();
-                    BeanUtils.copyProperties(category, response);
+        return promotionPage.getContent().stream()
+                .map(promotion -> {
+                    PromotionResponseModel response = new PromotionResponseModel();
+                    BeanUtils.copyProperties(promotion, response);
                     return response;
                 })
                 .collect(Collectors.toList());

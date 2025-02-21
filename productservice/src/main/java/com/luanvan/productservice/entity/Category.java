@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 @Table(name = "categories" )
@@ -33,6 +34,9 @@ public class Category {
 
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "category")
+    private Collection<Product> products;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

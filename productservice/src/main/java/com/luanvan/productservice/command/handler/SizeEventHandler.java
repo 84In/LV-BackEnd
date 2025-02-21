@@ -1,10 +1,11 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.entity.Category;
+import com.luanvan.productservice.command.event.SizeCreateEvent;
+import com.luanvan.productservice.command.event.SizeDeleteEvent;
+import com.luanvan.productservice.command.event.SizeUpdateEvent;
 import com.luanvan.productservice.entity.Size;
-import com.luanvan.productservice.repository.CategoryRepository;
 import com.luanvan.productservice.repository.SizeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,18 +34,18 @@ public class SizeEventHandler {
     @EventHandler
     public void on(SizeUpdateEvent event) {
         log.info("Size updated");
-        var category = sizeRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
-        category.setName(event.getName());
-        category.setCodeName(event.getCodeName());
-        category.setIsActive(event.getIsActive());
-        sizeRepository.save(category);
+        var size = sizeRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
+        size.setName(event.getName());
+        size.setCodeName(event.getCodeName());
+        size.setIsActive(event.getIsActive());
+        sizeRepository.save(size);
     }
 
     @EventHandler
     @DisallowReplay
     public void on(SizeDeleteEvent event) {
         log.info("Size deleted");
-        var category = sizeRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
-        sizeRepository.delete(category);
+        var size = sizeRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
+        sizeRepository.delete(size);
     }
 }
