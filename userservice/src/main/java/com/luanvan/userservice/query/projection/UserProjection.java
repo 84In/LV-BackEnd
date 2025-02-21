@@ -1,12 +1,15 @@
 package com.luanvan.userservice.query.projection;
 
+import com.luanvan.commonservice.event.GetUserQuery;
+import com.luanvan.commonservice.model.RoleResponseModel;
+import com.luanvan.commonservice.model.UserAddressResponseModel;
+import com.luanvan.commonservice.model.UserResponseModel;
+import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
-import com.luanvan.userservice.query.model.UserResponseModel;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,6 +42,9 @@ public class UserProjection {
                 .stream()
                 .map(
                         user -> {
+
+
+
                             UserResponseModel userResponseModel = UserResponseModel.builder()
                                     .id(user.getId())
                                     .username(user.getUsername())
@@ -48,8 +55,25 @@ public class UserProjection {
                                     .lastName(user.getLastName())
                                     .avatar(user.getAvatar())
                                     .active(user.getActive())
-                                    .role(user.getRole())
-                                    .addresses(user.getAddresses())
+                                    .role(new RoleResponseModel(user.getRole().getName(),user.getRole().getDescription()))
+                                    .addresses(user.getAddresses().stream().map(userAddress -> {
+                                        UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
+                                        userAddressResponse.setAddressId(userAddress.getId().getAddressId());
+                                        userAddressResponse.setUserId(userAddress.getId().getUserId());
+
+                                        // Lấy thông tin từ Address và mapping vào UserAddressResponse
+                                        Address address = userAddress.getAddress();
+                                        userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+                                        userAddressResponse.setAddressPhone(address.getPhone());
+                                        userAddressResponse.setProvinceName(address.getProvince().getName());
+                                        userAddressResponse.setDistrictName(address.getDistrict().getName());
+                                        userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+                                        userAddressResponse.setDefault(userAddress.isDefault());
+                                        userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
+                                        userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
+
+                                        return userAddressResponse;
+                                    }).collect(Collectors.toList()))
                                     .createdAt(user.getCreatedAt())
                                     .updatedAt(user.getUpdatedAt())
                                     .build();
@@ -58,5 +82,49 @@ public class UserProjection {
                             return userResponseModel;
                         }
                 ).collect(Collectors.toList());
+    }
+
+    @QueryHandler
+    public UserResponseModel handle(GetUserQuery query){
+        User user = userRepository.findByUsername(query.getUsername()).orElseThrow( ()-> new RuntimeException("Not found user"));
+
+        UserResponseModel userResponseModel = new UserResponseModel();
+        userResponseModel.setId(user.getId());
+        userResponseModel.setUsername(user.getUsername());
+        userResponseModel.setPassword(user.getPassword());
+        userResponseModel.setEmail(user.getEmail());
+        userResponseModel.setPhone(user.getPhone());
+        userResponseModel.setFirstName(user.getFirstName());
+        userResponseModel.setLastName(user.getLastName());
+        userResponseModel.setAvatar(user.getAvatar());
+        userResponseModel.setActive(user.getActive());
+
+        // Mapping Role
+        userResponseModel.setRole(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()));
+
+        // Mapping UserAddressResponse
+        userResponseModel.setAddresses(user.getAddresses().stream().map(userAddress -> {
+            UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
+            userAddressResponse.setAddressId(userAddress.getId().getAddressId());
+            userAddressResponse.setUserId(userAddress.getId().getUserId());
+
+            // Lấy thông tin từ Address và mapping vào UserAddressResponse
+            Address address = userAddress.getAddress();
+            userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+            userAddressResponse.setAddressPhone(address.getPhone());
+            userAddressResponse.setProvinceName(address.getProvince().getName());
+            userAddressResponse.setDistrictName(address.getDistrict().getName());
+            userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+            userAddressResponse.setDefault(userAddress.isDefault());
+            userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
+            userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
+
+            return userAddressResponse;
+        }).collect(Collectors.toList())); // Thu thập thành danh sách
+
+        // Mapping thời gian tạo và cập nhật
+        userResponseModel.setCreatedAt(user.getCreatedAt());
+        userResponseModel.setUpdatedAt(user.getUpdatedAt());
+        return userResponseModel;
     }
 }

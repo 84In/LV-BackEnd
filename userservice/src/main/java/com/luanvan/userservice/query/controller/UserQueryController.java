@@ -3,7 +3,7 @@ package com.luanvan.userservice.query.controller;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.userservice.query.model.UserResponseModel;
+import com.luanvan.commonservice.model.UserResponseModel;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
