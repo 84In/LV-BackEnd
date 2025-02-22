@@ -2,7 +2,7 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.controller.ColorUpdateEvent;
+import com.luanvan.productservice.command.event.ColorUpdateEvent;
 import com.luanvan.productservice.command.event.ColorCreateEvent;
 import com.luanvan.productservice.command.event.ColorDeleteEvent;
 import com.luanvan.productservice.entity.Color;
@@ -21,7 +21,7 @@ public class ColorEventHandler {
 
     @EventHandler
     public void on(ColorCreateEvent event) throws Exception {
-        log.info("Promotion created");
+        log.info("Color created");
         var color = Color.builder()
                 .id(event.getId())
                 .name(event.getName())

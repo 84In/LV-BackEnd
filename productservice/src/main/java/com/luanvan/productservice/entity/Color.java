@@ -32,10 +32,11 @@ public class Color {
     @Column(name = "description", length = 255)
     private String description;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
 
-    @OneToMany(mappedBy = "color")
+    @OneToMany(mappedBy = "color", cascade = CascadeType.ALL)
     private Collection<ProductColor> productColors = new ArrayList<>();
 
     @CreationTimestamp

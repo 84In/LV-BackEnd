@@ -54,7 +54,7 @@ public class AuthController {
         response.addCookie(refreshTokenCookie);
 
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .message("Login success")
                 .data(Map.of("accessToken", accessToken))
                 .build();
@@ -72,7 +72,7 @@ public class AuthController {
         String accessToken = jwtUtil.generateToken(username, Map.of("role", role),false);
 
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .message("Refresh success")
                 .data(Map.of("accessToken", accessToken))
                 .build();

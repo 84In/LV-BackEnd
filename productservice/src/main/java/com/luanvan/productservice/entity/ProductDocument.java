@@ -12,7 +12,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import java.math.BigDecimal;
 import java.util.Collection;
 
-@Document(indexName = "product_variant_index")
+@Document(indexName = "products_index")
 @Getter
 @Setter
 @Builder

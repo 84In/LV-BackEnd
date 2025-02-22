@@ -2,6 +2,7 @@ package com.luanvan.productservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,25 +22,31 @@ public class ProductColor {
     @Id
     private String id;
 
-    @Column(name = "price")
-    private BigDecimal price;
+    @Builder.Default
+    @ColumnDefault("0")
+    @Column(name = "price", nullable = false)
+    private BigDecimal price = BigDecimal.valueOf(0);
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "color_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "color_id", referencedColumnName = "id", nullable = false)
     private Color color;
 
-    @OneToMany(mappedBy = "productColor")
+    @OneToMany(mappedBy = "productColor", cascade = CascadeType.ALL)
     private Collection<ProductVariant> productVariants = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "product_color_promotion")
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinTable(name = "product_color_promotion",
+            joinColumns = @JoinColumn(name = "product_color_id"),
+            inverseJoinColumns = @JoinColumn(name = "promotion_id")
+    )
     private Collection<Promotion> promotions = new ArrayList<>();
 
     @CreationTimestamp

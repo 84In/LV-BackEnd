@@ -22,13 +22,14 @@ public class KafkaService {
      * @param topic the name of the Kafka topic to which the message will be sent
      * @param message the message content to be sent
      */
+
     public void sendMessage(String topic, Object message){
 
         try {
             kafkaTemplate.send(topic, objectMapper.writeValueAsString(message));
             log.info("Message sent to topic: {}",topic);
         }catch (JsonProcessingException e) {
-            log.error(e.getMessage());
+            log.error("Kafka send message error: {}", e.getMessage());
         }
     }
 }

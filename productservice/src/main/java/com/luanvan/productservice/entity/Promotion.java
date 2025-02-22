@@ -2,6 +2,7 @@ package com.luanvan.productservice.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -29,8 +30,10 @@ public class Promotion {
     @Column(name = "description", length = 255)
     private String description;
 
+    @Builder.Default
+    @ColumnDefault("0")
     @Column(name = "discount_percentage")
-    private Double discountPercentage;
+    private Double discountPercentage = 0.0;
 
     @Column(name = "start_date")
     private LocalDateTime startDate;
@@ -38,6 +41,7 @@ public class Promotion {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
 

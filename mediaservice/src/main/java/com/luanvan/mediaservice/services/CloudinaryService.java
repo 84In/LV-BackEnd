@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CloudinaryService {
@@ -47,6 +49,19 @@ public class CloudinaryService {
         }
     }
 
+    public String uploadFile(byte[] fileBytes, String folder) {
+        try {
+            Map<String, Object> params = ObjectUtils.asMap(
+                    "folder", folder,
+                    "resource_type", "auto"
+            );
+            Map uploadResult = cloudinary.uploader().upload(fileBytes, params);
+            return (String) uploadResult.get("url");
+        } catch (IOException e) {
+            throw new RuntimeException("Upload file failed", e);
+        }
+    }
+
     // Các phương thức wrapper cho từng loại tài nguyên
 
     public String uploadAvatar(MultipartFile file, String userId) {
@@ -57,7 +72,9 @@ public class CloudinaryService {
         return uploadFile(file, "categories/" + categoryId);
     }
 
-    public String uploadProductImage(MultipartFile file, String productId) {
-        return uploadFile(file, "products/" + productId);
+    public String uploadProductImage(List<MultipartFile> files, String productId) {
+        return files.stream()
+                .map(file -> uploadFile(file, "products/" + productId))
+                .collect(Collectors.toList()).toString();
     }
 }

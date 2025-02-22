@@ -1,7 +1,7 @@
 package com.luanvan.productservice.command.aggregate;
 
 import com.luanvan.productservice.command.command.*;
-import com.luanvan.productservice.command.controller.ColorUpdateEvent;
+import com.luanvan.productservice.command.event.ColorUpdateEvent;
 import com.luanvan.productservice.command.event.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +11,6 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
-
-import java.time.LocalDateTime;
 
 @Slf4j
 @Aggregate

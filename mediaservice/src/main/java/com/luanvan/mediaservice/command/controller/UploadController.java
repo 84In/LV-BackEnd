@@ -51,7 +51,7 @@ public class UploadController {
 
         log.info("Send message to kafka topic category-uploaded-topic with categoryId {}", categoryId);
 
-        kafkaService.sendMessage("category-uploaded-topic", categoryImageUpdateModel);
+        kafkaService.sendMessage("category-image-uploaded-topic", categoryImageUpdateModel);
 
 
         return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");

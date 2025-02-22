@@ -22,7 +22,7 @@ public class UserCommandController {
 
         var response = userCommandService.save(model);
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .data(response)
                 .build();
     }
@@ -32,7 +32,7 @@ public class UserCommandController {
 
         var response = userCommandService.update(userId, model);
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .data(response)
                 .build();
     }
@@ -42,7 +42,7 @@ public class UserCommandController {
     public ApiResponse<?> deleteUser(@PathVariable String userId) {
         var response = userCommandService.delete(userId);
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .data(response)
                 .build();
     }
@@ -51,7 +51,7 @@ public class UserCommandController {
     public ApiResponse<?> changeStatusUser(@PathVariable String userId, UserChangeStatusModel model) {
         var response = userCommandService.changeStatus(userId, model);
         return ApiResponse.builder()
-                .code(200)
+                .code(0)
                 .data(response)
                 .build();
 

@@ -10,7 +10,6 @@ import com.luanvan.productservice.command.model.CategoryUpdateModel;
 import com.luanvan.productservice.repository.CategoryRepository;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,9 +18,9 @@ import java.util.UUID;
 @Service
 public class CategoryCommandService {
     @Autowired
-    private  CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
     @Autowired
-    private  CommandGateway commandGateway;
+    private CommandGateway commandGateway;
 
     public HashMap<?, ?> save(CategoryCreateModel model) throws AppException {
         if (categoryRepository.existsByName(model.getName())) {
@@ -43,7 +42,7 @@ public class CategoryCommandService {
     }
 
     public HashMap<?, ?> update(String categoryId, CategoryUpdateModel model) throws AppException {
-        if(!categoryRepository.existsById(categoryId)) {
+        if (!categoryRepository.existsById(categoryId)) {
             throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
         }
         UpdateCategoryCommand command = UpdateCategoryCommand.builder()
@@ -60,7 +59,7 @@ public class CategoryCommandService {
     }
 
     public HashMap<?, ?> delete(String categoryId) throws AppException {
-        if(!categoryRepository.existsById(categoryId)) {
+        if (!categoryRepository.existsById(categoryId)) {
             throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
         }
         DeleteCategoryCommand command = DeleteCategoryCommand.builder()

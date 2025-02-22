@@ -32,6 +32,7 @@ public class Category {
     @Column(name = "description", length = 255)
     private String description;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean isActive = true;
 

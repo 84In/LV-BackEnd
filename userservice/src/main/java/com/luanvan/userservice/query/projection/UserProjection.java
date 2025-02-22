@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -28,7 +27,7 @@ public class UserProjection {
     private UserRepository userRepository;
 
     @QueryHandler
-    public List<UserResponseModel> handle(GetAllUserQuery query){
+    public List<UserResponseModel> handle(GetAllUserQuery query) {
         Pageable pageable = PageRequest.of(
                 query.getPage(),
                 query.getSize(),
@@ -37,56 +36,49 @@ public class UserProjection {
 
         var userPages = userRepository.findAll(pageable);
 
-        return userPages
-                .getContent()
-                .stream()
-                .map(
-                        user -> {
+        return userPages.getContent().stream().map(user -> {
+                    UserResponseModel userResponseModel = UserResponseModel.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .password(user.getPassword())
+                            .email(user.getEmail())
+                            .phone(user.getPhone())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .avatar(user.getAvatar())
+                            .active(user.getActive())
+                            .role(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()))
+                            .addresses(user.getAddresses().stream().map(userAddress -> {
+                                UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
+                                userAddressResponse.setAddressId(userAddress.getId().getAddressId());
+                                userAddressResponse.setUserId(userAddress.getId().getUserId());
 
+                                // Lấy thông tin từ Address và mapping vào UserAddressResponse
+                                Address address = userAddress.getAddress();
+                                userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+                                userAddressResponse.setAddressPhone(address.getPhone());
+                                userAddressResponse.setProvinceName(address.getProvince().getName());
+                                userAddressResponse.setDistrictName(address.getDistrict().getName());
+                                userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+                                userAddressResponse.setDefault(userAddress.isDefault());
+                                userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
+                                userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
 
-
-                            UserResponseModel userResponseModel = UserResponseModel.builder()
-                                    .id(user.getId())
-                                    .username(user.getUsername())
-                                    .password(user.getPassword())
-                                    .email(user.getEmail())
-                                    .phone(user.getPhone())
-                                    .firstName(user.getFirstName())
-                                    .lastName(user.getLastName())
-                                    .avatar(user.getAvatar())
-                                    .active(user.getActive())
-                                    .role(new RoleResponseModel(user.getRole().getName(),user.getRole().getDescription()))
-                                    .addresses(user.getAddresses().stream().map(userAddress -> {
-                                        UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
-                                        userAddressResponse.setAddressId(userAddress.getId().getAddressId());
-                                        userAddressResponse.setUserId(userAddress.getId().getUserId());
-
-                                        // Lấy thông tin từ Address và mapping vào UserAddressResponse
-                                        Address address = userAddress.getAddress();
-                                        userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
-                                        userAddressResponse.setAddressPhone(address.getPhone());
-                                        userAddressResponse.setProvinceName(address.getProvince().getName());
-                                        userAddressResponse.setDistrictName(address.getDistrict().getName());
-                                        userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
-                                        userAddressResponse.setDefault(userAddress.isDefault());
-                                        userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
-                                        userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
-
-                                        return userAddressResponse;
-                                    }).collect(Collectors.toList()))
-                                    .createdAt(user.getCreatedAt())
-                                    .updatedAt(user.getUpdatedAt())
-                                    .build();
-                            log.info("handle get all users dto");
-                            log.info(userResponseModel.toString());
-                            return userResponseModel;
-                        }
-                ).collect(Collectors.toList());
+                                return userAddressResponse;
+                            }).collect(Collectors.toList()))
+                            .createdAt(user.getCreatedAt())
+                            .updatedAt(user.getUpdatedAt())
+                            .build();
+                    log.info("handle get all users dto");
+                    log.info(userResponseModel.toString());
+                    return userResponseModel;
+                }
+        ).collect(Collectors.toList());
     }
 
     @QueryHandler
-    public UserResponseModel handle(GetUserQuery query){
-        User user = userRepository.findByUsername(query.getUsername()).orElseThrow( ()-> new RuntimeException("Not found user"));
+    public UserResponseModel handle(GetUserQuery query) {
+        User user = userRepository.findByUsername(query.getUsername()).orElseThrow(() -> new RuntimeException("Not found user"));
 
         UserResponseModel userResponseModel = new UserResponseModel();
         userResponseModel.setId(user.getId());
