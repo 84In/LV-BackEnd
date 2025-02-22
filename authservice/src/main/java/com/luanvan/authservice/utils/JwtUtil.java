@@ -8,7 +8,10 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String subject, Map<String, Object> claims, boolean isRefresh) {
@@ -41,16 +44,16 @@ public class JwtUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiryTime))
-                .signWith(SignatureAlgorithm.HS512, key)
+                .signWith(key)
                 .compact();
     }
 
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(key)
+                .verifyWith(new SecretKeySpec(key.getEncoded(), "HmacSHA512"))
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     public boolean validateToken(String token) {

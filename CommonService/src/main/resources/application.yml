@@ -5,3 +5,16 @@ spring:
       group-id: ${KAFKA_GROUP_ID:default-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+jwt:
+  secret: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+  expiration: 3600000  # 1 giờ (Access Token)
+  refresh-expiration: 604800000  # 7 ngày (Refresh Token)
+  issuer: http://localhost:8081/api/v1/auth
+  permitted-urls:
+    - "/api/v1/auth/login"
+    - "/api/v1/auth/logout"
+    - "/api/v1/auth/refresh"
+    - "/swagger-ui/**"
+    - "/v3/api-docs/**"
+    - "/swagger-resources/**"
+    - "/webjars/**"
