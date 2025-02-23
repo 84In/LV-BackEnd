@@ -9,14 +9,17 @@ import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.commonservice.model.UserResponseModel;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -39,17 +42,32 @@ public class AuthController {
                     throw new AppException(ErrorCode.USER_NOT_EXISTED);
                 })
                 .join();
+        if (userResponse == null || userResponse.getUsername() == null || userResponse.getRole() == null) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
 
-        if(userResponse == null || !passwordEncoder.matches(loginModel.getPassword(), userResponse.getPassword())) {
+        if (userResponse == null || !passwordEncoder.matches(loginModel.getPassword(), userResponse.getPassword())) {
             throw new AppException(ErrorCode.INCORRECT_PASSWORD);
         }
 
-        String accessToken = jwtUtil.generateToken(userResponse.getUsername(), Map.of("role", userResponse.getRole().getName()),false);
-        String refreshToken = jwtUtil.generateToken(userResponse.getUsername(), Map.of("role", userResponse.getRole().getName()),true);
+        log.info(userResponse.toString());
+
+        log.info("Login success");
+//        "accestoken";
+//        "cookie";
+        Map<String, Object> claims = new HashMap<>();
+        if (userResponse.getRole() != null) {
+            claims.put("role", userResponse.getRole().getName());
+        }
+
+        String accessToken = jwtUtil.generateToken(userResponse.getUsername(), claims, false);
+        String refreshToken = jwtUtil.generateToken(userResponse.getUsername(), claims, true);
+
+        log.info("Login success, access_token:{}, refresh_token:{}", accessToken, refreshToken);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setSecure(false); //setFalse để debug
         refreshTokenCookie.setPath("/api/v1/auth/refresh");
         response.addCookie(refreshTokenCookie);
 
@@ -62,14 +80,17 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ApiResponse<?> refresh(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
-        if(refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
+        if (refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
             throw new AppException(ErrorCode.INVALID_KEY);
         }
 
         String username = jwtUtil.extractClaims(refreshToken).getSubject();
         String role = (String) jwtUtil.extractClaims(refreshToken).get("role");
 
-        String accessToken = jwtUtil.generateToken(username, Map.of("role", role),false);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+
+        String accessToken = jwtUtil.generateToken(username, claims, false);
 
         return ApiResponse.builder()
                 .code(0)

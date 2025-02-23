@@ -33,12 +33,10 @@ public class User {
     private String id;
 
     @NotBlank
-    @Size(max = 50)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false)
     private String username;
 
     @NotBlank
-    @Size(min = 6, max = 255)
     @Column(nullable = false)
     private String password;
 
@@ -54,16 +52,15 @@ public class User {
     @Column(length = 15)
     private String phone;
 
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
+    @Size(max = 100)
+    @Column(name = "last_name")
     private String lastName;
 
-    @Size(max = 50)
-    @Column(name = "first_name", length = 50)
+    @Size(max = 100)
+    @Column(name = "first_name")
     private String firstName;
 
     @Size(max = 255)
-    @Column(length = 255)
     private String avatar;
 
     @ManyToOne
