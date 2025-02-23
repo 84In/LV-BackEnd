@@ -25,13 +25,13 @@ public class PromotionQueryController {
 
     @GetMapping
     public ApiResponse<Page<PromotionResponseModel>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "") List<String> sorts) {
 
         ArrayList<String> sortOrder = new ArrayList<>(sorts);
 
-        GetAllPromotionQuery query = new GetAllPromotionQuery(page, size, sortOrder);
+        GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sortOrder);
 
         List<PromotionResponseModel> response;
         try {
@@ -39,7 +39,7 @@ public class PromotionQueryController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        Page<PromotionResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
+        Page<PromotionResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
 
         return ApiResponse.<Page<PromotionResponseModel>>builder()
                 .data(pageResponse)

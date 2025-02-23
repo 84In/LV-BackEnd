@@ -1,0 +1,147 @@
+package com.luanvan.productservice.query.projection;
+
+import com.luanvan.commonservice.utils.SearchParamsUtils;
+import com.luanvan.productservice.entity.*;
+import com.luanvan.productservice.query.model.ProductResponseModel;
+import com.luanvan.productservice.query.queries.GetAllProductQuery;
+import com.luanvan.productservice.repository.ProductRepository;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.axonframework.queryhandling.QueryHandler;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class ProductProjection {
+    private final ProductRepository productRepository;
+
+    @QueryHandler
+    public List<ProductResponseModel> handle(GetAllProductQuery queryParams) {
+
+        // Xây dựng Specification cho Product
+        Specification<Product> spec = (root, cq, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 1. Xử lý mutually exclusive giữa query và category
+            if (StringUtils.hasText(queryParams.getQuery())) {
+                // Nếu có query thì lọc theo tên sản phẩm hoặc tên danh mục
+                Join<Product, Category> categoryJoin = root.join("category", JoinType.LEFT);
+                Predicate productNameLike = cb.like(cb.lower(root.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
+                Predicate categoryNameLike = cb.like(cb.lower(categoryJoin.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
+                predicates.add(cb.or(productNameLike, categoryNameLike));
+            } else if (StringUtils.hasText(queryParams.getCategory())) {
+                // Nếu có category thì lọc theo codeName category
+                if (!"all".equalsIgnoreCase(queryParams.getCategory())) {
+                    Join<Product, Category> categoryJoin = root.join("category", JoinType.LEFT);
+                    predicates.add(cb.equal(cb.lower(categoryJoin.get("codeName")), queryParams.getCategory().toLowerCase()));
+                }
+                // Nếu category là "all" thì không thêm điều kiện nào
+            }
+
+            // 2. Lọc theo price (danh sách min-max)
+            if (queryParams.getPrice() != null && !queryParams.getPrice().isEmpty()) {
+                double globalMin = Double.MAX_VALUE;
+                double globalMax = Double.MIN_VALUE;
+                for (String range : queryParams.getPrice()) {
+                    String[] parts = range.split("-");
+                    double min = Double.parseDouble(parts[0]);
+                    double max = parts[1].equalsIgnoreCase("infinity") ? Double.MAX_VALUE : Double.parseDouble(parts[1]);
+                    globalMin = Math.min(globalMin, min);
+                    globalMax = Math.max(globalMax, max);
+                }
+                Join<Product, ProductColor> productColorJoin = root.join("productColors", JoinType.LEFT);
+                predicates.add(cb.between(productColorJoin.get("price"), globalMin, globalMax));
+            }
+
+            // 3. Lọc theo Size (danh sách codeName của Size)
+            if (queryParams.getSize() != null && !queryParams.getSize().isEmpty()) {
+                // Join đến productColors -> productVariants -> size
+                Join<Product, ProductColor> productColorJoin = root.join("productColors", JoinType.LEFT);
+                Join<ProductColor, ProductVariant> variantJoin = productColorJoin.join("productVariants", JoinType.LEFT);
+                Join<ProductVariant, Size> sizeJoin = variantJoin.join("size", JoinType.LEFT);
+                predicates.add(sizeJoin.get("codeName").in(queryParams.getSize()));
+            }
+
+            // 4. Lọc theo Color (danh sách codeName của Color)
+            if (queryParams.getColor() != null && !queryParams.getColor().isEmpty()) {
+                // Join đến productColors -> color
+                Join<Product, ProductColor> productColorJoin = root.join("productColors", JoinType.LEFT);
+                Join<ProductColor, Color> colorJoin = productColorJoin.join("color", JoinType.LEFT);
+                predicates.add(colorJoin.get("codeName").in(queryParams.getColor()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        // Tạo PageRequest từ các tham số
+        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
+        Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize(), sort);
+
+        var productPage = productRepository.findAll(spec, pageable);
+
+        return productPage.getContent().stream()
+                .map(this::toProductResponseModel)
+                .collect(Collectors.toList());
+    }
+
+    public ProductResponseModel toProductResponseModel(Product product) {
+        return ProductResponseModel.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .images(product.getImages())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .category(ProductResponseModel.Category.builder()
+                        .id(product.getCategory().getId())
+                        .name(product.getCategory().getName())
+                        .codeName(product.getCategory().getCodeName())
+                        .build())
+                .productColors(product.getProductColors().stream().map(productColor ->
+                        ProductResponseModel.ProductColor.builder()
+                                .id(productColor.getId())
+                                .price(productColor.getPrice())
+                                .color(ProductResponseModel.Color.builder()
+                                        .id(productColor.getColor().getId())
+                                        .name(productColor.getColor().getName())
+                                        .codeName(productColor.getColor().getCodeName())
+                                        .colorCode(productColor.getColor().getCodeName())
+                                        .build())
+                                .promotions(productColor.getPromotions().stream().map(promotion ->
+                                        ProductResponseModel.Promotion.builder()
+                                                .id(promotion.getId())
+                                                .name(promotion.getName())
+                                                .codeName(promotion.getCodeName())
+                                                .discountPercentage(promotion.getDiscountPercentage())
+                                                .startDate(promotion.getStartDate())
+                                                .endDate(promotion.getEndDate())
+                                                .build()).collect(Collectors.toList()))
+                                .productVariants(productColor.getProductVariants().stream().map(productVariant ->
+                                        ProductResponseModel.ProductVariant.builder()
+                                                .id(productVariant.getId())
+                                                .stock(productVariant.getStock())
+                                                .sold(productVariant.getSold())
+                                                .size(ProductResponseModel.Size.builder()
+                                                        .id(productVariant.getSize().getId())
+                                                        .name(productVariant.getSize().getName())
+                                                        .codeName(productVariant.getSize().getCodeName())
+                                                        .build())
+                                                .build()).collect(Collectors.toList()))
+                                .build()).collect(Collectors.toList()))
+                .build();
+    }
+}

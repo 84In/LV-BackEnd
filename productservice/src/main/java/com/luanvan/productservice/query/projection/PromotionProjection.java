@@ -28,7 +28,7 @@ public class PromotionProjection {
         // Tạo PageRequest từ các tham số
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
-        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+        Pageable pageable = PageRequest.of(query.getPageNumber(), query.getPageSize(), sort);
 
         var promotionPage = promotionRepository.findAll(pageable);
 

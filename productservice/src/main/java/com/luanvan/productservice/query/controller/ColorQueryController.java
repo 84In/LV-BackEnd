@@ -23,13 +23,13 @@ public class ColorQueryController {
 
     @GetMapping
     public ApiResponse<Page<ColorResponseModel>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "") List<String> sorts) {
 
         ArrayList<String> sortOrder = new ArrayList<>(sorts);
 
-        GetAllColorQuery query = new GetAllColorQuery(page, size, sortOrder);
+        GetAllColorQuery query = new GetAllColorQuery(pageNumber, pageSize, sortOrder);
 
         List<ColorResponseModel> response;
         try {
@@ -37,7 +37,7 @@ public class ColorQueryController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        Page<ColorResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
+        Page<ColorResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
 
         return ApiResponse.<Page<ColorResponseModel>>builder()
                 .data(pageResponse)

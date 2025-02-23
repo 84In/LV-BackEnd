@@ -25,13 +25,13 @@ public class CategoryQueryController {
 
     @GetMapping
     public ApiResponse<Page<CategoryResponseModel>> getAll(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "") List<String> sorts) {
 
         ArrayList<String> sortOrder = new ArrayList<>(sorts);
 
-        GetAllCategoryQuery query = new GetAllCategoryQuery(page, size, sortOrder);
+        GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sortOrder);
 
         List<CategoryResponseModel> response;
         try {
@@ -39,7 +39,7 @@ public class CategoryQueryController {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        Page<CategoryResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(page, size), response.size());
+        Page<CategoryResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
 
         return ApiResponse.<Page<CategoryResponseModel>>builder()
                 .data(pageResponse)

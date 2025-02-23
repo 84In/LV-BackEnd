@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllCategoryQuery {
-    private int page;
-    private int size;
+    private int pageNumber;
+    private int pageSize;
     private ArrayList<String> sortOrder;
 }

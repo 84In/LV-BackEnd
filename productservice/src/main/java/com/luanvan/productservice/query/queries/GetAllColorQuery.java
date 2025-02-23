@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetAllColorQuery {
-    private int page;
-    private int size;
+    private int pageNumber;
+    private int pageSize;
     private ArrayList<String> sortOrder;
 }

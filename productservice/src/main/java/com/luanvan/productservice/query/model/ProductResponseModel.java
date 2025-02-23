@@ -1,4 +1,4 @@
-package com.luanvan.productservice.entity;
+package com.luanvan.productservice.query.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -7,23 +7,18 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.data.elasticsearch.annotations.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
-/*
- * Dùng để search sản phẩm nhanh chóng hiển thị thông tin cần thiết
- * */
-
-@Document(indexName = "products_index")
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProductDocument {
+@NoArgsConstructor
+@ToString
+public class ProductResponseModel {
     @Id
     private String id;
     private String name;
@@ -31,7 +26,13 @@ public class ProductDocument {
     private String images;
     private Category category;
     private Collection<ProductColor> productColors;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
     @Getter
@@ -53,10 +54,21 @@ public class ProductDocument {
     public static class ProductColor {
         private String id;
         private BigDecimal price;
-        private Boolean isActive;
         private Color color;
         private Collection<Promotion> promotions;
         private Collection<ProductVariant> productVariants;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Color {
+        private String id;
+        private String name;
+        private String codeName;
+        private String colorCode;
     }
 
     @Getter
@@ -80,8 +92,20 @@ public class ProductDocument {
     @NoArgsConstructor
     public static class ProductVariant {
         private String id;
-        private String size;
+        private Size size;
         private Integer stock;
         private Integer sold;
     }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Size {
+        private String id;
+        private String name;
+        private String codeName;
+    }
+
 }

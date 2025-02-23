@@ -26,7 +26,7 @@ public class ColorProjection {
     public List<ColorResponseModel> handle(GetAllColorQuery query) {
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
-        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), sort);
+        Pageable pageable = PageRequest.of(query.getPageNumber(), query.getPageSize(), sort);
 
         var colorPage = colorRepository.findAll(pageable);
 
