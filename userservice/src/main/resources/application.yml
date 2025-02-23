@@ -22,7 +22,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -30,9 +30,9 @@ spring:
     import: optional:file:../commonservice/src/main/resources/application.yml
 logging:
   level:
-    org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL
+    org.hibernate.SQL: off                     # Tắt log câu truy vấn SQL
     org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
     org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
     org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: warn                # Kiểm soát log của Spring
+    org.springframework: info               # Kiểm soát log của Spring
 

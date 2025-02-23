@@ -79,7 +79,7 @@ public class ExceptionAdvice {
 
         ApiResponse<Map<String, String>> apiResponse = new ApiResponse<>();
         apiResponse.setCode(ErrorCode.INVALID_KEY.getCode());
-        apiResponse.setMessage(ErrorCode.INVALID_KEY.getMessage());
+        apiResponse.setMessage(ErrorCode.INVALID_KEY.getMessage() + exception.getMessage());
         apiResponse.setData(errorMap);
 
         return ResponseEntity.badRequest().body(apiResponse);

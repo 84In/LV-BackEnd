@@ -30,7 +30,7 @@ public class UserEventsHandler {
         try {
             log.info("User created user event handler");
 
-            Role role = roleRepository.findById(event.getRoleName()).orElseThrow(() -> new RuntimeException("Role not found"));
+            Role role = roleRepository.findByName(event.getRoleName());
             log.info("User created role event handler");
             User user = new User();
             user.setId(event.getId());

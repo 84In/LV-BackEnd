@@ -2,19 +2,21 @@ package com.luanvan.authservice.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.crypto.AlgorithmMethod;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtUtil {
     @Value("${jwt.secret}")
@@ -39,13 +41,25 @@ public class JwtUtil {
     public String generateToken(String subject, Map<String, Object> claims, boolean isRefresh) {
         long expiryTime = isRefresh ? refreshExpiration : expiration;
         claims.put("iss", issuer);
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiryTime))
-                .signWith(key)
-                .compact();
+
+        log.info("key: {}", Base64.getEncoder().encodeToString(key.getEncoded()));
+        log.info("issuer: {}", issuer);
+        log.info("subject: {}", subject);
+        log.info("claims: {}", claims);
+        try {
+           String result = Jwts.builder()
+                   .setClaims(claims)
+                   .setSubject(subject)
+                   .setIssuedAt(new Date())
+                   .setExpiration(new Date(System.currentTimeMillis() + expiryTime))
+                   .signWith(key)
+                   .compact();
+           log.info(result);
+           return result;
+        }catch (Exception e) {
+           log.info(e.getMessage());
+        }
+        return null;
     }
 
     public Claims extractClaims(String token) {

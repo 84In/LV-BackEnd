@@ -5,6 +5,7 @@ import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;
 import com.luanvan.userservice.service.UserCommandService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class UserCommandController {
     private UserCommandService userCommandService;
 
     @PostMapping
-    public ApiResponse<?> createUser(@RequestBody UserCreateModel model) {
+    public ApiResponse<?> createUser(@Valid @RequestBody UserCreateModel model) {
 
         var response = userCommandService.save(model);
         return ApiResponse.builder()
