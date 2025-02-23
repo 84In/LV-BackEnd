@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, String> {
     boolean existsByName(String name);
 
-    Page<Product> findAll(Specification<Product> spec, Pageable pageable);
+    Page<Product> findAll(Specification<Product> specification, Pageable pageable);
 }

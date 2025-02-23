@@ -55,7 +55,7 @@ public class UserAggregate {
     }
 
     @CommandHandler
-    public void hanle(ChangeStatusUserCommand command) {
+    public void handle(ChangeStatusUserCommand command) {
 
         UserChangeStatusEvent event = new UserChangeStatusEvent();
         event.setId(command.getId());

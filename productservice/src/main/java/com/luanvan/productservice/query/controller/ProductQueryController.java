@@ -1,20 +1,19 @@
 package com.luanvan.productservice.query.controller;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.productservice.query.model.ProductResponseModel;
-import com.luanvan.productservice.query.model.PromotionResponseModel;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
-import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
+import com.luanvan.productservice.query.queries.GetProductDetailQuery;
+import com.luanvan.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,30 +23,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductQueryController {
     private final QueryGateway queryGateway;
+    private final ProductRepository productRepository;
 
     @GetMapping
-    public ApiResponse<Page<ProductResponseModel>> getAll(
-            @RequestParam(defaultValue = "", required = false)  String query,
-            @RequestParam(defaultValue = "", required = false)  String category,
-            @RequestParam(defaultValue = "", required = false)  ArrayList<String> price,
-            @RequestParam(defaultValue = "", required = false)  ArrayList<String> size,
-            @RequestParam(defaultValue = "", required = false)  ArrayList<String> color,
+    public ApiResponse<Page<ProductResponseModel>> getAllProduct(
+            @RequestParam(defaultValue = "", required = false) String query,
+            @RequestParam(defaultValue = "", required = false) String category,
+            @RequestParam(defaultValue = "", required = false) ArrayList<String> price,
+            @RequestParam(defaultValue = "", required = false) ArrayList<String> size,
+            @RequestParam(defaultValue = "", required = false) ArrayList<String> color,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") ArrayList<String> sorts) {;
+            @RequestParam(defaultValue = "") ArrayList<String> sorts) {
+        ;
 
         GetAllProductQuery queryGetAll = new GetAllProductQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
 
-        List<ProductResponseModel> response;
-        try {
-            response = queryGateway.query(queryGetAll, ResponseTypes.multipleInstancesOf(ProductResponseModel.class)).join();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        List<ProductResponseModel> response = queryGateway.query(queryGetAll, ResponseTypes.multipleInstancesOf(ProductResponseModel.class)).join();
         Page<ProductResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
 
         return ApiResponse.<Page<ProductResponseModel>>builder()
                 .data(pageResponse)
+                .build();
+    }
+
+    @GetMapping("/{productId}")
+    public ApiResponse<ProductResponseModel> getProduct(@PathVariable("productId") String productId) {
+
+        if(!productRepository.existsById(productId)) throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
+
+        GetProductDetailQuery query = new GetProductDetailQuery(productId);
+
+        ProductResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(ProductResponseModel.class)).join();
+
+        return ApiResponse.<ProductResponseModel>builder()
+                .data(response)
                 .build();
     }
 }

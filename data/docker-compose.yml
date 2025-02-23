@@ -27,6 +27,19 @@ services:
     volumes:
       - productservicedb_data:/var/lib/mysql
       - ./init-scripts/productservice:/docker-entrypoint-initdb.d
+  orderservicedb:
+    image: mysql:8.0
+    container_name: orderservicedb
+    environment:
+      MYSQL_ROOT_PASSWORD: shop2425
+      MYSQL_USER: orderservice
+      MYSQL_PASSWORD: orderservice2425
+      MYSQL_DATABASE: orderservicedb
+    ports:
+      - '3308:3306'
+    volumes:
+      - orderservicedb_data:/var/lib/mysql
+      - ./init-scripts/orderservice:/docker-entrypoint-initdb.d
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
     container_name: elasticsearch
@@ -112,4 +125,5 @@ services:
 volumes:
   userservicedb_data:
   productservicedb_data:
+  orderservicedb_data:
   elasticsearch_data:
