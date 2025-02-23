@@ -35,7 +35,8 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        byte[] decodedKey = Base64.getDecoder().decode(secret);
+        this.key = Keys.hmacShaKeyFor(decodedKey);
     }
 
     public String generateToken(String subject, Map<String, Object> claims, boolean isRefresh) {

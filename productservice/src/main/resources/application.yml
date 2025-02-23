@@ -8,6 +8,8 @@ eureka:
 
 #Dataconfig
 spring:
+  config:
+    import: optional:file:../commonservice/src/main/resources/application.yml
   datasource:
     url: jdbc:mysql://localhost:3307/productservicedb
     username: productservice

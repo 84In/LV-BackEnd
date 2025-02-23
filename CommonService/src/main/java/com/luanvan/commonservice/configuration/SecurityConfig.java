@@ -1,7 +1,6 @@
 package com.luanvan.commonservice.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,26 +23,27 @@ public class SecurityConfig {
     @Autowired
     private JwtProperties jwtProperties;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
-                        .requestMatchers("/api/v1/users", HttpMethod.POST.name()).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
                         .anyRequest().authenticated()
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())))
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
+                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        byte[] secretBytes = Base64.getDecoder().decode(jwtProperties.getSecret());
-        SecretKeySpec secretKey = new SecretKeySpec(secretBytes, "HmacSHA512");
+        byte[] decodedKey = Base64.getDecoder().decode(jwtProperties.getSecret());
+        SecretKeySpec secretKey = new SecretKeySpec(decodedKey, "HmacSHA512");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
+
     }
 
     @Bean
