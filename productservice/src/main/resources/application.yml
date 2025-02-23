@@ -19,8 +19,6 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: product-group
-  config:
-    import: file:../commonservice/src/main/resources/application.yml
   jpa:
     hibernate:
       ddl-auto: update

@@ -23,8 +23,7 @@ public class Product {
     @Column(name = "name", length = 255)
     private String name;
 
-    @Lob
-    @Column(name = "images")
+    @Column(name = "images", columnDefinition = "TEXT")
     private String images;
 
     @Column(name = "description", length = 255)

@@ -3,7 +3,6 @@ package com.luanvan.productservice.command.service;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.command.UploadProductImagesCommand;
-import com.luanvan.commonservice.services.KafkaService;
 import com.luanvan.commonservice.utils.ImageUtils;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.model.ProductCreateModel;
@@ -40,8 +39,11 @@ public class ProductCommandService {
     @Autowired
     private KafkaTemplate<String, UploadProductImagesCommand> kafkaTemplate;
 
-    public HashMap<?, ?> save(List<MultipartFile> files, ProductCreateModel model) throws AppException {
+    public HashMap<?, ?> save(ArrayList<MultipartFile> images, ProductCreateModel model) throws AppException {
         //Kiểm tra tính đúng đắn của dữ liệu nhập
+        if(images.isEmpty()){
+            throw new AppException(ErrorCode.COMMAND_ERROR);
+        }
         if (productRepository.existsByName(model.getName())) {
             throw new AppException(ErrorCode.PRODUCT_EXISTED);
         }
@@ -101,7 +103,7 @@ public class ProductCommandService {
         result.put("id", commandGateway.sendAndWait(productCommand));
 
         // Convert MultipartFile thành byte[]
-        List<String> imageBytes =  files.stream()
+        List<String> imageBytes =  images.stream()
                 .map(file -> {
                     try {
                         return ImageUtils.encodeImageToBase64(file.getBytes());

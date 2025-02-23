@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.ProductImagesUploadModel;
 import com.luanvan.commonservice.model.CategoryImageUpdateModel;
+import com.luanvan.commonservice.model.ProductImagesUploadModel;
 import com.luanvan.productservice.entity.Category;
 import com.luanvan.productservice.entity.Product;
 import com.luanvan.productservice.repository.CategoryRepository;
@@ -41,17 +41,16 @@ public class UploadImageService {
     }
 
     @KafkaListener(topics = "product-images-uploaded-topic", groupId = "product-group")
-    public void uploadedProductImages(String message) {
+    public void uploadedProductImages(ProductImagesUploadModel message) {
 
-        log.info(message);
+        log.info("Received product images upload event for productId: {} with URLs: {}", message.getProductId(), String.join(",", message.getImageUrls()));
 
         try {
-            ProductImagesUploadModel event = objectMapper.readValue(message, ProductImagesUploadModel.class);
-            Product product = productRepository.findById(event.getProductId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-            product.setImages(event.getImageUrls().toString());
+            Product product = productRepository.findById(message.getProductId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            product.setImages(String.join(",", message.getImageUrls()));
             productRepository.save(product);
-            log.info("Product images URL updated for categoryId: {}", event.getProductId());
-        } catch (JsonProcessingException e) {
+            log.info("Product images URL updated for productId: {}", message.getProductId());
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
 

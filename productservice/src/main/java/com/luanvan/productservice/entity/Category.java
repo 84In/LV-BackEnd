@@ -25,8 +25,7 @@ public class Category {
     @Column(name = "code_name", length = 255)
     private String codeName;
 
-    @Lob
-    @Column(name = "images")
+    @Column(name = "images", columnDefinition = "TEXT")
     private String images;
 
     @Column(name = "description", length = 255)

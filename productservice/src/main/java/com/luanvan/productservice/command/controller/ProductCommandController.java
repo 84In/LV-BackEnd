@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductCommandController {
@@ -18,10 +20,10 @@ public class ProductCommandController {
     private ProductCommandService productCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestPart("files") List<MultipartFile> files,
+    public ApiResponse<?> save(@RequestPart("images") ArrayList<MultipartFile> images,
                                @RequestPart("data") ProductCreateModel model) throws JsonProcessingException {
 
-        var response = productCommandService.save(files, model);
+        var response = productCommandService.save(images, model);
         return ApiResponse.builder()
                 .data(response)
                 .build();

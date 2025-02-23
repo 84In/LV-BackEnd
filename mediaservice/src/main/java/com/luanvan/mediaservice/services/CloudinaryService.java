@@ -2,6 +2,7 @@ package com.luanvan.mediaservice.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CloudinaryService {
 
@@ -43,7 +45,7 @@ public class CloudinaryService {
                     "resource_type", "auto"  // tự động nhận dạng loại file
             );
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), params);
-            return (String) uploadResult.get("url");
+            return (String) uploadResult.get("secure_url");
         } catch (IOException e) {
             throw new RuntimeException("Upload file failed", e);
         }
@@ -56,7 +58,7 @@ public class CloudinaryService {
                     "resource_type", "auto"
             );
             Map uploadResult = cloudinary.uploader().upload(fileBytes, params);
-            return (String) uploadResult.get("url");
+            return (String) uploadResult.get("secure_url");
         } catch (IOException e) {
             throw new RuntimeException("Upload file failed", e);
         }
