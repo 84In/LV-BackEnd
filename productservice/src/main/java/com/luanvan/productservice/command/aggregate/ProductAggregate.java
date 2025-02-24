@@ -1,7 +1,9 @@
 package com.luanvan.productservice.command.aggregate;
 
 import com.luanvan.productservice.command.command.CreateProductCommand;
+import com.luanvan.productservice.command.command.UpdateProductCommand;
 import com.luanvan.productservice.command.event.ProductCreateEvent;
+import com.luanvan.productservice.command.event.ProductUpdateEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -22,7 +24,8 @@ public class ProductAggregate {
     private String name;
     private String description;
     private String images;
-    private List<ProductCreateEvent.ProductColorCreateEvent> productColors;
+    private List<ProductCreateEvent.ProductColorCreateEvent> productColorsCreateEvent;
+    private List<ProductUpdateEvent.ProductColorUpdateEvent> productColorsUpdateEvent;
 
     @CommandHandler
     public ProductAggregate(CreateProductCommand command) {
@@ -44,6 +47,37 @@ public class ProductAggregate {
                                                                 .id(variantItem.getId())
                                                                 .sizeId(variantItem.getSizeId())
                                                                 .stock(variantItem.getStock())
+                                                                .isActive(variantItem.getIsActive())
+                                                                .build())
+                                                .collect(Collectors.toList()))
+                                        .promotions(colorItem.getPromotions())
+                                        .build())
+                        .collect(Collectors.toList()))
+                .build();
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void handle(UpdateProductCommand command) {
+        var event = ProductUpdateEvent.builder()
+                .id(command.getId())
+                .name(command.getName())
+                .description(command.getDescription())
+                .images(command.getImages())
+                .categoryId(command.getCategoryId())
+                .isActive(command.getIsActive())
+                .productColors(command.getProductColors().stream().map(colorItem ->
+                                ProductUpdateEvent.ProductColorUpdateEvent.builder()
+                                        .id(colorItem.getId())
+                                        .colorId(colorItem.getColorId())
+                                        .price(colorItem.getPrice())
+                                        .isActive(colorItem.getIsActive())
+                                        .productVariants(colorItem.getProductVariants().stream().map(variantItem ->
+                                                        ProductUpdateEvent.ProductVariantUpdateEvent.builder()
+                                                                .id(variantItem.getId())
+                                                                .sizeId(variantItem.getSizeId())
+                                                                .stock(variantItem.getStock())
+                                                                .isActive(variantItem.getIsActive())
                                                                 .build())
                                                 .collect(Collectors.toList()))
                                         .promotions(colorItem.getPromotions())
@@ -59,6 +93,15 @@ public class ProductAggregate {
         this.name = event.getName();
         this.description = event.getDescription();
         this.images = event.getImages();
-        this.productColors = event.getProductColors();
+        this.productColorsCreateEvent = event.getProductColors();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductUpdateEvent event) {
+        this.id = event.getId();
+        this.name = event.getName();
+        this.description = event.getDescription();
+        this.images = event.getImages();
+        this.productColorsUpdateEvent = event.getProductColors();
     }
 }

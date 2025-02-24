@@ -1,9 +1,9 @@
 package com.luanvan.productservice.command.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.productservice.command.model.ProductCreateModel;
+import com.luanvan.productservice.command.model.ProductUpdateModel;
 import com.luanvan.productservice.command.service.ProductCommandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +29,12 @@ public class ProductCommandController {
                 .build();
     }
 
-    @PostMapping("/test")
-    public ApiResponse<?> save(@RequestBody ProductCreateModel model) {
+    @PutMapping("/{productId}")
+    public ApiResponse<?> update(@PathVariable String productId, @RequestBody ProductUpdateModel model) {
+
+        var response = productCommandService.update(productId, model);
         return ApiResponse.builder()
-                .data(model)
+                .data(response)
                 .build();
     }
 }

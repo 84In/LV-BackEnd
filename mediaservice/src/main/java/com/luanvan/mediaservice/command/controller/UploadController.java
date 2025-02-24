@@ -1,5 +1,6 @@
 package com.luanvan.mediaservice.command.controller;
 
+import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.commonservice.model.AvatarUpdateModel;
 import com.luanvan.commonservice.model.CategoryImageUpdateModel;
 import com.luanvan.commonservice.model.ProductImagesUploadModel;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +27,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UploadController {
     private final CloudinaryService cloudinaryService;
-
     private final KafkaService kafkaService;
+    private final KafkaTemplate<String, ProductImagesUploadModel> kafkaTemplate;
 
     @PostMapping("avatar/{userId}")
     public ResponseEntity<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
@@ -61,18 +63,16 @@ public class UploadController {
         return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
     }
 
-    @PostMapping("product/{productId}")
-    public ResponseEntity<?> uploadProductImages(@PathVariable String productId, @RequestParam("images") ArrayList<MultipartFile> images) {
+    @PostMapping("products/{productId}")
+    public ApiResponse<?> uploadProductImages(@PathVariable String productId, @RequestParam("images") ArrayList<MultipartFile> images) {
 
         log.info("Saved uploadProductImage: {}", productId);
-        List<String> listImageUrls = images.stream()
+        List<String> imageUrls = images.stream()
                 .map(image -> cloudinaryService.uploadFile(image, "products/" + productId))
                 .toList();
-        ArrayList<String> imageUrls = new ArrayList<>(listImageUrls);
         log.info("Upload products images successful productId: {}", productId);
-        var event = new ProductImagesUploadModel(productId, imageUrls);
-        kafkaService.sendMessage("product-images-uploaded-topic", event);
-
-        return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
+        return ApiResponse.builder()
+                .data(String.join(",", imageUrls))
+                .build();
     }
 }

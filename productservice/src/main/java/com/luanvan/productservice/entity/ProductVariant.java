@@ -30,6 +30,10 @@ public class ProductVariant {
     @Column(name = "sold", nullable = false)
     private Integer sold = 0;
 
+    @Builder.Default
+    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean isActive = true;
+
     @ManyToOne
     @JoinColumn(name = "product_color_id", referencedColumnName = "id", nullable = false)
     private ProductColor productColor;

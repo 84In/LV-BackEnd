@@ -24,6 +24,7 @@ public class ProductResponseModel {
     private String name;
     private String description;
     private String images;
+    private Boolean isActive;
     private Category category;
     private Collection<ProductColor> productColors;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -44,6 +45,9 @@ public class ProductResponseModel {
         private String id;
         private String name;
         private String codeName;
+        private String images;
+        private String description;
+        private Boolean isActive;
     }
 
     @Getter
@@ -54,6 +58,7 @@ public class ProductResponseModel {
     public static class ProductColor {
         private String id;
         private BigDecimal price;
+        private Boolean isActive;
         private Color color;
         private Collection<Promotion> promotions;
         private Collection<ProductVariant> productVariants;
@@ -69,6 +74,8 @@ public class ProductResponseModel {
         private String name;
         private String codeName;
         private String colorCode;
+        private String description;
+        private Boolean isActive;
     }
 
     @Getter
@@ -83,6 +90,7 @@ public class ProductResponseModel {
         private Double discountPercentage;
         private LocalDateTime startDate;
         private LocalDateTime endDate;
+        private Boolean isActive;
     }
 
     @Getter
@@ -95,6 +103,7 @@ public class ProductResponseModel {
         private Size size;
         private Integer stock;
         private Integer sold;
+        private Boolean isActive;
     }
 
     @Getter
@@ -106,6 +115,7 @@ public class ProductResponseModel {
         private String id;
         private String name;
         private String codeName;
+        private Boolean isActive;
     }
 
 }

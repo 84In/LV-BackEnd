@@ -1,50 +1,48 @@
-package com.luanvan.productservice.command.command;
+package com.luanvan.productservice.command.event;
 
-import com.luanvan.productservice.command.model.ProductCreateModel;
-import lombok.*;
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateProductCommand {
-    @TargetAggregateIdentifier
+public class ProductUpdateEvent {
     private String id;
     private String name;
     private String description;
     private String images;
     private String categoryId;
     private Boolean isActive;
-    private List<CreateProductColorCommand> productColors;
+    private List<ProductColorUpdateEvent> productColors;
 
-    @Getter
-    @Setter
+    @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreateProductColorCommand {
+    public static class ProductColorUpdateEvent {
         private String id;
         private String colorId;
         private BigDecimal price;
         private Boolean isActive;
-        private List<CreateProductVariantCommand> productVariants;
+        private List<ProductVariantUpdateEvent> productVariants;
         private List<String> promotions;
     }
 
-    @Getter
-    @Setter
+    @Data
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreateProductVariantCommand {
+    public static class ProductVariantUpdateEvent {
         private String id;
         private String sizeId;
         private Integer stock;
         private Boolean isActive;
     }
 }
+

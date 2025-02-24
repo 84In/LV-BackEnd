@@ -1,7 +1,8 @@
 package com.luanvan.productservice.command.model;
 
-import com.luanvan.productservice.entity.ProductVariant;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -10,10 +11,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductCreateModel {
+public class ProductUpdateModel {
     private String name;
     private String description;
     private String images;
+    private Boolean isActive;
     private String categoryId;
     private List<ProductColorModel> productColors = new ArrayList<>();
 

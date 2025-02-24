@@ -42,6 +42,7 @@ public class ProductCreateEvent {
         private String id;
         private String sizeId;
         private Integer stock;
+        private Boolean isActive;
     }
 }
 

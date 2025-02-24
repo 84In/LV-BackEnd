@@ -1,6 +1,5 @@
 package com.luanvan.productservice.command.command;
 
-import com.luanvan.productservice.command.model.ProductCreateModel;
 import lombok.*;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateProductCommand {
+public class UpdateProductCommand {
     @TargetAggregateIdentifier
     private String id;
     private String name;
@@ -20,19 +19,19 @@ public class CreateProductCommand {
     private String images;
     private String categoryId;
     private Boolean isActive;
-    private List<CreateProductColorCommand> productColors;
+    private List<UpdateProductColorCommand> productColors;
 
     @Getter
     @Setter
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreateProductColorCommand {
+    public static class UpdateProductColorCommand {
         private String id;
         private String colorId;
         private BigDecimal price;
         private Boolean isActive;
-        private List<CreateProductVariantCommand> productVariants;
+        private List<UpdateProductVariantCommand> productVariants;
         private List<String> promotions;
     }
 
@@ -41,7 +40,7 @@ public class CreateProductCommand {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreateProductVariantCommand {
+    public static class UpdateProductVariantCommand {
         private String id;
         private String sizeId;
         private Integer stock;

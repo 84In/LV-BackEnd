@@ -54,6 +54,10 @@ public enum ErrorCode {
     SIZE_EXISTED(18, "Kích thước đã tồn tại", HttpStatus.BAD_REQUEST),
     COLOR_NOT_EXISTED(19, "Màu sắc không tồn tại", HttpStatus.BAD_REQUEST),
     COLOR_EXISTED(20, "Màu sắc đã tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_COLOR_NOT_EXISTED(21, "Màu sắc sản phẩm không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_COLOR_EXISTED(22, "Màu sắc sản phẩm đã tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_VARIANT_NOT_EXISTED(23, "Biến thể sản phẩm không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_VARIANT_EXISTED(24, "Biến thể sản phẩm đã tồn tại", HttpStatus.BAD_REQUEST),
 
     // Lỗi thanh toán
     PAYMENT_METHOD_EXISTED(51, "Phương thức thanh toán đã tồn tại", HttpStatus.BAD_REQUEST),
