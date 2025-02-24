@@ -1,16 +1,18 @@
 package com.luanvan.productservice.query.controller;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.ApiResponse;
 import com.luanvan.productservice.query.model.ColorResponseModel;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
+import com.luanvan.productservice.query.queries.GetColorDetailQuery;
+import com.luanvan.productservice.repository.CategoryRepository;
+import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.data.domain.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ColorQueryController {
     private final QueryGateway queryGateway;
+    private final ColorRepository colorRepository;
 
     @GetMapping
     public ApiResponse<Page<ColorResponseModel>> getAll(
@@ -41,6 +44,22 @@ public class ColorQueryController {
 
         return ApiResponse.<Page<ColorResponseModel>>builder()
                 .data(pageResponse)
+                .build();
+    }
+
+    @GetMapping("/{colorId}")
+    public ApiResponse<ColorResponseModel> getDetail(@PathVariable String colorId) {
+
+        if(!colorRepository.existsById(colorId)) {
+            throw new AppException(ErrorCode.COLOR_NOT_EXISTED);
+        }
+
+        GetColorDetailQuery query = new GetColorDetailQuery(colorId);
+
+        ColorResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(ColorResponseModel.class)).join();
+
+        return ApiResponse.<ColorResponseModel>builder()
+                .data(response)
                 .build();
     }
 }

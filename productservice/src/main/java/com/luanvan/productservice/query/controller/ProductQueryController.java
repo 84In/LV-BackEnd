@@ -26,7 +26,7 @@ public class ProductQueryController {
     private final ProductRepository productRepository;
 
     @GetMapping
-    public ApiResponse<Page<ProductResponseModel>> getAllProduct(
+    public ApiResponse<Page<ProductResponseModel>> getAll(
             @RequestParam(defaultValue = "", required = false) String query,
             @RequestParam(defaultValue = "", required = false) String category,
             @RequestParam(defaultValue = "", required = false) ArrayList<String> price,
@@ -48,7 +48,7 @@ public class ProductQueryController {
     }
 
     @GetMapping("/{productId}")
-    public ApiResponse<ProductResponseModel> getProduct(@PathVariable("productId") String productId) {
+    public ApiResponse<ProductResponseModel> getDetail(@PathVariable("productId") String productId) {
 
         if(!productRepository.existsById(productId)) throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
 
