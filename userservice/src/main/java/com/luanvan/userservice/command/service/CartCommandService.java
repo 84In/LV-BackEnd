@@ -6,8 +6,10 @@ import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.userservice.command.command.AddToCartCommand;
 import com.luanvan.userservice.command.command.CreateCartCommand;
+import com.luanvan.userservice.command.command.DeleteCartCommand;
 import com.luanvan.userservice.command.command.UpdateCartCommand;
 import com.luanvan.userservice.command.model.CartCreateModel;
+import com.luanvan.userservice.command.model.CartDeleteModel;
 import com.luanvan.userservice.command.model.CartUpdateModel;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.repository.CartDetailRepository;
@@ -124,7 +126,7 @@ public class CartCommandService {
         return result;
     }
 
-    public HashMap<?, ?> update(CartUpdateModel model) {
+    public HashMap<?, ?> update(String cartId, CartUpdateModel model) {
         log.info("Cart updated");
 
         var user = userRepository.findByUsername(model.getUsername())
@@ -166,6 +168,22 @@ public class CartCommandService {
                         .build())
                 .build();
 
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
+
+    public HashMap<?, ?> delete(String cartId, CartDeleteModel model) {
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
+        var cartDetail = cart.getCartDetails().stream()
+                .filter(c -> c.getId().equals(model.getCartDetailId()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.CART_DETAIL_NOT_EXISTED));
+        DeleteCartCommand command = DeleteCartCommand.builder()
+                .id(cart.getId())
+                .cartDetailId(cartDetail.getId())
+                .build();
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         return result;

@@ -2,6 +2,7 @@ package com.luanvan.userservice.command.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.userservice.command.model.CartCreateModel;
+import com.luanvan.userservice.command.model.CartDeleteModel;
 import com.luanvan.userservice.command.model.CartUpdateModel;
 import com.luanvan.userservice.command.service.CartCommandService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,17 +22,24 @@ public class CartCommandController {
 
         var response = cartCommandService.create(model);
         return ApiResponse.builder()
-                .code(0)
                 .data(response)
                 .build();
     }
 
-    @PutMapping
-    public ApiResponse<?> update(@RequestBody CartUpdateModel model) {
+    @PutMapping("/{cartId}")
+    public ApiResponse<?> update(@PathVariable String cartId, @RequestBody CartUpdateModel model) {
 
-        var response = cartCommandService.update(model);
+        var response = cartCommandService.update(cartId, model);
         return ApiResponse.builder()
-                .code(0)
+                .data(response)
+                .build();
+    }
+
+    @DeleteMapping("/{cartId}")
+    public ApiResponse<?> delete(@PathVariable String cartId, @RequestBody CartDeleteModel model) {
+
+        var response = cartCommandService.delete(cartId, model);
+        return ApiResponse.builder()
                 .data(response)
                 .build();
     }

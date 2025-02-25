@@ -1,4 +1,4 @@
-package com.luanvan.productservice.query.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,10 +16,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class SizeResponseModel {
+public class ColorResponseModel {
     private String id;
     private String name;
     private String codeName;
+    private String colorCode;
+    private String description;
     private Boolean isActive;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

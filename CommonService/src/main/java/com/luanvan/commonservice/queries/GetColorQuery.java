@@ -1,4 +1,4 @@
-package com.luanvan.productservice.query.queries;
+package com.luanvan.commonservice.queries;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetSizeQuery {
-    private String sizeId;
+public class GetColorQuery {
+    private String colorId;
 }

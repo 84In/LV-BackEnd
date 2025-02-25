@@ -6,6 +6,7 @@ import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.userservice.command.event.CartAddToEvent;
 import com.luanvan.userservice.command.event.CartCreatedEvent;
+import com.luanvan.userservice.command.event.CartDeletedEvent;
 import com.luanvan.userservice.command.event.CartUpdatedEvent;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.CartDetail;
@@ -237,6 +238,20 @@ public class CartEventHandler {
         }
 
         // 8. Lưu lại giỏ hàng
+        cartRepository.save(cart);
+    }
+
+    @EventHandler
+    public void on(CartDeletedEvent event){
+        log.info("Cart deleted");
+
+        var cart = cartRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
+        var cartDetail = cart.getCartDetails().stream()
+                .filter(c -> c.getId().equals(event.getCartDetailId()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.CART_DETAIL_NOT_EXISTED));
+        cart.getCartDetails().remove(cartDetail);
         cartRepository.save(cart);
     }
 
