@@ -1,6 +1,6 @@
 package com.luanvan.productservice.query.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.query.model.CategoryResponseModel;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
 import lombok.RequiredArgsConstructor;

@@ -2,6 +2,7 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
 import com.luanvan.productservice.command.event.ProductCreateEvent;
 import com.luanvan.productservice.command.event.ProductUpdateEvent;
 import com.luanvan.productservice.entity.*;
@@ -198,6 +199,14 @@ public class ProductEventHandler {
 
         // 5. Lưu lại danh sách ProductColor đã cập nhật
         productColorRepository.saveAll(finalProductColors);
+    }
+
+    @EventHandler
+    public void on(ProductChangeStatusEvent event){
+        var product = productRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        product.setIsActive(event.getIsActive());
+        productRepository.save(product);
     }
 
 }

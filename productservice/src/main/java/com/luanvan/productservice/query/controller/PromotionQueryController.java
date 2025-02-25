@@ -1,7 +1,7 @@
 package com.luanvan.productservice.query.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.query.model.PromotionResponseModel;
+import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.commonservice.model.response.PromotionResponseModel;
 import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;

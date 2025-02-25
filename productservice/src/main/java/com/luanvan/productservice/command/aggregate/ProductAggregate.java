@@ -1,7 +1,9 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.productservice.command.command.ChangeStatusProductCommand;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.command.UpdateProductCommand;
+import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
 import com.luanvan.productservice.command.event.ProductCreateEvent;
 import com.luanvan.productservice.command.event.ProductUpdateEvent;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +27,7 @@ public class ProductAggregate {
     private String name;
     private String description;
     private String images;
+    private Boolean isActive;
     private List<ProductCreateEvent.ProductColorCreateEvent> productColorsCreateEvent;
     private List<ProductUpdateEvent.ProductColorUpdateEvent> productColorsUpdateEvent;
 
@@ -87,12 +91,20 @@ public class ProductAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(ChangeStatusProductCommand command){
+        ProductChangeStatusEvent event = new ProductChangeStatusEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(ProductCreateEvent event) {
         this.id = event.getId();
         this.name = event.getName();
         this.description = event.getDescription();
         this.images = event.getImages();
+        this.isActive = event.getIsActive();
         this.productColorsCreateEvent = event.getProductColors();
     }
 
@@ -102,6 +114,13 @@ public class ProductAggregate {
         this.name = event.getName();
         this.description = event.getDescription();
         this.images = event.getImages();
+        this.isActive = event.getIsActive();
         this.productColorsUpdateEvent = event.getProductColors();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductChangeStatusEvent event) {
+        this.id = event.getId();
+        this.isActive = event.getIsActive();
     }
 }

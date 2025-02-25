@@ -1,5 +1,6 @@
-package com.luanvan.userservice.command.event;
+package com.luanvan.userservice.command.handler;
 
+import com.luanvan.userservice.command.event.AddressCreatedEvent;
 import com.luanvan.userservice.entity.*;
 import com.luanvan.userservice.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class AddressEventsHandler {
+public class AddressEventHandler {
     @Autowired
     private UserAddressRepository userAddressRepository;
 

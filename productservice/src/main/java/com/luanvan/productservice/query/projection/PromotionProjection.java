@@ -1,8 +1,7 @@
 package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.utils.SearchParamsUtils;
-import com.luanvan.productservice.query.model.PromotionResponseModel;
-import com.luanvan.productservice.query.model.SizeResponseModel;
+import com.luanvan.commonservice.model.response.PromotionResponseModel;
 import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
 import com.luanvan.productservice.repository.PromotionRepository;
 import lombok.RequiredArgsConstructor;

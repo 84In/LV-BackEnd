@@ -4,8 +4,10 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.command.UploadProductImagesCommand;
 import com.luanvan.commonservice.utils.ImageUtils;
+import com.luanvan.productservice.command.command.ChangeStatusProductCommand;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.command.UpdateProductCommand;
+import com.luanvan.productservice.command.model.ProductChangeStatusModel;
 import com.luanvan.productservice.command.model.ProductCreateModel;
 import com.luanvan.productservice.command.model.ProductUpdateModel;
 import com.luanvan.productservice.entity.Product;
@@ -210,6 +212,19 @@ public class ProductCommandService {
                 .build();
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(productCommand));
+        return result;
+    }
+
+    public HashMap<?, ?> changeStatus(String productId, ProductChangeStatusModel model) throws AppException {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        ChangeStatusProductCommand command = ChangeStatusProductCommand.builder()
+                .id(productId)
+                .isActive(model.getIsActive())
+                .build();
+
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
         return result;
     }
 }

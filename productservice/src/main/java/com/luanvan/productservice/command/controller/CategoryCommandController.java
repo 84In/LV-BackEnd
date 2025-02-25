@@ -1,6 +1,6 @@
 package com.luanvan.productservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.command.model.CategoryCreateModel;
 import com.luanvan.productservice.command.model.CategoryUpdateModel;
 import com.luanvan.productservice.command.service.CategoryCommandService;
@@ -19,7 +19,7 @@ public class CategoryCommandController {
     private  CategoryCommandService categoryCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestBody CategoryCreateModel model) {
+    public ApiResponse<?> create(@RequestBody CategoryCreateModel model) {
         var response = categoryCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)

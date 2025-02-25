@@ -2,11 +2,10 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.query.model.ColorResponseModel;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
-import com.luanvan.productservice.query.queries.GetColorDetailQuery;
-import com.luanvan.productservice.repository.CategoryRepository;
+import com.luanvan.productservice.query.queries.GetColorQuery;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -54,7 +53,7 @@ public class ColorQueryController {
             throw new AppException(ErrorCode.COLOR_NOT_EXISTED);
         }
 
-        GetColorDetailQuery query = new GetColorDetailQuery(colorId);
+        GetColorQuery query = new GetColorQuery(colorId);
 
         ColorResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(ColorResponseModel.class)).join();
 

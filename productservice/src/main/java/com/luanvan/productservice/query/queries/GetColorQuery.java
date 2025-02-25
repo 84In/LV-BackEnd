@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetSizeDetailQuery {
-    private String sizeId;
+public class GetColorQuery {
+    private String colorId;
 }

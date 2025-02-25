@@ -1,9 +1,9 @@
 package com.luanvan.userservice.query.projection;
 
-import com.luanvan.commonservice.event.GetUserQuery;
-import com.luanvan.commonservice.model.RoleResponseModel;
-import com.luanvan.commonservice.model.UserAddressResponseModel;
-import com.luanvan.commonservice.model.UserResponseModel;
+import com.luanvan.commonservice.queries.GetUserQuery;
+import com.luanvan.commonservice.model.response.RoleResponseModel;
+import com.luanvan.commonservice.model.response.UserAddressResponseModel;
+import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;

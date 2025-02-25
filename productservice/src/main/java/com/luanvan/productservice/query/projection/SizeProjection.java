@@ -5,7 +5,7 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.query.model.SizeResponseModel;
 import com.luanvan.productservice.query.queries.GetAllSizeQuery;
-import com.luanvan.productservice.query.queries.GetSizeDetailQuery;
+import com.luanvan.productservice.query.queries.GetSizeQuery;
 import com.luanvan.productservice.repository.SizeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class SizeProjection {
     }
 
     @QueryHandler
-    public SizeResponseModel handle(GetSizeDetailQuery query) {
+    public SizeResponseModel handle(GetSizeQuery query) {
         var sizeDetail = sizeRepository.findById(query.getSizeId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
         SizeResponseModel response = new SizeResponseModel();
         BeanUtils.copyProperties(sizeDetail, response);

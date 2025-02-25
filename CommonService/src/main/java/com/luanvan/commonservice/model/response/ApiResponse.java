@@ -1,4 +1,4 @@
-package com.luanvan.commonservice.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

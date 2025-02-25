@@ -1,10 +1,8 @@
 package com.luanvan.productservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.command.model.CategoryUpdateModel;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.command.model.SizeCreateModel;
 import com.luanvan.productservice.command.model.SizeUpdateModel;
-import com.luanvan.productservice.command.service.CategoryCommandService;
 import com.luanvan.productservice.command.service.SizeCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -21,7 +19,7 @@ public class SizeCommandController {
     private SizeCommandService sizeCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestBody SizeCreateModel model) {
+    public ApiResponse<?> create(@RequestBody SizeCreateModel model) {
         var response = sizeCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)

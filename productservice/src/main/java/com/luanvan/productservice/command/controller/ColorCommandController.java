@@ -1,12 +1,9 @@
 package com.luanvan.productservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.command.model.ColorCreateModel;
 import com.luanvan.productservice.command.model.ColorUpdateModel;
-import com.luanvan.productservice.command.model.PromotionCreateModel;
-import com.luanvan.productservice.command.model.PromotionUpdateModel;
 import com.luanvan.productservice.command.service.ColorCommandService;
-import com.luanvan.productservice.command.service.PromotionCommandService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,7 @@ public class ColorCommandController {
     private ColorCommandService colorCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestBody ColorCreateModel model) {
+    public ApiResponse<?> create(@RequestBody ColorCreateModel model) {
         var response = colorCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)

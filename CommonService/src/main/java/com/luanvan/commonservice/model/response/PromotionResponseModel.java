@@ -1,32 +1,30 @@
-package com.luanvan.commonservice.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Builder
-public class UserResponseModel {
+public class PromotionResponseModel {
     private String id;
-    private String username;
-    private String password;
-    private Boolean active;
-    private String email;
-    private String phone;
-    private String lastName;
-    private String firstName;
-    private String avatar;
-    private RoleResponseModel role;
-    private List<UserAddressResponseModel> addresses;
+    private String name;
+    private String codeName;
+    private String description;
+    private Double discountPercentage;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private Boolean isActive;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -1,4 +1,4 @@
-package com.luanvan.commonservice.model;
+package com.luanvan.commonservice.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvatarUpdateModel {
-    private String userId;
-    private String avatarUrl;
+public class CategoryImageUpdateModel {
+    private String categoryId;
+    private String categoryUrl;
 }

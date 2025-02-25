@@ -1,5 +1,9 @@
-package com.luanvan.userservice.command.event;
+package com.luanvan.userservice.command.handler;
 
+import com.luanvan.userservice.command.event.UserChangeStatusEvent;
+import com.luanvan.userservice.command.event.UserCreatedEvent;
+import com.luanvan.userservice.command.event.UserDeletedEvent;
+import com.luanvan.userservice.command.event.UserUpdatedEvent;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.RoleRepository;
@@ -14,7 +18,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class UserEventsHandler {
+public class UserEventHandler {
 
     @Autowired
     private UserRepository userRepository;

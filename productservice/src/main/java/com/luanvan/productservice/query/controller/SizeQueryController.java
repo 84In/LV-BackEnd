@@ -2,20 +2,17 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.query.model.CategoryResponseModel;
-import com.luanvan.productservice.query.model.ColorResponseModel;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.query.model.SizeResponseModel;
-import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
-import com.luanvan.productservice.query.queries.GetAllColorQuery;
 import com.luanvan.productservice.query.queries.GetAllSizeQuery;
-import com.luanvan.productservice.query.queries.GetColorDetailQuery;
+import com.luanvan.productservice.query.queries.GetSizeQuery;
 import com.luanvan.productservice.repository.SizeRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
-import org.springframework.data.domain.*;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -54,11 +51,11 @@ public class SizeQueryController {
     @GetMapping("/{sizeId}")
     public ApiResponse<SizeResponseModel> getDetail(@PathVariable String sizeId) {
 
-        if(!sizeRepository.existsById(sizeId)) {
+        if (!sizeRepository.existsById(sizeId)) {
             throw new AppException(ErrorCode.SIZE_NOT_EXISTED);
         }
 
-        GetSizeDetailQuery query = new GetSizeDetailQuery(sizeId);
+        GetSizeQuery query = new GetSizeQuery(sizeId);
 
         SizeResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(SizeResponseModel.class)).join();
 

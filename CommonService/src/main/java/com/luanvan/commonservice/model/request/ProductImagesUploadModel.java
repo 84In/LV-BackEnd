@@ -1,4 +1,4 @@
-package com.luanvan.commonservice.model;
+package com.luanvan.commonservice.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

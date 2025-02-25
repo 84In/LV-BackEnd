@@ -1,13 +1,9 @@
 package com.luanvan.productservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.command.model.PromotionCreateModel;
 import com.luanvan.productservice.command.model.PromotionUpdateModel;
-import com.luanvan.productservice.command.model.SizeCreateModel;
-import com.luanvan.productservice.command.model.SizeUpdateModel;
 import com.luanvan.productservice.command.service.PromotionCommandService;
-import com.luanvan.productservice.command.service.SizeCommandService;
-import com.luanvan.productservice.repository.PromotionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +19,7 @@ public class PromotionCommandController {
     private PromotionCommandService promotionCommandService;
 
     @PostMapping
-    public ApiResponse<?> save(@RequestBody PromotionCreateModel model) {
+    public ApiResponse<?> create(@RequestBody PromotionCreateModel model) {
         var response = promotionCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)

@@ -1,11 +1,10 @@
-package com.luanvan.productservice.query.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import jakarta.persistence.Id;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -19,7 +18,6 @@ import java.util.Collection;
 @NoArgsConstructor
 @ToString
 public class ProductResponseModel {
-    @Id
     private String id;
     private String name;
     private String description;

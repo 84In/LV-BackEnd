@@ -1,17 +1,13 @@
 package com.luanvan.mediaservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.commonservice.model.AvatarUpdateModel;
-import com.luanvan.commonservice.model.CategoryImageUpdateModel;
-import com.luanvan.commonservice.model.ProductImagesUploadModel;
+import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.commonservice.model.request.AvatarUpdateModel;
+import com.luanvan.commonservice.model.request.CategoryImageUpdateModel;
+import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
 import com.luanvan.commonservice.services.KafkaService;
-import com.luanvan.commonservice.utils.ImageUtils;
 import com.luanvan.mediaservice.services.CloudinaryService;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;

@@ -1,10 +1,7 @@
 package com.luanvan.mediaservice.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.command.UploadProductImagesCommand;
-import com.luanvan.commonservice.model.ProductImagesUploadModel;
-import com.luanvan.commonservice.services.KafkaService;
+import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
 import com.luanvan.commonservice.utils.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component

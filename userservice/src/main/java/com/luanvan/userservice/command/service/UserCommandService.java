@@ -1,4 +1,4 @@
-package com.luanvan.userservice.service;
+package com.luanvan.userservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;

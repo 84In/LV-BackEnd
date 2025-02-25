@@ -5,7 +5,7 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.query.model.ColorResponseModel;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
-import com.luanvan.productservice.query.queries.GetColorDetailQuery;
+import com.luanvan.productservice.query.queries.GetColorQuery;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class ColorProjection {
     }
 
     @QueryHandler
-    public ColorResponseModel handle(GetColorDetailQuery query) {
+    public ColorResponseModel handle(GetColorQuery query) {
         var colorDetail = colorRepository.findById(query.getColorId()).orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_EXISTED));
         ColorResponseModel response = new ColorResponseModel();
         BeanUtils.copyProperties(colorDetail, response);

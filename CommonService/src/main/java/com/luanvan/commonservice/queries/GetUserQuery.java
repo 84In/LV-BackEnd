@@ -1,4 +1,4 @@
-package com.luanvan.commonservice.event;
+package com.luanvan.commonservice.queries;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

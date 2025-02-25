@@ -2,10 +2,10 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.ApiResponse;
-import com.luanvan.productservice.query.model.ProductResponseModel;
+import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
-import com.luanvan.productservice.query.queries.GetProductDetailQuery;
+import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -52,7 +52,7 @@ public class ProductQueryController {
 
         if(!productRepository.existsById(productId)) throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
 
-        GetProductDetailQuery query = new GetProductDetailQuery(productId);
+        GetProductQuery query = new GetProductQuery(productId);
 
         ProductResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(ProductResponseModel.class)).join();
 

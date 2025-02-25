@@ -1,10 +1,10 @@
 package com.luanvan.userservice.command.controller;
 
-import com.luanvan.commonservice.model.ApiResponse;
+import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;
-import com.luanvan.userservice.service.UserCommandService;
+import com.luanvan.userservice.command.service.UserCommandService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

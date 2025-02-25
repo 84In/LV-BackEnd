@@ -4,9 +4,9 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.entity.*;
-import com.luanvan.productservice.query.model.ProductResponseModel;
+import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
-import com.luanvan.productservice.query.queries.GetProductDetailQuery;
+import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.productservice.repository.ProductRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -107,7 +107,7 @@ public class ProductProjection {
     }
 
     @QueryHandler
-    public ProductResponseModel handle(GetProductDetailQuery queryParams) {
+    public ProductResponseModel handle(GetProductQuery queryParams) {
         log.info("Get products detail with query, filter");
 
         var productDetail = productRepository.findById(queryParams.getProductId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
