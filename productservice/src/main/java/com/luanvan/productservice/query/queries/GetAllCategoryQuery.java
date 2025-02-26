@@ -14,5 +14,5 @@ import java.util.ArrayList;
 public class GetAllCategoryQuery {
     private int pageNumber;
     private int pageSize;
-    private ArrayList<String> sortOrder;
+    private String sortOrder;
 }

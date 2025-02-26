@@ -13,10 +13,10 @@ import java.util.List;
 public class GetAllProductWithFilterQuery {
     private String query;
     private String category;
-    private ArrayList<String> price;
-    private ArrayList<String> size;
-    private ArrayList<String> color;
+    private String price;
+    private String size;
+    private String color;
     private int pageNumber;
     private int pageSize;
-    private ArrayList<String> sortOrder;
+    private String sortOrder;
 }

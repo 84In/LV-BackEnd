@@ -14,5 +14,5 @@ import java.util.List;
 public class GetAllColorQuery {
     private int pageNumber;
     private int pageSize;
-    private ArrayList<String> sortOrder;
+    private String sortOrder;
 }

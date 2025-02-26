@@ -29,11 +29,9 @@ public class SizeQueryController {
     public ApiResponse<Page<SizeResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") List<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
 
-        ArrayList<String> sortOrder = new ArrayList<>(sorts);
-
-        GetAllSizeQuery query = new GetAllSizeQuery(pageNumber, pageSize, sortOrder);
+        GetAllSizeQuery query = new GetAllSizeQuery(pageNumber, pageSize, sorts);
 
         List<SizeResponseModel> response;
         try {

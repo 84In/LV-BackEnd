@@ -26,6 +26,7 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,27 @@ public class ProductProjection {
     @QueryHandler
     public List<AllProductResponseModel> handle(GetAllProductQuery queryParams) {
         log.info("Get all products for admin");
+
+        // Xử lý các tham số filter
+        List<String> price;
+        if (queryParams.getPrice() != null && !queryParams.getPrice().isBlank()) {
+            price = List.of(queryParams.getPrice().split(","));
+        } else {
+            price = new ArrayList<>();
+        }
+        List<String> color;
+        if (queryParams.getColor() != null && !queryParams.getColor().isBlank()) {
+            color = List.of(queryParams.getColor().split(","));
+        } else {
+            color = new ArrayList<>();
+        }
+        List<String> size;
+        if (queryParams.getSize() != null && !queryParams.getSize().isBlank()) {
+            size = List.of(queryParams.getSize().split(","));
+        } else {
+            size = new ArrayList<>();
+        }
+
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
             cq.distinct(true);
@@ -67,10 +89,10 @@ public class ProductProjection {
             }
 
             // 2. Lọc theo price (danh sách min-max)
-            if (queryParams.getPrice() != null && !queryParams.getPrice().isEmpty()) {
+            if (!price.isEmpty()) {
                 double globalMin = Double.MAX_VALUE;
                 double globalMax = Double.MIN_VALUE;
-                for (String range : queryParams.getPrice()) {
+                for (String range : price) {
                     String[] parts = range.split("-");
                     double min = Double.parseDouble(parts[0]);
                     double max = parts[1].equalsIgnoreCase("infinity") ? Double.MAX_VALUE : Double.parseDouble(parts[1]);
@@ -81,13 +103,13 @@ public class ProductProjection {
             }
 
             // 3. Lọc theo Size (danh sách codeName của Size)
-            if (queryParams.getSize() != null && !queryParams.getSize().isEmpty()) {
-                predicates.add(sizeJoin.get("codeName").in(queryParams.getSize()));
+            if (!size.isEmpty()) {
+                predicates.add(sizeJoin.get("codeName").in(size));
             }
 
             // 4. Lọc theo Color (danh sách codeName của Color)
-            if (queryParams.getColor() != null && !queryParams.getColor().isEmpty()) {
-                predicates.add(colorJoin.get("codeName").in(queryParams.getColor()));
+            if (!color.isEmpty()) {
+                predicates.add(colorJoin.get("codeName").in(color));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
@@ -107,6 +129,26 @@ public class ProductProjection {
     @QueryHandler
     public List<ProductResponseModel> handle(GetAllProductWithFilterQuery queryParams) {
         log.info("Get all products with query, filter");
+
+        // Xử lý các tham số filter
+        List<String> price;
+        if (queryParams.getPrice() != null && !queryParams.getPrice().isBlank()) {
+            price = List.of(queryParams.getPrice().split(","));
+        } else {
+            price = new ArrayList<>();
+        }
+        List<String> color;
+        if (queryParams.getColor() != null && !queryParams.getColor().isBlank()) {
+            color = List.of(queryParams.getColor().split(","));
+        } else {
+            color = new ArrayList<>();
+        }
+        List<String> size;
+        if (queryParams.getSize() != null && !queryParams.getSize().isBlank()) {
+            size = List.of(queryParams.getSize().split(","));
+        } else {
+            size = new ArrayList<>();
+        }
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
             cq.distinct(true);
@@ -141,10 +183,10 @@ public class ProductProjection {
             }
 
             // 2. Lọc theo price (danh sách min-max)
-            if (queryParams.getPrice() != null && !queryParams.getPrice().isEmpty()) {
+            if (!price.isEmpty()) {
                 double globalMin = Double.MAX_VALUE;
                 double globalMax = Double.MIN_VALUE;
-                for (String range : queryParams.getPrice()) {
+                for (String range : price) {
                     String[] parts = range.split("-");
                     double min = Double.parseDouble(parts[0]);
                     double max = parts[1].equalsIgnoreCase("infinity") ? Double.MAX_VALUE : Double.parseDouble(parts[1]);
@@ -155,13 +197,13 @@ public class ProductProjection {
             }
 
             // 3. Lọc theo Size (danh sách codeName của Size)
-            if (queryParams.getSize() != null && !queryParams.getSize().isEmpty()) {
-                predicates.add(sizeJoin.get("codeName").in(queryParams.getSize()));
+            if (!size.isEmpty()) {
+                predicates.add(sizeJoin.get("codeName").in(size));
             }
 
             // 4. Lọc theo Color (danh sách codeName của Color)
-            if (queryParams.getColor() != null && !queryParams.getColor().isEmpty()) {
-                predicates.add(colorJoin.get("codeName").in(queryParams.getColor()));
+            if (!color.isEmpty()) {
+                predicates.add(colorJoin.get("codeName").in(color));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));

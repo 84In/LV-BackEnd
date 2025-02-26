@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
@@ -31,12 +32,12 @@ public class ProductQueryController {
     public ApiResponse<Page<AllProductResponseModel>> getAll(
             @RequestParam(defaultValue = "", required = false) String query,
             @RequestParam(defaultValue = "", required = false) String category,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> price,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> size,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> color,
+            @RequestParam(defaultValue = "", required = false) String price,
+            @RequestParam(defaultValue = "", required = false) String size,
+            @RequestParam(defaultValue = "", required = false) String color,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") ArrayList<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
         ;
 
         GetAllProductQuery queryGetAll = new GetAllProductQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
@@ -53,12 +54,12 @@ public class ProductQueryController {
     public ApiResponse<Page<ProductResponseModel>> getAllWithFilter(
             @RequestParam(defaultValue = "", required = false) String query,
             @RequestParam(defaultValue = "", required = false) String category,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> price,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> size,
-            @RequestParam(defaultValue = "", required = false) ArrayList<String> color,
+            @RequestParam(defaultValue = "", required = false) String price,
+            @RequestParam(defaultValue = "", required = false) String size,
+            @RequestParam(defaultValue = "", required = false) String color,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") ArrayList<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
         ;
 
         GetAllProductWithFilterQuery queryGetAll = new GetAllProductWithFilterQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
