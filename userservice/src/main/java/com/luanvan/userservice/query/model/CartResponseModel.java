@@ -88,9 +88,10 @@ public class CartResponseModel {
     public static class ProductColor {
         private String id;
         private BigDecimal price;
+        private BigDecimal finalPrice;
         private Boolean isActive;
         private Color color;
-        private Collection<Promotion> promotions;
+        private Promotion promotion;
         private Collection<ProductVariant> productVariants;
     }
 

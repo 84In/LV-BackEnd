@@ -17,6 +17,7 @@ import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -133,6 +134,7 @@ public class CartProjection {
                         .map(pc -> CartResponseModel.ProductColor.builder()
                                 .id(pc.getId())
                                 .price(pc.getPrice())
+                                .finalPrice(pc.getFinalPrice())
                                 .isActive(pc.getIsActive())
                                 .color(CartResponseModel.Color.builder()
                                         .id(pc.getColor().getId())
@@ -142,17 +144,17 @@ public class CartProjection {
                                         .description(pc.getColor().getDescription())
                                         .isActive(pc.getColor().getIsActive())
                                         .build())
-                                .promotions(pc.getPromotions().stream()
-                                        .map(promotion -> CartResponseModel.Promotion.builder()
-                                                .id(promotion.getId())
-                                                .name(promotion.getName())
-                                                .codeName(promotion.getCodeName())
-                                                .discountPercentage(promotion.getDiscountPercentage())
-                                                .startDate(promotion.getStartDate())
-                                                .endDate(promotion.getEndDate())
-                                                .isActive(promotion.getIsActive())
+                                .promotion(Optional.ofNullable(pc.getPromotion())
+                                        .map(promo -> CartResponseModel.Promotion.builder()
+                                                .id(promo.getId())
+                                                .name(promo.getName())
+                                                .codeName(promo.getCodeName())
+                                                .discountPercentage(promo.getDiscountPercentage())
+                                                .startDate(promo.getStartDate())
+                                                .endDate(promo.getEndDate())
+                                                .isActive(promo.getIsActive())
                                                 .build())
-                                        .collect(Collectors.toList()))
+                                        .orElse(null))
                                 .productVariants(pc.getProductVariants().stream()
                                         .map(pv -> CartResponseModel.ProductVariant.builder()
                                                 .id(pv.getId())
