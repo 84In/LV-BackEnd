@@ -2,6 +2,7 @@ package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.utils.PromotionUtils;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.entity.*;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
@@ -21,6 +22,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -134,43 +136,61 @@ public class ProductProjection {
                         .build())
                 .productColors(product.getProductColors().stream()
                         .filter(pc -> Boolean.TRUE.equals(pc.getIsActive()))
-                        .map(productColor ->
-                                ProductResponseModel.ProductColor.builder()
-                                        .id(productColor.getId())
-                                        .price(productColor.getPrice())
-                                        .isActive(productColor.getIsActive())
-                                        .color(ProductResponseModel.Color.builder()
-                                                .id(productColor.getColor().getId())
-                                                .name(productColor.getColor().getName())
-                                                .codeName(productColor.getColor().getCodeName())
-                                                .colorCode(productColor.getColor().getCodeName())
-                                                .description(productColor.getColor().getDescription())
-                                                .isActive(productColor.getColor().getIsActive())
-                                                .build())
-                                        .promotions(productColor.getPromotions().stream().map(promotion ->
-                                                ProductResponseModel.Promotion.builder()
-                                                        .id(promotion.getId())
-                                                        .name(promotion.getName())
-                                                        .codeName(promotion.getCodeName())
-                                                        .discountPercentage(promotion.getDiscountPercentage())
-                                                        .startDate(promotion.getStartDate())
-                                                        .endDate(promotion.getEndDate())
-                                                        .isActive(promotion.getIsActive())
-                                                        .build()).collect(Collectors.toList()))
-                                        .productVariants(productColor.getProductVariants().stream().map(productVariant ->
-                                                ProductResponseModel.ProductVariant.builder()
-                                                        .id(productVariant.getId())
-                                                        .stock(productVariant.getStock())
-                                                        .sold(productVariant.getSold())
-                                                        .isActive(productVariant.getIsActive())
-                                                        .size(ProductResponseModel.Size.builder()
-                                                                .id(productVariant.getSize().getId())
-                                                                .name(productVariant.getSize().getName())
-                                                                .codeName(productVariant.getSize().getCodeName())
-                                                                .isActive(productVariant.getSize().getIsActive())
-                                                                .build())
-                                                        .build()).collect(Collectors.toList()))
-                                        .build()).collect(Collectors.toList()))
+                        .map(productColor -> {
+                            // Chuyển đổi danh sách promotion của productColor sang DTO promotion
+                            var finalPromotion = productColor.getPromotions().stream()
+                                    .map(promotion ->
+                                            ProductResponseModel.Promotion.builder()
+                                                    .id(promotion.getId())
+                                                    .name(promotion.getName())
+                                                    .codeName(promotion.getCodeName())
+                                                    .discountPercentage(promotion.getDiscountPercentage())
+                                                    .startDate(promotion.getStartDate())
+                                                    .endDate(promotion.getEndDate())
+                                                    .isActive(promotion.getIsActive())
+                                                    .build())
+                                    .collect(Collectors.toList());
+
+                            // Lấy promotion tốt nhất
+                            var bestPromotionOpt = PromotionUtils.getBestPromotion(finalPromotion);
+                            BigDecimal finalPrice;
+                            if(bestPromotionOpt.isPresent()){
+                                finalPrice = PromotionUtils.calculateFinalPrice(productColor.getPrice(),
+                                        BigDecimal.valueOf(bestPromotionOpt.get().getDiscountPercentage()));
+                            } else {
+                                finalPrice = productColor.getPrice();
+                            }
+
+                            return ProductResponseModel.ProductColor.builder()
+                                    .id(productColor.getId())
+                                    .price(productColor.getPrice())
+                                    .finalPrice(finalPrice)
+                                    .isActive(productColor.getIsActive())
+                                    .color(ProductResponseModel.Color.builder()
+                                            .id(productColor.getColor().getId())
+                                            .name(productColor.getColor().getName())
+                                            .codeName(productColor.getColor().getCodeName())
+                                            .colorCode(productColor.getColor().getColorCode())
+                                            .description(productColor.getColor().getDescription())
+                                            .isActive(productColor.getColor().getIsActive())
+                                            .build())
+                                    .promotion(bestPromotionOpt.orElse(null))
+                                    .productVariants(productColor.getProductVariants().stream().map(productVariant ->
+                                            ProductResponseModel.ProductVariant.builder()
+                                                    .id(productVariant.getId())
+                                                    .stock(productVariant.getStock())
+                                                    .sold(productVariant.getSold())
+                                                    .isActive(productVariant.getIsActive())
+                                                    .size(ProductResponseModel.Size.builder()
+                                                            .id(productVariant.getSize().getId())
+                                                            .name(productVariant.getSize().getName())
+                                                            .codeName(productVariant.getSize().getCodeName())
+                                                            .isActive(productVariant.getSize().getIsActive())
+                                                            .build())
+                                                    .build()).collect(Collectors.toList()))
+                                    .build();
+                        })
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
