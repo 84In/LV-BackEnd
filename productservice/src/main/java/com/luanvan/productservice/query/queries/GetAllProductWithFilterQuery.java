@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllProductQuery {
+public class GetAllProductWithFilterQuery {
     private String query;
     private String category;
     private ArrayList<String> price;
