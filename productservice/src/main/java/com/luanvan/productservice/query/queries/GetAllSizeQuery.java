@@ -13,5 +13,5 @@ import java.util.ArrayList;
 public class GetAllSizeQuery {
     private int pageNumber;
     private int pageSize;
-    private ArrayList<String> sortOrder;
+    private String sortOrder;
 }

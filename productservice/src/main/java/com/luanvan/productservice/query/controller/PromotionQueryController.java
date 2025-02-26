@@ -27,11 +27,9 @@ public class PromotionQueryController {
     public ApiResponse<Page<PromotionResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") List<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
 
-        ArrayList<String> sortOrder = new ArrayList<>(sorts);
-
-        GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sortOrder);
+        GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sorts);
 
         List<PromotionResponseModel> response;
         try {

@@ -27,11 +27,9 @@ public class ColorQueryController {
     public ApiResponse<Page<ColorResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") List<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
 
-        ArrayList<String> sortOrder = new ArrayList<>(sorts);
-
-        GetAllColorQuery query = new GetAllColorQuery(pageNumber, pageSize, sortOrder);
+        GetAllColorQuery query = new GetAllColorQuery(pageNumber, pageSize, sorts);
 
         List<ColorResponseModel> response;
         try {

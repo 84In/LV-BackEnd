@@ -27,11 +27,9 @@ public class CategoryQueryController {
     public ApiResponse<Page<CategoryResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") List<String> sorts) {
+            @RequestParam(defaultValue = "") String sorts) {
 
-        ArrayList<String> sortOrder = new ArrayList<>(sorts);
-
-        GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sortOrder);
+        GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sorts);
 
         List<CategoryResponseModel> response;
         try {
