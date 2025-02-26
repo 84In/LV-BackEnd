@@ -62,7 +62,8 @@ public class ProductProjection {
 
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
-            cq.distinct(true);
+            //cq.distinct(true);
+            cq.groupBy(root.get("id"));
 
             List<Predicate> predicates = new ArrayList<>();
             // Join đén category
@@ -116,8 +117,8 @@ public class ProductProjection {
         };
 
         // Tạo PageRequest từ các tham số
-        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
-        Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize(), sort);
+//        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
+        Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
 
         var productPage = productRepository.findAll(spec, pageable);
 
@@ -151,7 +152,8 @@ public class ProductProjection {
         }
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
-            cq.distinct(true);
+            //cq.distinct(true);
+            cq.groupBy(root.get("id"));
 
             List<Predicate> predicates = new ArrayList<>();
             // Join đén category
@@ -166,7 +168,7 @@ public class ProductProjection {
             // Kiểm tra xem Product và ProductColor có đang isActive
             Integer outOfStock = 0;
             predicates.add(cb.isTrue(root.get("isActive")));
-//            predicates.add(cb.greaterThan(productVariantJoin.get("stock"), outOfStock));
+            //predicates.add(cb.greaterThan(productVariantJoin.get("stock"), outOfStock));
 
             // 1. Xử lý mutually exclusive giữa query và category
             if (StringUtils.hasText(queryParams.getQuery())) {
@@ -180,6 +182,21 @@ public class ProductProjection {
                     predicates.add(cb.equal(cb.lower(categoryJoin.get("codeName")), queryParams.getCategory().toLowerCase()));
                 }
                 // Nếu category là "all" thì không thêm điều kiện nào
+            }
+
+            // Tính giá thấp nhất của các productColor của một Product
+            var minPriceExpr = cb.min(productColorJoin.get("price"));
+            // Tính tổng số sold từ productVariant
+            var totalSoldExpr = cb.sum(productVariantJoin.get("sold"));
+            String sortParam = queryParams.getSortOrder();
+            if ("price-ASC".equalsIgnoreCase(sortParam)) {
+                cq.orderBy(cb.asc(minPriceExpr));
+            } else if ("price-DESC".equalsIgnoreCase(sortParam)) {
+                cq.orderBy(cb.desc(minPriceExpr));
+            } else if ("sold-DESC".equalsIgnoreCase(sortParam)) {
+                cq.orderBy(cb.desc(totalSoldExpr));
+            } else if ("createdAt-DESC".equalsIgnoreCase(sortParam)) {
+                cq.orderBy(cb.desc(root.get("createdAt")));
             }
 
             // 2. Lọc theo price (danh sách min-max)
@@ -210,8 +227,8 @@ public class ProductProjection {
         };
 
         // Tạo PageRequest từ các tham số
-        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
-        Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize(), sort);
+//        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
+        Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
 
         var productPage = productRepository.findAll(spec, pageable);
 

@@ -26,7 +26,7 @@ public class Product {
     @Column(name = "images", columnDefinition = "TEXT")
     private String images;
 
-    @Column(name = "description", length = 255)
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @Builder.Default
