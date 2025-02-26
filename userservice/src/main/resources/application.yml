@@ -27,7 +27,9 @@ spring:
       hibernate:
         format_sql: true
   config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
+    import:
+      - optional:file:../commonservice/src/main/resources/application.yml
+
 logging:
   level:
     org.hibernate.SQL: off                     # Tắt log câu truy vấn SQL
