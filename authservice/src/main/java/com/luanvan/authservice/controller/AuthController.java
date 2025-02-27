@@ -71,10 +71,14 @@ public class AuthController {
         refreshTokenCookie.setPath("/api/v1/auth/refresh");
         response.addCookie(refreshTokenCookie);
 
+        Map<String, String> result = new HashMap<>();
+        result.put("accessToken", accessToken);
+        result.put("username", userResponse.getUsername());
+
         return ApiResponse.builder()
                 .code(0)
                 .message("Login success")
-                .data(Map.of("accessToken", accessToken))
+                .data(result)
                 .build();
     }
 
