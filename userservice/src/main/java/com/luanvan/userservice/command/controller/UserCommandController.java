@@ -44,6 +44,7 @@ public class UserCommandController {
         var response = userCommandService.delete(userId);
         return ApiResponse.builder()
                 .code(0)
+                .message("Người dùng đã bị vô hiệu hoá")
                 .data(response)
                 .build();
     }
@@ -53,6 +54,7 @@ public class UserCommandController {
         var response = userCommandService.changeStatus(userId, model);
         return ApiResponse.builder()
                 .code(0)
+                .message("Người dùng đã bị vô hiệu hoá")
                 .data(response)
                 .build();
 

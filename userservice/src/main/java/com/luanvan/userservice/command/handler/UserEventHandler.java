@@ -4,8 +4,10 @@ import com.luanvan.userservice.command.event.UserChangeStatusEvent;
 import com.luanvan.userservice.command.event.UserCreatedEvent;
 import com.luanvan.userservice.command.event.UserDeletedEvent;
 import com.luanvan.userservice.command.event.UserUpdatedEvent;
+import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
+import com.luanvan.userservice.repository.CartRepository;
 import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -28,6 +32,8 @@ public class UserEventHandler {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private CartRepository cartRepository;
 
     @EventHandler
     public void on(UserCreatedEvent event) {
@@ -46,7 +52,15 @@ public class UserEventHandler {
             user.setLastName(event.getLastName());
             user.setActive(event.getActive());
             user.setRole(role);
-            userRepository.save(user);
+            var finalUser = userRepository.save(user);
+
+            var cart = cartRepository.findByUser(finalUser)
+                    .orElseGet(() -> Cart.builder()
+                            .id(UUID.randomUUID().toString())
+                            .user(finalUser)
+                            .cartDetails(new ArrayList<>())
+                            .build());
+            cartRepository.save(cart);
             log.info("User created successfully");
         }catch (Exception e) {
             log.info(e.getMessage());

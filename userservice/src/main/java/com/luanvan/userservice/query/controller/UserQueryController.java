@@ -4,7 +4,11 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.UserResponseModel;
+import com.luanvan.commonservice.queries.GetUserQuery;
+import com.luanvan.userservice.query.model.CartResponseModel;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
+import com.luanvan.userservice.query.queries.GetCartQuery;
+import com.luanvan.userservice.repository.UserRepository;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +30,8 @@ public class UserQueryController {
 
     @Autowired
     private QueryGateway queryGateway;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public ApiResponse<Page<UserResponseModel>> getAllUsers(
@@ -57,5 +64,19 @@ public class UserQueryController {
                 .data(page)
                 .build();
 
+    }
+
+    @GetMapping("/{username}")
+    public ApiResponse<UserResponseModel> getUser(@PathVariable String username) {
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        GetUserQuery query = new GetUserQuery(username);
+
+        UserResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(UserResponseModel.class)).join();
+
+        return ApiResponse.<UserResponseModel>builder()
+                .data(response)
+                .build();
     }
 }

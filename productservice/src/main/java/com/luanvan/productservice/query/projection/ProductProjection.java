@@ -27,6 +27,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,25 +41,18 @@ public class ProductProjection {
     public List<AllProductResponseModel> handle(GetAllProductQuery queryParams) {
         log.info("Get all products for admin");
 
-        // Xử lý các tham số filter
-        List<String> price;
-        if (queryParams.getPrice() != null && !queryParams.getPrice().isBlank()) {
-            price = List.of(queryParams.getPrice().split(","));
-        } else {
-            price = new ArrayList<>();
-        }
-        List<String> color;
-        if (queryParams.getColor() != null && !queryParams.getColor().isBlank()) {
-            color = List.of(queryParams.getColor().split(","));
-        } else {
-            color = new ArrayList<>();
-        }
-        List<String> size;
-        if (queryParams.getSize() != null && !queryParams.getSize().isBlank()) {
-            size = List.of(queryParams.getSize().split(","));
-        } else {
-            size = new ArrayList<>();
-        }
+        // Xử lý các tham số filter: price, color, size
+        List<String> priceList = (queryParams.getPrice() != null && !queryParams.getPrice().isBlank())
+                ? List.of(queryParams.getPrice().split(","))
+                : new ArrayList<>();
+
+        List<String> colorList = (queryParams.getColor() != null && !queryParams.getColor().isBlank())
+                ? List.of(queryParams.getColor().split(","))
+                : new ArrayList<>();
+
+        List<String> sizeList = (queryParams.getSize() != null && !queryParams.getSize().isBlank())
+                ? List.of(queryParams.getSize().split(","))
+                : new ArrayList<>();
 
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
@@ -75,51 +69,49 @@ public class ProductProjection {
             // Join đến productColors -> color
             Join<ProductColor, Color> colorJoin = productColorJoin.join("color", JoinType.LEFT);
 
-            // 1. Xử lý mutually exclusive giữa query và category
+            // 1. Lọc theo query hoặc category
             if (StringUtils.hasText(queryParams.getQuery())) {
-                // Nếu có query thì lọc theo tên sản phẩm hoặc tên danh mục
                 Predicate productNameLike = cb.like(cb.lower(root.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
                 Predicate categoryNameLike = cb.like(cb.lower(categoryJoin.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
                 predicates.add(cb.or(productNameLike, categoryNameLike));
             } else if (StringUtils.hasText(queryParams.getCategory())) {
-                // Nếu có category & không phải "all" thì lọc theo codeName category
                 if (!"all".equalsIgnoreCase(queryParams.getCategory())) {
                     predicates.add(cb.equal(cb.lower(categoryJoin.get("codeName")), queryParams.getCategory().toLowerCase()));
                 }
-                // Nếu category là "all" thì không thêm điều kiện nào
             }
 
-            // 2. Lọc theo price (danh sách min-max)
-            if (!price.isEmpty()) {
+            // 3. Lọc theo price (min-max)
+            if (!priceList.isEmpty()) {
                 double globalMin = Double.MAX_VALUE;
                 double globalMax = Double.MIN_VALUE;
-                for (String range : price) {
+                for (String range : priceList) {
+                    if (range.isBlank()) continue;
                     String[] parts = range.split("-");
-                    double min = Double.parseDouble(parts[0]);
-                    double max = parts[1].equalsIgnoreCase("infinity") ? Double.MAX_VALUE : Double.parseDouble(parts[1]);
+                    double min = Double.parseDouble(parts[0].trim());
+                    double max = parts[1].trim().equalsIgnoreCase("infinity")
+                            ? Double.MAX_VALUE
+                            : Double.parseDouble(parts[1].trim());
                     globalMin = Math.min(globalMin, min);
                     globalMax = Math.max(globalMax, max);
                 }
                 predicates.add(cb.between(productColorJoin.get("price"), globalMin, globalMax));
             }
 
-            // 3. Lọc theo Size (danh sách codeName của Size)
-            if (!size.isEmpty()) {
-                predicates.add(sizeJoin.get("codeName").in(size));
+            // 4. Lọc theo Size
+            if (!sizeList.isEmpty()) {
+                predicates.add(sizeJoin.get("codeName").in(sizeList));
             }
 
-            // 4. Lọc theo Color (danh sách codeName của Color)
-            if (!color.isEmpty()) {
-                predicates.add(colorJoin.get("codeName").in(color));
+            // 5. Lọc theo Color
+            if (!colorList.isEmpty()) {
+                predicates.add(colorJoin.get("codeName").in(colorList));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
         // Tạo PageRequest từ các tham số
-//        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
-
         var productPage = productRepository.findAll(spec, pageable);
 
         return productPage.getContent().stream()
@@ -131,111 +123,104 @@ public class ProductProjection {
     public List<ProductResponseModel> handle(GetAllProductWithFilterQuery queryParams) {
         log.info("Get all products with query, filter");
 
-        // Xử lý các tham số filter
-        List<String> price;
-        if (queryParams.getPrice() != null && !queryParams.getPrice().isBlank()) {
-            price = List.of(queryParams.getPrice().split(","));
-        } else {
-            price = new ArrayList<>();
-        }
-        List<String> color;
-        if (queryParams.getColor() != null && !queryParams.getColor().isBlank()) {
-            color = List.of(queryParams.getColor().split(","));
-        } else {
-            color = new ArrayList<>();
-        }
-        List<String> size;
-        if (queryParams.getSize() != null && !queryParams.getSize().isBlank()) {
-            size = List.of(queryParams.getSize().split(","));
-        } else {
-            size = new ArrayList<>();
-        }
+        // Xử lý các tham số filter: price, color, size
+        List<String> priceList = (queryParams.getPrice() != null && !queryParams.getPrice().isBlank())
+                ? List.of(queryParams.getPrice().split(","))
+                : new ArrayList<>();
+
+        List<String> colorList = (queryParams.getColor() != null && !queryParams.getColor().isBlank())
+                ? List.of(queryParams.getColor().split(","))
+                : new ArrayList<>();
+
+        List<String> sizeList = (queryParams.getSize() != null && !queryParams.getSize().isBlank())
+                ? List.of(queryParams.getSize().split(","))
+                : new ArrayList<>();
+
         // Xây dựng Specification cho Product
         Specification<Product> spec = (root, cq, cb) -> {
-            //cq.distinct(true);
+            // Sử dụng GROUP BY theo Product.id
             cq.groupBy(root.get("id"));
 
             List<Predicate> predicates = new ArrayList<>();
-            // Join đén category
+
+            // Join các bảng liên quan
             Join<Product, Category> categoryJoin = root.join("category", JoinType.LEFT);
-            // Join đến productColors -> productVariants -> size
             Join<Product, ProductColor> productColorJoin = root.join("productColors", JoinType.LEFT);
             Join<ProductColor, ProductVariant> productVariantJoin = productColorJoin.join("productVariants", JoinType.LEFT);
             Join<ProductVariant, Size> sizeJoin = productVariantJoin.join("size", JoinType.LEFT);
-            // Join đến productColors -> color
             Join<ProductColor, Color> colorJoin = productColorJoin.join("color", JoinType.LEFT);
 
-            // Kiểm tra xem Product và ProductColor có đang isActive
-            Integer outOfStock = 0;
+            // Điều kiện: sản phẩm active
             predicates.add(cb.isTrue(root.get("isActive")));
-            //predicates.add(cb.greaterThan(productVariantJoin.get("stock"), outOfStock));
 
-            // 1. Xử lý mutually exclusive giữa query và category
+            // 1. Lọc theo query hoặc category
             if (StringUtils.hasText(queryParams.getQuery())) {
-                // Nếu có query thì lọc theo tên sản phẩm hoặc tên danh mục
                 Predicate productNameLike = cb.like(cb.lower(root.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
                 Predicate categoryNameLike = cb.like(cb.lower(categoryJoin.get("name")), "%" + queryParams.getQuery().toLowerCase() + "%");
                 predicates.add(cb.or(productNameLike, categoryNameLike));
             } else if (StringUtils.hasText(queryParams.getCategory())) {
-                // Nếu có category & không phải "all" thì lọc theo codeName category
                 if (!"all".equalsIgnoreCase(queryParams.getCategory())) {
                     predicates.add(cb.equal(cb.lower(categoryJoin.get("codeName")), queryParams.getCategory().toLowerCase()));
                 }
-                // Nếu category là "all" thì không thêm điều kiện nào
             }
 
-            // Tính giá thấp nhất của các productColor của một Product
+            // 2. Áp dụng sắp xếp theo các biểu thức aggregate
+            // Tính giá thấp nhất của các productColor
             var minPriceExpr = cb.min(productColorJoin.get("price"));
-            // Tính tổng số sold từ productVariant
+            // Tính tổng sold của các productVariant
             var totalSoldExpr = cb.sum(productVariantJoin.get("sold"));
             String sortParam = queryParams.getSortOrder();
-            if ("price-ASC".equalsIgnoreCase(sortParam)) {
-                cq.orderBy(cb.asc(minPriceExpr));
-            } else if ("price-DESC".equalsIgnoreCase(sortParam)) {
-                cq.orderBy(cb.desc(minPriceExpr));
-            } else if ("sold-DESC".equalsIgnoreCase(sortParam)) {
-                cq.orderBy(cb.desc(totalSoldExpr));
-            } else if ("createdAt-DESC".equalsIgnoreCase(sortParam)) {
-                cq.orderBy(cb.desc(root.get("createdAt")));
+            if (StringUtils.hasText(sortParam)) {
+                if ("price-ASC".equalsIgnoreCase(sortParam)) {
+                    cq.orderBy(cb.asc(minPriceExpr));
+                } else if ("price-DESC".equalsIgnoreCase(sortParam)) {
+                    cq.orderBy(cb.desc(minPriceExpr));
+                } else if ("sold-DESC".equalsIgnoreCase(sortParam)) {
+                    cq.orderBy(cb.desc(totalSoldExpr));
+                } else if ("createdAt-DESC".equalsIgnoreCase(sortParam)) {
+                    cq.orderBy(cb.desc(root.get("createdAt")));
+                }
             }
 
-            // 2. Lọc theo price (danh sách min-max)
-            if (!price.isEmpty()) {
+            // 3. Lọc theo price (min-max)
+            if (!priceList.isEmpty()) {
                 double globalMin = Double.MAX_VALUE;
                 double globalMax = Double.MIN_VALUE;
-                for (String range : price) {
+                for (String range : priceList) {
+                    if (range.isBlank()) continue;
                     String[] parts = range.split("-");
-                    double min = Double.parseDouble(parts[0]);
-                    double max = parts[1].equalsIgnoreCase("infinity") ? Double.MAX_VALUE : Double.parseDouble(parts[1]);
+                    double min = Double.parseDouble(parts[0].trim());
+                    double max = parts[1].trim().equalsIgnoreCase("infinity")
+                            ? Double.MAX_VALUE
+                            : Double.parseDouble(parts[1].trim());
                     globalMin = Math.min(globalMin, min);
                     globalMax = Math.max(globalMax, max);
                 }
                 predicates.add(cb.between(productColorJoin.get("price"), globalMin, globalMax));
             }
 
-            // 3. Lọc theo Size (danh sách codeName của Size)
-            if (!size.isEmpty()) {
-                predicates.add(sizeJoin.get("codeName").in(size));
+            // 4. Lọc theo Size
+            if (!sizeList.isEmpty()) {
+                predicates.add(sizeJoin.get("codeName").in(sizeList));
             }
 
-            // 4. Lọc theo Color (danh sách codeName của Color)
-            if (!color.isEmpty()) {
-                predicates.add(colorJoin.get("codeName").in(color));
+            // 5. Lọc theo Color
+            if (!colorList.isEmpty()) {
+                predicates.add(colorJoin.get("codeName").in(colorList));
             }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        // Tạo PageRequest từ các tham số
-//        Sort sort = SearchParamsUtils.getSortParams(queryParams.getSortOrder());
+        // Tạo PageRequest (sắp xếp đã được xử lý trong Criteria Query)
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
-
         var productPage = productRepository.findAll(spec, pageable);
 
         return productPage.getContent().stream()
                 .map(this::toProductResponseModel)
                 .collect(Collectors.toList());
     }
+
 
     @QueryHandler
     public ProductResponseModel handle(GetProductQuery queryParams) {
@@ -264,7 +249,9 @@ public class ProductProjection {
                         .description(product.getCategory().getDescription())
                         .isActive(product.getCategory().getIsActive())
                         .build())
-                .productColors(product.getProductColors().stream().map(productColor -> AllProductResponseModel.ProductColor.builder()
+                .productColors(product.getProductColors().stream()
+                        .sorted(Comparator.comparing(pc -> pc.getColor().getName()))
+                        .map(productColor -> AllProductResponseModel.ProductColor.builder()
                         .id(productColor.getId())
                         .price(productColor.getPrice())
                         .isActive(productColor.getIsActive())
@@ -286,7 +273,9 @@ public class ProductProjection {
                                         .endDate(promotion.getEndDate())
                                         .isActive(promotion.getIsActive())
                                         .build()).collect(Collectors.toList()))
-                        .productVariants(productColor.getProductVariants().stream().map(productVariant ->
+                        .productVariants(productColor.getProductVariants().stream()
+                                .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
+                                .map(productVariant ->
                                 AllProductResponseModel.ProductVariant.builder()
                                         .id(productVariant.getId())
                                         .stock(productVariant.getStock())
@@ -323,6 +312,7 @@ public class ProductProjection {
                         .build())
                 .productColors(product.getProductColors().stream()
                         .filter(pc -> Boolean.TRUE.equals(pc.getIsActive()))
+                        .sorted(Comparator.comparing(pc -> pc.getColor().getName()))
                         .map(productColor -> {
                             // Chuyển đổi danh sách promotion của productColor sang DTO promotion
                             var finalPromotion = productColor.getPromotions().stream()
@@ -361,7 +351,9 @@ public class ProductProjection {
                                             .isActive(productColor.getColor().getIsActive())
                                             .build())
                                     .promotion(bestPromotionOpt.orElse(null))
-                                    .productVariants(productColor.getProductVariants().stream().map(productVariant ->
+                                    .productVariants(productColor.getProductVariants().stream()
+                                            .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
+                                            .map(productVariant ->
                                             ProductResponseModel.ProductVariant.builder()
                                                     .id(productVariant.getId())
                                                     .stock(productVariant.getStock())
