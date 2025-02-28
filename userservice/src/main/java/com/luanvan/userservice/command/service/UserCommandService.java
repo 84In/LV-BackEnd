@@ -2,10 +2,7 @@ package com.luanvan.userservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.userservice.command.command.ChangeStatusUserCommand;
-import com.luanvan.userservice.command.command.CreateUserCommand;
-import com.luanvan.userservice.command.command.DeleteUserCommand;
-import com.luanvan.userservice.command.command.UpdateUserCommand;
+import com.luanvan.userservice.command.command.*;
 import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;
@@ -49,9 +46,15 @@ public class UserCommandService {
                 model.getLastName(),
                 model.getFirstName(),
                 model.getRoleName());
+
+        CreateEmptyCartCommand cartCommand = CreateEmptyCartCommand.builder()
+                .id(UUID.randomUUID().toString())
+                .username(model.getUsername())
+                .build();
         log.info("Send command create user: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
+        commandGateway.sendAndWait(cartCommand);
         return result;
     }
 

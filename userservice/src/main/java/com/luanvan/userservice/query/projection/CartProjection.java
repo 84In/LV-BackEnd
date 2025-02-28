@@ -17,6 +17,7 @@ import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,7 @@ public class CartProjection {
 
         // Mapping CartDetail
         var cartDetailResponses = cart.getCartDetails().stream()
+                .sorted(Comparator.comparing(CartDetail::getUpdatedAt).reversed())
                 .map(cd -> mapCartDetail(cd, productMap.get(cd.getProductId())))
                 .collect(Collectors.toList());
 

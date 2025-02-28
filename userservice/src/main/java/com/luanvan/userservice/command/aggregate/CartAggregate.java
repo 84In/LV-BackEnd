@@ -25,7 +25,16 @@ public class CartAggregate {
     private String cartDetailId;
 
     @CommandHandler
-    public CartAggregate(CreateCartCommand command) {
+    public CartAggregate(CreateEmptyCartCommand command) {
+        CartEmptyCreatedEvent event = CartEmptyCreatedEvent.builder()
+                .id(command.getId())
+                .username(command.getUsername())
+                .build();
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void handle(CreateCartCommand command) {
         CartCreatedEvent event = CartCreatedEvent.builder()
                 .id(command.getId())
                 .username(command.getUsername())
@@ -77,6 +86,12 @@ public class CartAggregate {
         CartDeletedEvent event = new CartDeletedEvent();
         BeanUtils.copyProperties(command, event);
         AggregateLifecycle.apply(event);
+    }
+
+    @EventSourcingHandler
+    public void on(CartEmptyCreatedEvent event) {
+        this.id = event.getId();
+        this.username = event.getUsername();
     }
 
     @EventSourcingHandler

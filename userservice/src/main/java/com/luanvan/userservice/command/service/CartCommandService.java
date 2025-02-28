@@ -42,7 +42,7 @@ public class CartCommandService {
     private CommandGateway commandGateway;
 
     public HashMap<?, ?> create(CartCreateModel model) {
-        log.info("Cart created");
+        log.info("Cart created for username {}", model.getUsername());
 
         var user = userRepository.findByUsername(model.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -65,16 +65,12 @@ public class CartCommandService {
                 .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
 
         // Nếu cart tồn tại thì tìm theo username, nếu chưa thì tạo mới
-        Cart cart;
         Object command;
-        if (!cartRepository.existsByUser(user)) {
-            cart = Cart.builder()
-                    .id(UUID.randomUUID().toString())
-                    .user(user)
-                    .cartDetails(new ArrayList<>())
-                    .build();
+        var cart = cartRepository.findByUser(user);
+        if (cart.isEmpty()) {
+            log.info("Cart is empty for username {}", model.getUsername());
             command = CreateCartCommand.builder()
-                    .id(cart.getId())
+                    .id(UUID.randomUUID().toString())
                     .username(user.getUsername())
                     .cartDetail(CreateCartCommand.CartDetail.builder()
                             .id(UUID.randomUUID().toString())
@@ -85,17 +81,16 @@ public class CartCommandService {
                             .build())
                     .build();
         } else {
-
-            cart = cartRepository.findByUser(user).get();
-            var cartDetail = cart.getCartDetails().stream()
+            var cartDetail = cart.get().getCartDetails().stream()
                     .filter(cd -> cd.getProductId().equals(model.getCartDetail().getProductId())
                             && cd.getColorId().equals(model.getCartDetail().getColorId())
                             && cd.getSizeId().equals(model.getCartDetail().getSizeId()))
                     .findFirst();
             // Nếu cart đã tồn tại và cartDetail cũng tồn tại thì cộng đồn số lượng
             if(cartDetail.isPresent()) {
+                log.info("Cart exist and cartDetail exist for username {}", model.getUsername());
                 command = AddToCartCommand.builder()
-                        .id(cart.getId())
+                        .id(cart.get().getId())
                         .username(user.getUsername())
                         .cartDetail(AddToCartCommand.CartDetail.builder()
                                 .id(cartDetail.get().getId())
@@ -106,9 +101,10 @@ public class CartCommandService {
                                 .build())
                         .build();
             }else{
-                // Nếu cart đã tồn tại và cartDetail chưa tồn tại thì ta mới cartDetailz
+                // Nếu cart đã tồn tại và cartDetail chưa tồn tại thì ta mới cartDetails
+                log.info("Cart exist and cartDetail not exist for username {}", model.getUsername());
                 command = AddToCartCommand.builder()
-                        .id(cart.getId())
+                        .id(cart.get().getId())
                         .username(user.getUsername())
                         .cartDetail(AddToCartCommand.CartDetail.builder()
                                 .id(UUID.randomUUID().toString())

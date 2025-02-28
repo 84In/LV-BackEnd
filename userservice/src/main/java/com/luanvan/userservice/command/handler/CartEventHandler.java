@@ -4,10 +4,7 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
-import com.luanvan.userservice.command.event.CartAddToEvent;
-import com.luanvan.userservice.command.event.CartCreatedEvent;
-import com.luanvan.userservice.command.event.CartDeletedEvent;
-import com.luanvan.userservice.command.event.CartUpdatedEvent;
+import com.luanvan.userservice.command.event.*;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.CartDetail;
 import com.luanvan.userservice.repository.CartRepository;
@@ -32,6 +29,20 @@ public class CartEventHandler {
     private QueryGateway queryGateway;
     @Autowired
     private CartRepository cartRepository;
+
+    @EventHandler
+    @Transactional
+    public void on(CartEmptyCreatedEvent event){
+        log.info("Cart empty created");
+        var user = userRepository.findByUsername(event.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        var cart = Cart.builder()
+                .id(event.getId())
+                .user(user)
+                .cartDetails(new ArrayList<>())
+                .build();
+        cartRepository.save(cart);
+    }
 
     @EventHandler
     @Transactional
@@ -68,7 +79,7 @@ public class CartEventHandler {
                         .user(user)
                         .cartDetails(new ArrayList<>())
                         .build());
-
+        cartRepository.save(cart);
         // 5. Xử lý số lượng (requestQuantity vs stockQuantity)
         var stockQuantity = productVariantOpt.getStock();
         var requestQuantity = event.getCartDetail().getQuantity();
@@ -132,7 +143,8 @@ public class CartEventHandler {
                 .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
 
         // 4. Tìm cart theo user
-        var cart = cartRepository.findByUser(user).get();
+        var cart = cartRepository.findByUser(user)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
 
         // 5. Xử lý số lượng (requestQuantity vs stockQuantity)
         var stockQuantity = productVariantOpt.getStock();

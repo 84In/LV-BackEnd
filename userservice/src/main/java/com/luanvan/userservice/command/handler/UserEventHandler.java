@@ -1,10 +1,10 @@
 package com.luanvan.userservice.command.handler;
 
+import com.luanvan.userservice.command.command.CreateEmptyCartCommand;
 import com.luanvan.userservice.command.event.UserChangeStatusEvent;
 import com.luanvan.userservice.command.event.UserCreatedEvent;
 import com.luanvan.userservice.command.event.UserDeletedEvent;
 import com.luanvan.userservice.command.event.UserUpdatedEvent;
-import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.CartRepository;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,10 +25,8 @@ public class UserEventHandler {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -52,17 +49,9 @@ public class UserEventHandler {
             user.setLastName(event.getLastName());
             user.setActive(event.getActive());
             user.setRole(role);
-            var finalUser = userRepository.save(user);
-
-            var cart = cartRepository.findByUser(finalUser)
-                    .orElseGet(() -> Cart.builder()
-                            .id(UUID.randomUUID().toString())
-                            .user(finalUser)
-                            .cartDetails(new ArrayList<>())
-                            .build());
-            cartRepository.save(cart);
+            userRepository.save(user);
             log.info("User created successfully");
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.info(e.getMessage());
         }
     }
