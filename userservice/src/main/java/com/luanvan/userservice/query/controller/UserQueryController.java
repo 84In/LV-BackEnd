@@ -8,6 +8,7 @@ import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.userservice.query.model.CartResponseModel;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import com.luanvan.userservice.query.queries.GetCartQuery;
+import com.luanvan.userservice.query.queries.GetUserDetailQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
@@ -71,7 +72,7 @@ public class UserQueryController {
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        GetUserQuery query = new GetUserQuery(username);
+        GetUserDetailQuery query = new GetUserDetailQuery(username);
 
         UserResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(UserResponseModel.class)).join();
 

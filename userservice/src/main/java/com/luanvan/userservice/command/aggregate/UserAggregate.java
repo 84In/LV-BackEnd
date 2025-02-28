@@ -1,10 +1,7 @@
 package com.luanvan.userservice.command.aggregate;
 
 import com.luanvan.userservice.command.command.*;
-import com.luanvan.userservice.command.event.UserCreatedEvent;
-import com.luanvan.userservice.command.event.UserDeletedEvent;
-import com.luanvan.userservice.command.event.UserChangeStatusEvent;
-import com.luanvan.userservice.command.event.UserUpdatedEvent;
+import com.luanvan.userservice.command.event.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -64,6 +61,14 @@ public class UserAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(ChangePasswordUserCommand command) {
+        UserChangePasswordEvent event = new UserChangePasswordEvent();
+        event.setPassword(command.getPassword());
+        log.info("UserChangedEvent: {}", event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(UserCreatedEvent event) {
         this.id = event.getId();
@@ -83,6 +88,7 @@ public class UserAggregate {
     @EventSourcingHandler
     public void on(UserUpdatedEvent event) {
         this.id = event.getId();
+        this.username = event.getUsername();
         this.email = event.getEmail();
         this.phone = event.getPhone();
         this.lastName = event.getLastName();
@@ -100,6 +106,11 @@ public class UserAggregate {
     public void on(UserChangeStatusEvent event) {
         this.id = event.getId();
         this.active = event.getActive();
+    }
+    @EventSourcingHandler
+    public void on(UserChangePasswordEvent event) {
+        this.id = event.getId();
+        this.password = event.getPassword();
     }
 
 }

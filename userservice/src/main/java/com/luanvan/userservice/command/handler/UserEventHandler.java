@@ -1,9 +1,6 @@
 package com.luanvan.userservice.command.handler;
 
-import com.luanvan.userservice.command.event.UserChangeStatusEvent;
-import com.luanvan.userservice.command.event.UserCreatedEvent;
-import com.luanvan.userservice.command.event.UserDeletedEvent;
-import com.luanvan.userservice.command.event.UserUpdatedEvent;
+import com.luanvan.userservice.command.event.*;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
@@ -73,6 +70,8 @@ public class UserEventHandler {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+
+            Optional.ofNullable(event.getUsername()).ifPresent(user::setUsername);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);
@@ -100,6 +99,15 @@ public class UserEventHandler {
     public void on(UserChangeStatusEvent event) {
         User user = userRepository.findByUserId(event.getId());
         user.setActive(event.getActive());
+        log.info("User change status event handler");
+        userRepository.save(user);
+    }
+
+    @EventHandler
+    public void on(UserChangePasswordEvent event){
+        User user = userRepository.findByUserId(event.getId());
+        user.setPassword(passwordEncoder.encode(event.getPassword()));
+        log.info("User change password event handler");
         userRepository.save(user);
     }
 

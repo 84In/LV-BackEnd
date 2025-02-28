@@ -7,6 +7,7 @@ import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
+import com.luanvan.userservice.query.queries.GetUserDetailQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
@@ -40,7 +41,6 @@ public class UserProjection {
                     UserResponseModel userResponseModel = UserResponseModel.builder()
                             .id(user.getId())
                             .username(user.getUsername())
-                            .password(user.getPassword())
                             .email(user.getEmail())
                             .phone(user.getPhone())
                             .firstName(user.getFirstName())
@@ -84,6 +84,49 @@ public class UserProjection {
         userResponseModel.setId(user.getId());
         userResponseModel.setUsername(user.getUsername());
         userResponseModel.setPassword(user.getPassword());
+        userResponseModel.setEmail(user.getEmail());
+        userResponseModel.setPhone(user.getPhone());
+        userResponseModel.setFirstName(user.getFirstName());
+        userResponseModel.setLastName(user.getLastName());
+        userResponseModel.setAvatar(user.getAvatar());
+        userResponseModel.setActive(user.getActive());
+
+        // Mapping Role
+        userResponseModel.setRole(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()));
+
+        // Mapping UserAddressResponse
+        userResponseModel.setAddresses(user.getAddresses().stream().map(userAddress -> {
+            UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
+            userAddressResponse.setAddressId(userAddress.getId().getAddressId());
+            userAddressResponse.setUserId(userAddress.getId().getUserId());
+
+            // Lấy thông tin từ Address và mapping vào UserAddressResponse
+            Address address = userAddress.getAddress();
+            userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+            userAddressResponse.setAddressPhone(address.getPhone());
+            userAddressResponse.setProvinceName(address.getProvince().getName());
+            userAddressResponse.setDistrictName(address.getDistrict().getName());
+            userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+            userAddressResponse.setDefault(userAddress.isDefault());
+            userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
+            userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
+
+            return userAddressResponse;
+        }).collect(Collectors.toList())); // Thu thập thành danh sách
+
+        // Mapping thời gian tạo và cập nhật
+        userResponseModel.setCreatedAt(user.getCreatedAt());
+        userResponseModel.setUpdatedAt(user.getUpdatedAt());
+        return userResponseModel;
+    }
+
+    @QueryHandler
+    public UserResponseModel handle(GetUserDetailQuery query) {
+        User user = userRepository.findByUsername(query.getUsername()).orElseThrow(() -> new RuntimeException("Not found user"));
+
+        UserResponseModel userResponseModel = new UserResponseModel();
+        userResponseModel.setId(user.getId());
+        userResponseModel.setUsername(user.getUsername());
         userResponseModel.setEmail(user.getEmail());
         userResponseModel.setPhone(user.getPhone());
         userResponseModel.setFirstName(user.getFirstName());

@@ -29,6 +29,7 @@ public enum ErrorCode {
     PHONE_EXISTED(304, "Số điện thoại đã tồn tại", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(305, "Email đã tồn tại", HttpStatus.BAD_REQUEST),
     ACCOUNT_LOCKED(306, "Tài khoản bị khóa", HttpStatus.FORBIDDEN),
+    USERNAME_EXISTED(307, "Tài khoản đã tồn tại", HttpStatus.BAD_REQUEST),
 
     //Lỗi vai trò
     ROLE_NOT_EXISTED(355, "Vai trò không tồn tại", HttpStatus.BAD_REQUEST),

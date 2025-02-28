@@ -10,14 +10,8 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserCommand {
+public class ChangePasswordUserCommand {
     @TargetAggregateIdentifier
     private String id;
-    private String username;
-    private String email;
-    private String phone;
-    private String lastName;
-    private String firstName;
-    private String roleName;
-
+    private String password;
 }

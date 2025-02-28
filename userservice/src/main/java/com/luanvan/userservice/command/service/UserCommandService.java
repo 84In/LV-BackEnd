@@ -2,18 +2,18 @@ package com.luanvan.userservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.userservice.command.command.ChangeStatusUserCommand;
-import com.luanvan.userservice.command.command.CreateUserCommand;
-import com.luanvan.userservice.command.command.DeleteUserCommand;
-import com.luanvan.userservice.command.command.UpdateUserCommand;
+import com.luanvan.userservice.command.command.*;
+import com.luanvan.userservice.command.model.UserChangePasswordModel;
 import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;
+import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -26,6 +26,9 @@ public class UserCommandService {
     private UserRepository userRepository;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
@@ -34,6 +37,9 @@ public class UserCommandService {
     public HashMap<?,?> save(UserCreateModel model) throws AppException {
         if(userRepository.existsByUsername(model.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        if(userRepository.existsByEmail(model.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
         if(!roleRepository.existsById(model.getRoleName())){
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
@@ -61,13 +67,22 @@ public class UserCommandService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
 
-        if(model.getRoleName() != null && !model.getRoleName().isEmpty() && !roleRepository.existsById(model.getRoleName())) {
+        if (!model.getUsername().isEmpty() && userRepository.existsByUsername(model.getUsername())) {
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
+        }
+
+        if(!model.getEmail().isEmpty() && userRepository.existsByEmail(model.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
+
+        if(!model.getRoleName().isEmpty() && !roleRepository.existsById(model.getRoleName())) {
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
         }
 
 
         UpdateUserCommand command = new UpdateUserCommand(
                 userId,
+                model.getUsername(),
                 model.getEmail(),
                 model.getPhone(),
                 model.getLastName(),
@@ -98,6 +113,21 @@ public class UserCommandService {
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         result.put("message","Trạng thái tài khoản đã được cập nhật");
+        return result;
+    }
+
+    public HashMap<?,?> changePassword(String userId, UserChangePasswordModel model) throws AppException {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(!passwordEncoder.matches(model.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.INCORRECT_PASSWORD);
+        }
+
+        ChangePasswordUserCommand command = new ChangePasswordUserCommand(userId,model.getNewPassword());
+        log.info("Send command change password user: {}", command);
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        result.put("message","Mật khẩu đã được thay đổi");
         return result;
     }
 }
