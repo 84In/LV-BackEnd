@@ -1,6 +1,7 @@
 package com.luanvan.userservice.command.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.userservice.command.model.UserChangePasswordModel;
 import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;
@@ -23,7 +24,6 @@ public class UserCommandController {
 
         var response = userCommandService.save(model);
         return ApiResponse.builder()
-                .code(0)
                 .data(response)
                 .build();
     }
@@ -33,7 +33,6 @@ public class UserCommandController {
 
         var response = userCommandService.update(userId, model);
         return ApiResponse.builder()
-                .code(0)
                 .data(response)
                 .build();
     }
@@ -43,7 +42,6 @@ public class UserCommandController {
     public ApiResponse<?> deleteUser(@PathVariable String userId) {
         var response = userCommandService.delete(userId);
         return ApiResponse.builder()
-                .code(0)
                 .message("Người dùng đã bị vô hiệu hoá")
                 .data(response)
                 .build();
@@ -53,11 +51,19 @@ public class UserCommandController {
     public ApiResponse<?> changeStatusUser(@PathVariable String userId, UserChangeStatusModel model) {
         var response = userCommandService.changeStatus(userId, model);
         return ApiResponse.builder()
-                .code(0)
                 .message("Người dùng đã bị vô hiệu hoá")
                 .data(response)
                 .build();
 
+    }
+
+    @PutMapping("/changePassword/{userId}")
+    public ApiResponse<?> changePasswordUser(@PathVariable String userId, @Valid @RequestBody UserChangePasswordModel model) {
+        var response = userCommandService.changePassword(userId, model);
+        return ApiResponse.builder()
+                .message("Mật khẩu đã được cập nhật")
+                .data(response)
+                .build();
     }
 
 

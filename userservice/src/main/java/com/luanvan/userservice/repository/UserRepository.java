@@ -1,6 +1,7 @@
 package com.luanvan.userservice.repository;
 
 import com.luanvan.userservice.entity.User;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     boolean existsByUsername(@NotBlank @Size(max = 50) String username);
 
     Optional<User> findByUsername(@NotBlank @Size(max = 50) String username);
+
+    boolean existsByEmail(@Email @Size(max = 100) String email);
 }

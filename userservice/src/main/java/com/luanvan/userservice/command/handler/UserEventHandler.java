@@ -1,10 +1,7 @@
 package com.luanvan.userservice.command.handler;
 
-import com.luanvan.userservice.command.command.CreateEmptyCartCommand;
-import com.luanvan.userservice.command.event.UserChangeStatusEvent;
-import com.luanvan.userservice.command.event.UserCreatedEvent;
-import com.luanvan.userservice.command.event.UserDeletedEvent;
-import com.luanvan.userservice.command.event.UserUpdatedEvent;
+import com.luanvan.userservice.command.event.*;
+import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.CartRepository;
@@ -16,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +23,10 @@ public class UserEventHandler {
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private RoleRepository roleRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -62,6 +62,8 @@ public class UserEventHandler {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
+
+            Optional.ofNullable(event.getUsername()).ifPresent(user::setUsername);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);
@@ -89,6 +91,15 @@ public class UserEventHandler {
     public void on(UserChangeStatusEvent event) {
         User user = userRepository.findByUserId(event.getId());
         user.setActive(event.getActive());
+        log.info("User change status event handler");
+        userRepository.save(user);
+    }
+
+    @EventHandler
+    public void on(UserChangePasswordEvent event){
+        User user = userRepository.findByUserId(event.getId());
+        user.setPassword(passwordEncoder.encode(event.getPassword()));
+        log.info("User change password event handler");
         userRepository.save(user);
     }
 
