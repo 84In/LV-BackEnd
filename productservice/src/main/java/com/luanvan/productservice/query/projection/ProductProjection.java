@@ -2,12 +2,13 @@ package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.model.response.PageAllProductResponse;
+import com.luanvan.commonservice.model.response.PageProductResponse;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.commonservice.utils.PromotionUtils;
-import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.entity.*;
-import com.luanvan.productservice.query.model.AllProductResponseModel;
+import com.luanvan.commonservice.model.response.AllProductResponseModel;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
 import com.luanvan.productservice.query.queries.GetAllProductWithFilterQuery;
 import com.luanvan.productservice.repository.ProductRepository;
@@ -19,14 +20,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ public class ProductProjection {
     private final ProductRepository productRepository;
 
     @QueryHandler
-    public List<AllProductResponseModel> handle(GetAllProductQuery queryParams) {
+    public PageAllProductResponse handle(GetAllProductQuery queryParams) {
         log.info("Get all products for admin");
 
         // Xử lý các tham số filter: price, color, size
@@ -114,13 +113,19 @@ public class ProductProjection {
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
         var productPage = productRepository.findAll(spec, pageable);
 
-        return productPage.getContent().stream()
-                .map(this::toAllProductResponseModel)
-                .collect(Collectors.toList());
+        var responsePage = productPage.map(this::toAllProductResponseModel);
+
+        return PageAllProductResponse.builder()
+                .content(new ArrayList<>(responsePage.getContent()))
+                .pageNumber(productPage.getNumber())
+                .pageSize(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .build();
     }
 
     @QueryHandler
-    public List<ProductResponseModel> handle(GetAllProductWithFilterQuery queryParams) {
+    public PageProductResponse handle(GetAllProductWithFilterQuery queryParams) {
         log.info("Get all products with query, filter");
 
         // Xử lý các tham số filter: price, color, size
@@ -216,9 +221,15 @@ public class ProductProjection {
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
         var productPage = productRepository.findAll(spec, pageable);
 
-        return productPage.getContent().stream()
-                .map(this::toProductResponseModel)
-                .collect(Collectors.toList());
+        var responsePage = productPage.map(this::toProductResponseModel);
+
+        return PageProductResponse.builder()
+                .content(new ArrayList<>(responsePage.getContent()))
+                .pageNumber(productPage.getNumber())
+                .pageSize(productPage.getSize())
+                .totalElements(productPage.getTotalElements())
+                .totalPages(productPage.getTotalPages())
+                .build();
     }
 
 
@@ -252,43 +263,43 @@ public class ProductProjection {
                 .productColors(product.getProductColors().stream()
                         .sorted(Comparator.comparing(pc -> pc.getColor().getName()))
                         .map(productColor -> AllProductResponseModel.ProductColor.builder()
-                        .id(productColor.getId())
-                        .price(productColor.getPrice())
-                        .isActive(productColor.getIsActive())
-                        .color(AllProductResponseModel.Color.builder()
-                                .id(productColor.getColor().getId())
-                                .name(productColor.getColor().getName())
-                                .codeName(productColor.getColor().getCodeName())
-                                .colorCode(productColor.getColor().getColorCode())
-                                .description(productColor.getColor().getDescription())
-                                .isActive(productColor.getColor().getIsActive())
-                                .build())
-                        .promotions(productColor.getPromotions().stream().map(promotion ->
-                                AllProductResponseModel.Promotion.builder()
-                                        .id(promotion.getId())
-                                        .name(promotion.getName())
-                                        .codeName(promotion.getCodeName())
-                                        .discountPercentage(promotion.getDiscountPercentage())
-                                        .startDate(promotion.getStartDate())
-                                        .endDate(promotion.getEndDate())
-                                        .isActive(promotion.getIsActive())
-                                        .build()).collect(Collectors.toList()))
-                        .productVariants(productColor.getProductVariants().stream()
-                                .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
-                                .map(productVariant ->
-                                AllProductResponseModel.ProductVariant.builder()
-                                        .id(productVariant.getId())
-                                        .stock(productVariant.getStock())
-                                        .sold(productVariant.getSold())
-                                        .isActive(productVariant.getIsActive())
-                                        .size(AllProductResponseModel.Size.builder()
-                                                .id(productVariant.getSize().getId())
-                                                .name(productVariant.getSize().getName())
-                                                .codeName(productVariant.getSize().getCodeName())
-                                                .isActive(productVariant.getSize().getIsActive())
-                                                .build())
-                                        .build()).collect(Collectors.toList()))
-                        .build()).collect(Collectors.toList()))
+                                .id(productColor.getId())
+                                .price(productColor.getPrice())
+                                .isActive(productColor.getIsActive())
+                                .color(AllProductResponseModel.Color.builder()
+                                        .id(productColor.getColor().getId())
+                                        .name(productColor.getColor().getName())
+                                        .codeName(productColor.getColor().getCodeName())
+                                        .colorCode(productColor.getColor().getColorCode())
+                                        .description(productColor.getColor().getDescription())
+                                        .isActive(productColor.getColor().getIsActive())
+                                        .build())
+                                .promotions(productColor.getPromotions().stream().map(promotion ->
+                                        AllProductResponseModel.Promotion.builder()
+                                                .id(promotion.getId())
+                                                .name(promotion.getName())
+                                                .codeName(promotion.getCodeName())
+                                                .discountPercentage(promotion.getDiscountPercentage())
+                                                .startDate(promotion.getStartDate())
+                                                .endDate(promotion.getEndDate())
+                                                .isActive(promotion.getIsActive())
+                                                .build()).collect(Collectors.toList()))
+                                .productVariants(productColor.getProductVariants().stream()
+                                        .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
+                                        .map(productVariant ->
+                                                AllProductResponseModel.ProductVariant.builder()
+                                                        .id(productVariant.getId())
+                                                        .stock(productVariant.getStock())
+                                                        .sold(productVariant.getSold())
+                                                        .isActive(productVariant.getIsActive())
+                                                        .size(AllProductResponseModel.Size.builder()
+                                                                .id(productVariant.getSize().getId())
+                                                                .name(productVariant.getSize().getName())
+                                                                .codeName(productVariant.getSize().getCodeName())
+                                                                .isActive(productVariant.getSize().getIsActive())
+                                                                .build())
+                                                        .build()).collect(Collectors.toList()))
+                                .build()).collect(Collectors.toList()))
                 .build();
     }
 
@@ -354,18 +365,18 @@ public class ProductProjection {
                                     .productVariants(productColor.getProductVariants().stream()
                                             .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
                                             .map(productVariant ->
-                                            ProductResponseModel.ProductVariant.builder()
-                                                    .id(productVariant.getId())
-                                                    .stock(productVariant.getStock())
-                                                    .sold(productVariant.getSold())
-                                                    .isActive(productVariant.getIsActive())
-                                                    .size(ProductResponseModel.Size.builder()
-                                                            .id(productVariant.getSize().getId())
-                                                            .name(productVariant.getSize().getName())
-                                                            .codeName(productVariant.getSize().getCodeName())
-                                                            .isActive(productVariant.getSize().getIsActive())
-                                                            .build())
-                                                    .build()).collect(Collectors.toList()))
+                                                    ProductResponseModel.ProductVariant.builder()
+                                                            .id(productVariant.getId())
+                                                            .stock(productVariant.getStock())
+                                                            .sold(productVariant.getSold())
+                                                            .isActive(productVariant.getIsActive())
+                                                            .size(ProductResponseModel.Size.builder()
+                                                                    .id(productVariant.getSize().getId())
+                                                                    .name(productVariant.getSize().getName())
+                                                                    .codeName(productVariant.getSize().getCodeName())
+                                                                    .isActive(productVariant.getSize().getIsActive())
+                                                                    .build())
+                                                            .build()).collect(Collectors.toList()))
                                     .build();
                         }).collect(Collectors.toList()))
                 .build();

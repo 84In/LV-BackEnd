@@ -2,9 +2,7 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.response.ApiResponse;
-import com.luanvan.commonservice.model.response.ProductResponseModel;
-import com.luanvan.productservice.query.model.AllProductResponseModel;
+import com.luanvan.commonservice.model.response.*;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.productservice.query.queries.GetAllProductWithFilterQuery;
@@ -16,9 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -41,8 +36,8 @@ public class ProductQueryController {
 
         GetAllProductQuery queryGetAll = new GetAllProductQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
 
-        List<AllProductResponseModel> response = queryGateway.query(queryGetAll, ResponseTypes.multipleInstancesOf(AllProductResponseModel.class)).join();
-        Page<AllProductResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
+        PageAllProductResponse response = queryGateway.query(queryGetAll, ResponseTypes.instanceOf(PageAllProductResponse.class)).join();
+        Page<AllProductResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<AllProductResponseModel>>builder()
                 .data(pageResponse)
@@ -63,8 +58,8 @@ public class ProductQueryController {
 
         GetAllProductWithFilterQuery queryGetAll = new GetAllProductWithFilterQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
 
-        List<ProductResponseModel> response = queryGateway.query(queryGetAll, ResponseTypes.multipleInstancesOf(ProductResponseModel.class)).join();
-        Page<ProductResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
+        PageProductResponse response = queryGateway.query(queryGetAll, ResponseTypes.instanceOf(PageProductResponse.class)).join();
+        Page<ProductResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<ProductResponseModel>>builder()
                 .data(pageResponse)
