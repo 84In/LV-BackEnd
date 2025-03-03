@@ -1,11 +1,15 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.commonservice.command.RollBackStockProductCommand;
+import com.luanvan.commonservice.command.UpdateStockProductCommand;
+import com.luanvan.productservice.command.event.ProductRollBackStockEvent;
 import com.luanvan.productservice.command.command.ChangeStatusProductCommand;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.command.UpdateProductCommand;
 import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
 import com.luanvan.productservice.command.event.ProductCreateEvent;
 import com.luanvan.productservice.command.event.ProductUpdateEvent;
+import com.luanvan.productservice.command.event.ProductUpdateStockEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -28,6 +32,9 @@ public class ProductAggregate {
     private String description;
     private String images;
     private Boolean isActive;
+    private String colorId;
+    private String sizeId;
+    private Integer quantity;
     private List<ProductCreateEvent.ProductColorCreateEvent> productColorsCreateEvent;
     private List<ProductUpdateEvent.ProductColorUpdateEvent> productColorsUpdateEvent;
 
@@ -98,6 +105,20 @@ public class ProductAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(UpdateStockProductCommand command){
+        ProductUpdateStockEvent event = new ProductUpdateStockEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void handle(RollBackStockProductCommand command){
+        ProductRollBackStockEvent event = new ProductRollBackStockEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(ProductCreateEvent event) {
         this.id = event.getId();
@@ -122,5 +143,21 @@ public class ProductAggregate {
     public void on(ProductChangeStatusEvent event) {
         this.id = event.getId();
         this.isActive = event.getIsActive();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductUpdateStockEvent event) {
+        this.id = event.getId();
+        this.quantity = event.getQuantity();
+        this.colorId = event.getColorId();
+        this.sizeId = event.getSizeId();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductRollBackStockEvent event) {
+        this.id = event.getId();
+        this.quantity = event.getQuantity();
+        this.colorId = event.getColorId();
+        this.sizeId = event.getSizeId();
     }
 }

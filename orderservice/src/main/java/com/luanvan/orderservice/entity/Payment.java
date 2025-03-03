@@ -5,35 +5,35 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "reviews" )
+@Table(name = "payments" )
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Review {
+public class Payment {
     @Id
     private String id;
 
-    @Column(name = "rating")
-    private Integer rating;
+    @Column(name = "transaction_id")
+    private String transactionId;
 
-    @Column(name = "comment", columnDefinition = "TEXT")
-    private String comment;
+    @Column(name = "payment_method")
+    private String paymentMethod;
 
-    @Builder.Default
-    @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private Boolean isActive = true;
+    @Column(name = "total_amount")
+    private BigDecimal totalAmount;
 
-    @OneToOne
-    @JoinColumn(name = "order_detail_id", nullable = false)
-    private OrderDetail orderDetail;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private PaymentStatus status;
 
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @OneToOne(mappedBy = "payment")
+    private Order order;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

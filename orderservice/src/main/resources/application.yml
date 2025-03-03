@@ -37,3 +37,39 @@ logging:
     org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
     org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
     org.springframework: ERROR                    # Kiểm soát log của Spring
+
+payment:
+  vnpay:
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    hashSecret: MQN1ZKF963OHI8TZ9MJUB7IGJE9OSZP5
+    tmnCode: 03ECV6B1
+    returnUrl: http://localhost:8080/api/v1/orders/vnpay-callback
+    query:
+      endpoint: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction?vnp_Command=querydr
+    refund:
+      endpoint: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction?vnp_Command=refund
+    version: 2.1.0
+    orderType: other
+  zalopay:
+    appid: 554
+    key1: 8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn
+    key2: uUfsWgfLkRLzq6W2uNXTCxrfxs51auny
+    callback: http://localhost:8080/api/v1/orders/zalopay-callback
+    returnUrl: http://localhost:3000/payment-result?status=%s&orderId=%s
+    create:
+      endpoint: https://sandbox.zalopay.com.vn/v001/tpe/createorder
+    query:
+      endpoint: https://sandbox.zalopay.com.vn/v001/tpe/getstatusbyapptransid
+    refund:
+      endpoint: https://sandbox.zalopay.com.vn/v001/tpe/partialrefund
+ghtk:
+  production:
+    api:
+      url:
+        create: https://services.giaohangtietkiem.vn/services/shipment/order
+        cancel: https://services.giaohangtietkiem.vn/services/shipment/cancel
+        status: https://services.giaohangtietkiem.vn/services/shipment/v2
+        label: https://services.giaohangtietkiem.vn/services/label
+        fee: https://services.giaohangtietkiem.vn/services/shipment/fee
+      token: 186BjTm18OSmkbCzz0HJVYV3j0UUtafYk2taARP
+      secret: BOG5qzCJ/vbbJK/YEUlR9CAuk6xrxXVRqATbSKjyQfm7c1XVuVKl1mSuzaA2vHSU

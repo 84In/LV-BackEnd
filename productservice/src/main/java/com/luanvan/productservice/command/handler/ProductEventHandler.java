@@ -2,9 +2,11 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.event.ProductRollBackStockEvent;
 import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
 import com.luanvan.productservice.command.event.ProductCreateEvent;
 import com.luanvan.productservice.command.event.ProductUpdateEvent;
+import com.luanvan.productservice.command.event.ProductUpdateStockEvent;
 import com.luanvan.productservice.entity.*;
 import com.luanvan.productservice.repository.*;
 import jakarta.transaction.Transactional;
@@ -202,10 +204,58 @@ public class ProductEventHandler {
     }
 
     @EventHandler
-    public void on(ProductChangeStatusEvent event){
+    public void on(ProductChangeStatusEvent event) {
         var product = productRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         product.setIsActive(event.getIsActive());
+        productRepository.save(product);
+    }
+
+    @EventHandler
+    public void on(ProductUpdateStockEvent event) {
+        var product = productRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+
+        var productVariant = product.getProductColors().stream()
+                .filter(pc -> pc.getColor().getId().equals(event.getColorId()))
+                .flatMap(pc -> pc.getProductVariants().stream())
+                .filter(pv -> pv.getSize().getId().equals(event.getSizeId()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
+        if(event.getQuantity() > productVariant.getStock()){
+            throw new AppException(ErrorCode.PRODUCT_OUT_OF_STOCK);
+        }
+        // Cập nhật stock và sold
+        int quantity = event.getQuantity();
+        int updatedStock = productVariant.getStock() - quantity;
+        int updatedSold = productVariant.getSold() + quantity;
+
+        productVariant.setStock(updatedStock);
+        productVariant.setSold(updatedSold);
+
+        productRepository.save(product);
+    }
+
+    @EventHandler
+    public void on(ProductRollBackStockEvent event) {
+        var product = productRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+
+        var productVariant = product.getProductColors().stream()
+                .filter(pc -> pc.getColor().getId().equals(event.getColorId()))
+                .flatMap(pc -> pc.getProductVariants().stream())
+                .filter(pv -> pv.getSize().getId().equals(event.getSizeId()))
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
+
+        // Cập nhật stock và sold
+        int quantity = event.getQuantity();
+        int updatedStock = productVariant.getStock() + quantity;
+        int updatedSold = productVariant.getSold() - quantity;
+
+        productVariant.setStock(updatedStock);
+        productVariant.setSold(updatedSold);
+
         productRepository.save(product);
     }
 

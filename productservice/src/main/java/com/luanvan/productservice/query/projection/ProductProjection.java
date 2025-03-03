@@ -232,7 +232,6 @@ public class ProductProjection {
                 .build();
     }
 
-
     @QueryHandler
     public ProductResponseModel handle(GetProductQuery queryParams) {
         log.info("Get products detail with query, filter");
