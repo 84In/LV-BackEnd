@@ -1,7 +1,13 @@
 package com.luanvan.userservice.command.aggregate;
 
+import com.luanvan.userservice.command.command.ChangeDefaultAddressCommand;
 import com.luanvan.userservice.command.command.CreateAddressCommand;
+import com.luanvan.userservice.command.command.RemoveAddressCommand;
+import com.luanvan.userservice.command.command.UpdateAddressCommand;
+import com.luanvan.userservice.command.event.AddressChangeDefaultEvent;
 import com.luanvan.userservice.command.event.AddressCreatedEvent;
+import com.luanvan.userservice.command.event.AddressRemoveEvent;
+import com.luanvan.userservice.command.event.AddressUpdatedEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -36,6 +42,30 @@ public class AddressAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(UpdateAddressCommand command) {
+        AddressUpdatedEvent event = new AddressUpdatedEvent();
+        BeanUtils.copyProperties(command, event);
+        log.info("AddressUpdatedEvent: {}",event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void hanle(ChangeDefaultAddressCommand command) {
+        AddressChangeDefaultEvent event = new AddressChangeDefaultEvent();
+        BeanUtils.copyProperties(command, event);
+        log.info("AddressChangeDefaultEvent: {}",event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void hanle(RemoveAddressCommand command) {
+        AddressRemoveEvent event = new AddressRemoveEvent();
+        BeanUtils.copyProperties(command, event);
+        log.info("AddressRemoveEvent: {}",event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(AddressCreatedEvent event) {
         this.id = event.getId();
@@ -47,5 +77,30 @@ public class AddressAggregate {
         this.wardId = event.getWardId();
         this.userId = event.getUserId();
         this.isDefault = event.getIsDefault();
+    }
+
+    @EventSourcingHandler
+    public void on(AddressUpdatedEvent event) {
+        this.id = event.getId();
+        this.isActive = event.getIsActive();
+        this.phone = event.getPhone();
+        this.houseNumberAndStreet = event.getHouseNumberAndStreet();
+        this.provinceId = event.getProvinceId();
+        this.districtId = event.getDistrictId();
+        this.wardId = event.getWardId();
+        this.userId = event.getUserId();
+        this.isDefault = event.getIsDefault();
+    }
+
+    @EventSourcingHandler
+    public void on(AddressChangeDefaultEvent event){
+        this.id = event.getId();
+        this.userId = event.getUserId();
+    }
+
+    @EventSourcingHandler
+    public void on(AddressRemoveEvent event){
+        this.id = event.getId();
+        this.userId = event.getUserId();
     }
 }

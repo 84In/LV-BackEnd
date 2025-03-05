@@ -4,7 +4,6 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.userservice.command.command.*;
 import com.luanvan.userservice.command.model.UserChangePasswordModel;
-import com.luanvan.userservice.command.command.*;
 import com.luanvan.userservice.command.model.UserChangeStatusModel;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.model.UserUpdateModel;

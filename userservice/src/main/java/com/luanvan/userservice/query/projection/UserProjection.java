@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -139,23 +140,28 @@ public class UserProjection {
 
         // Mapping UserAddressResponse
         userResponseModel.setAddresses(user.getAddresses().stream().map(userAddress -> {
-            UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
-            userAddressResponse.setAddressId(userAddress.getId().getAddressId());
-            userAddressResponse.setUserId(userAddress.getId().getUserId());
 
-            // Lấy thông tin từ Address và mapping vào UserAddressResponse
-            Address address = userAddress.getAddress();
-            userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
-            userAddressResponse.setAddressPhone(address.getPhone());
-            userAddressResponse.setProvinceName(address.getProvince().getName());
-            userAddressResponse.setDistrictName(address.getDistrict().getName());
-            userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
-            userAddressResponse.setDefault(userAddress.isDefault());
-            userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
-            userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
 
-            return userAddressResponse;
-        }).collect(Collectors.toList())); // Thu thập thành danh sách
+            if (userAddress.getAddress().getIsActive() == true) {
+                UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
+                userAddressResponse.setAddressId(userAddress.getId().getAddressId());
+                userAddressResponse.setUserId(userAddress.getId().getUserId());
+
+                // Lấy thông tin từ Address và mapping vào UserAddressResponse
+                Address address = userAddress.getAddress();
+                userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+                userAddressResponse.setAddressPhone(address.getPhone());
+                userAddressResponse.setProvinceName(address.getProvince().getName());
+                userAddressResponse.setDistrictName(address.getDistrict().getName());
+                userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+                userAddressResponse.setDefault(userAddress.isDefault());
+                userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
+                userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
+                return userAddressResponse;
+            }
+
+            return null;
+        }) .filter(Objects::nonNull).collect(Collectors.toList())); // Thu thập thành danh sách bỏ qua các giá trị not active
 
         // Mapping thời gian tạo và cập nhật
         userResponseModel.setCreatedAt(user.getCreatedAt());
