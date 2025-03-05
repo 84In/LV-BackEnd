@@ -5,10 +5,7 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.commonservice.queries.GetUserQuery;
-import com.luanvan.userservice.query.model.CartResponseModel;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
-import com.luanvan.userservice.query.queries.GetCartQuery;
-import com.luanvan.userservice.query.queries.GetUserDetailQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
@@ -36,14 +33,14 @@ public class UserQueryController {
 
     @GetMapping
     public ApiResponse<Page<UserResponseModel>> getAllUsers(
-            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+            @PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
         String sortBy = "createdAt";
         Sort.Direction sortDirection = Sort.Direction.DESC;
 
-        if (pageable.getSort().isSorted()){
+        if (pageable.getSort().isSorted()) {
             Sort.Order order = pageable.getSort().get().findFirst().orElse(null);
-            if (order != null){
+            if (order != null) {
                 sortBy = order.getProperty();
                 sortDirection = order.getDirection();
             }
@@ -57,7 +54,9 @@ public class UserQueryController {
 
         List<UserResponseModel> response = queryGateway
                 .query(query, ResponseTypes.multipleInstancesOf(UserResponseModel.class))
-                .exceptionally((ex)->{throw  new AppException(ErrorCode.QUERY_ERROR);})
+                .exceptionally((ex) -> {
+                    throw new AppException(ErrorCode.QUERY_ERROR);
+                })
                 .join();
 
         Page<UserResponseModel> page = new PageImpl<UserResponseModel>(response, pageable, response.size());
@@ -72,7 +71,7 @@ public class UserQueryController {
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        GetUserDetailQuery query = new GetUserDetailQuery(username);
+        GetUserQuery query = new GetUserQuery(username);
 
         UserResponseModel response = queryGateway.query(query, ResponseTypes.instanceOf(UserResponseModel.class)).join();
 

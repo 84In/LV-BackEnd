@@ -1,17 +1,14 @@
-package com.luanvan.orderservice.command.command;
+package com.luanvan.orderservice.command.event;
 
 import lombok.*;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CancelledOrderCommand {
-    @TargetAggregateIdentifier
+public class OrderChangeStatusEvent {
     private String id;
+    private String orderStatus;
 }

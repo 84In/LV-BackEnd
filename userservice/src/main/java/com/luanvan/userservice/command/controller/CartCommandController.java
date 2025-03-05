@@ -43,4 +43,13 @@ public class CartCommandController {
                 .data(response)
                 .build();
     }
+
+    @DeleteMapping("/deleteAll/{cartId}")
+    public ApiResponse<?> deleteAll(@PathVariable String cartId) {
+
+        var response = cartCommandService.deleteAll(cartId);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
 }

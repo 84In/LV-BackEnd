@@ -35,7 +35,7 @@ public class Order {
     private Collection<OrderDetail> orderDetails;
 
     @ManyToOne
-    @JoinColumn(name = "order_status_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "order_status_id", referencedColumnName = "code_name", nullable = false)
     private OrderStatus orderStatus;
 
     @OneToOne(cascade = CascadeType.ALL)

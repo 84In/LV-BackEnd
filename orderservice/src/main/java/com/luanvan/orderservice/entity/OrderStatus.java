@@ -14,15 +14,10 @@ import java.util.Collection;
 @Builder
 public class OrderStatus {
     @Id
-    private String id;
-
-    @Column(name = "name")
-    private String name;
-
     @Column(name = "code_name")
     private String codeName;
 
-    @OneToMany(mappedBy = "orderStatus", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private Collection<Order> order;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
 }

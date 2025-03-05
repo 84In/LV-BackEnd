@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderStatusRepository extends JpaRepository<OrderStatus, String> {
-    OrderStatus findByCodeName(String pendingStatus);
 }

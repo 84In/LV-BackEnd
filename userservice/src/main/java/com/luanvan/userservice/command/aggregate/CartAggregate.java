@@ -88,6 +88,13 @@ public class CartAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(DeleteAllCartCommand command){
+        CartDeletedAllEvent event = new CartDeletedAllEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(CartEmptyCreatedEvent event) {
         this.id = event.getId();
@@ -119,5 +126,10 @@ public class CartAggregate {
     public void on(CartDeletedEvent event) {
         this.id = event.getId();
         this.cartDetailId = event.getCartDetailId();
+    }
+
+    @EventSourcingHandler
+    public void on(CartDeletedAllEvent event) {
+        this.id = event.getId();
     }
 }

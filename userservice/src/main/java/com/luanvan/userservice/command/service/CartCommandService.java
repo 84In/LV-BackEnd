@@ -4,10 +4,7 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
-import com.luanvan.userservice.command.command.AddToCartCommand;
-import com.luanvan.userservice.command.command.CreateCartCommand;
-import com.luanvan.userservice.command.command.DeleteCartCommand;
-import com.luanvan.userservice.command.command.UpdateCartCommand;
+import com.luanvan.userservice.command.command.*;
 import com.luanvan.userservice.command.model.CartCreateModel;
 import com.luanvan.userservice.command.model.CartDeleteModel;
 import com.luanvan.userservice.command.model.CartUpdateModel;
@@ -185,4 +182,14 @@ public class CartCommandService {
         return result;
     }
 
+    public HashMap<?, ?> deleteAll(String cartId) {
+        var cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
+        DeleteAllCartCommand command = DeleteAllCartCommand.builder()
+                .id(cart.getId())
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
 }

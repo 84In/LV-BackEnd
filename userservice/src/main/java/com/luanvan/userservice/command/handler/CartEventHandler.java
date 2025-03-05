@@ -267,4 +267,13 @@ public class CartEventHandler {
         cartRepository.save(cart);
     }
 
+    @EventHandler
+    public void on(CartDeletedAllEvent event){
+        log.info("Cart deleted all");
+
+        var cart = cartRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_EXISTED));
+        cart.getCartDetails().clear();
+        cartRepository.save(cart);
+    }
 }

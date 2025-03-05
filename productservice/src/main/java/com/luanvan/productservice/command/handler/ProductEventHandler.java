@@ -213,6 +213,7 @@ public class ProductEventHandler {
 
     @EventHandler
     public void on(ProductUpdateStockEvent event) {
+        log.info("ProductUpdateStockEvent for productId: {}", event.getId());
         var product = productRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
@@ -238,6 +239,7 @@ public class ProductEventHandler {
 
     @EventHandler
     public void on(ProductRollBackStockEvent event) {
+        log.info("ProductRollBackStockEvent for productId: {}", event.getId());
         var product = productRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
