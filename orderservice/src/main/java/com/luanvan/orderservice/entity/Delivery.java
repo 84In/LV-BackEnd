@@ -3,6 +3,7 @@ package com.luanvan.orderservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,6 +53,7 @@ public class Delivery {
     @Column(name = "start_date")
     private LocalDateTime startDate;
 
+    @UpdateTimestamp
     @Column(name = "end_date")
     private LocalDateTime endDate;
 

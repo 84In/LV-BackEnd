@@ -1,5 +1,7 @@
 package com.luanvan.userservice.query.projection;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.commonservice.model.response.RoleResponseModel;
 import com.luanvan.commonservice.model.response.UserAddressResponseModel;
@@ -7,7 +9,7 @@ import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
-import com.luanvan.userservice.query.queries.GetUserDetailQuery;
+import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
@@ -79,7 +81,8 @@ public class UserProjection {
 
     @QueryHandler
     public UserResponseModel handle(GetUserQuery query) {
-        User user = userRepository.findByUsername(query.getUsername()).orElseThrow(() -> new RuntimeException("Not found user"));
+        User user = userRepository.findByUsername(query.getUsername())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         UserResponseModel userResponseModel = new UserResponseModel();
         userResponseModel.setId(user.getId());
@@ -123,7 +126,8 @@ public class UserProjection {
 
     @QueryHandler
     public UserResponseModel handle(GetUserDetailQuery query) {
-        User user = userRepository.findByUsername(query.getUsername()).orElseThrow(() -> new RuntimeException("Not found user"));
+        User user = userRepository.findById(query.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         UserResponseModel userResponseModel = new UserResponseModel();
         userResponseModel.setId(user.getId());

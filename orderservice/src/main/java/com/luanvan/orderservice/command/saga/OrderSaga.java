@@ -2,16 +2,13 @@ package com.luanvan.orderservice.command.saga;
 
 import com.luanvan.commonservice.command.RollBackStockProductCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
-import com.luanvan.orderservice.command.command.CancelledOrderCommand;
+import com.luanvan.orderservice.command.command.ChangeStatusOrderCommand;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
-import com.luanvan.orderservice.repository.OrderDetailRepository;
-import com.luanvan.orderservice.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
-import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +19,7 @@ import java.util.List;
 @Saga
 public class OrderSaga {
     @Autowired
-    private CommandGateway commandGateway;
+    private transient CommandGateway commandGateway;
 
     //Danh sách các product update stock sold thành công
     private List<UpdateStockProductCommand> successfulUpdates = new ArrayList<>();
@@ -47,24 +44,27 @@ public class OrderSaga {
             SagaLifecycle.end();
         } catch (Exception e) {
             log.error("Error OrderCreateEvent: " + e.getMessage());
+
+            // Rollback lại stock cho sản phẩm
+            List<UpdateStockProductCommand> rollbackSuccessfulUpdates = new ArrayList<>(successfulUpdates);
+            for (UpdateStockProductCommand cmd : rollbackSuccessfulUpdates) {
+                RollBackStockProductCommand rollBackCmd = RollBackStockProductCommand.builder()
+                        .id(cmd.getId())
+                        .quantity(cmd.getQuantity())
+                        .colorId(cmd.getColorId())
+                        .sizeId(cmd.getSizeId())
+                        .build();
+                commandGateway.sendAndWait(rollBackCmd);
+            }
             rollBackOrder(event);
+            SagaLifecycle.end();
         }
     }
 
     private void rollBackOrder(OrderCreateEvent event) {
+        String cancelledStatus = "cancelled";
         log.info("Rollback order event: {}", event.getId());
-        List<UpdateStockProductCommand> rollbackSuccessfulUpdates = new ArrayList<>(successfulUpdates);
-        for (UpdateStockProductCommand cmd : rollbackSuccessfulUpdates) {
-            RollBackStockProductCommand rollBackCmd = RollBackStockProductCommand.builder()
-                    .id(cmd.getId())
-                    .quantity(cmd.getQuantity())
-                    .colorId(cmd.getColorId())
-                    .sizeId(cmd.getSizeId())
-                    .build();
-            commandGateway.sendAndWait(rollBackCmd);
-        }
-        CancelledOrderCommand command = new CancelledOrderCommand(event.getId());
+        ChangeStatusOrderCommand command = new ChangeStatusOrderCommand(event.getId(), cancelledStatus);
         commandGateway.sendAndWait(command);
-        SagaLifecycle.end();
     }
 }
