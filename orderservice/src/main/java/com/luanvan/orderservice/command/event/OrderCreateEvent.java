@@ -1,5 +1,6 @@
 package com.luanvan.orderservice.command.event;
 
+import com.luanvan.orderservice.entity.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -16,8 +17,22 @@ public class OrderCreateEvent {
     private BigDecimal totalPrice;
     private BigDecimal discountPrice;
     private String paymentMethod;
+    private Payment payment;
     private Delivery delivery;
     private List<OrderDetail> orderDetails;
+
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Payment{
+        private String id;
+        private String paymentMethod;
+        private BigDecimal totalAmount;
+        private PaymentStatus status;
+    }
 
     @Getter
     @Setter

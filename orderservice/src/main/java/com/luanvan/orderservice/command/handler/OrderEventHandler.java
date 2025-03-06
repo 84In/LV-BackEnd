@@ -64,12 +64,12 @@ public class OrderEventHandler {
                 .build();
         Order order;
 
-        if (!event.getPaymentMethod().equals("cash")) {
+        if (!event.getPaymentMethod().equals("cash") && event.getPayment() != null) {
             Payment payment = Payment.builder()
-                    .id(UUID.randomUUID().toString())
-                    .paymentMethod(event.getPaymentMethod())
-                    .totalAmount(event.getTotalPrice())
-                    .status(PaymentStatus.PENDING)
+                    .id(event.getPayment().getId())
+                    .paymentMethod(event.getPayment().getPaymentMethod())
+                    .totalAmount(event.getPayment().getTotalAmount())
+                    .status(event.getPayment().getStatus())
                     .build();
             order = Order.builder()
                     .id(event.getId())
@@ -165,7 +165,7 @@ public class OrderEventHandler {
         // Rollback tất cả stock cho sản phẩm
         for (OrderDetail orderDetail : order.getOrderDetails()) {
             RollBackStockProductCommand rollBackCmd = RollBackStockProductCommand.builder()
-                    .id(orderDetail.getId())
+                    .id(orderDetail.getProductId())
                     .quantity(orderDetail.getQuantity())
                     .colorId(orderDetail.getColorId())
                     .sizeId(orderDetail.getSizeId())

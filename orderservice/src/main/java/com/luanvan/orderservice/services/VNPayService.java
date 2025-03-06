@@ -191,17 +191,18 @@ public class VNPayService {
         // vnp_RequestId nên là duy nhất
         vnpParamsMap.put("vnp_RequestId", UUID.randomUUID().toString());
         vnpParamsMap.put("vnp_TxnRef", order.getId());
-        vnpParamsMap.put("vnp_Amount", String.valueOf(order.getPayment().getTotalAmount().multiply(BigDecimal.valueOf(100L))));
+        vnpParamsMap.put("vnp_Amount", String.valueOf(order.getPayment().getTotalAmount().multiply(BigDecimal.valueOf(100L)).longValue()));
         vnpParamsMap.put("vnp_OrderInfo", "Hoàn tiền cho đơn hàng: " + order.getId());
 
         // Sử dụng DateTimeFormatter cho LocalDateTime chuyển đổi sang GMT+7
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss")
+                .withZone(ZoneId.of("GMT+7"));
         ZonedDateTime zdt = order.getPayment().getCreatedAt()
                 .atZone(ZoneId.systemDefault())
                 .withZoneSameInstant(ZoneId.of("GMT+7"));
         String vnpTransactionDate = dtf.format(zdt);
         vnpParamsMap.put("vnp_TransactionDate", vnpTransactionDate);
-
+        vnpParamsMap.put("vnp_TransactionNo", order.getPayment().getTransactionId());
         vnpParamsMap.put("vnp_CreateBy", user.getUsername());
         vnpParamsMap.put("vnp_IpAddr", VNPayUtils.getIpAddress(request));
 

@@ -1,5 +1,6 @@
 package com.luanvan.orderservice.command.command;
 
+import com.luanvan.orderservice.entity.PaymentStatus;
 import lombok.*;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
@@ -18,8 +19,21 @@ public class CreateOrderCommand {
     private BigDecimal totalPrice;
     private BigDecimal discountPrice;
     private String paymentMethod;
+    private Payment payment;
     private Delivery delivery;
     private List<OrderDetail> orderDetails;
+
+    @Getter
+    @Setter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Payment{
+        private String id;
+        private String paymentMethod;
+        private BigDecimal totalAmount;
+        private PaymentStatus status;
+    }
 
     @Getter
     @Setter

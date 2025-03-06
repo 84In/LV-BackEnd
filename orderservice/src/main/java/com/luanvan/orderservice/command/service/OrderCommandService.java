@@ -92,7 +92,7 @@ public class OrderCommandService {
                     .paymentStatus(PaymentStatus.SUCCESS)
                     .build();
             commandGateway.sendAndWait(changePaymentStatusOrderCommand);
-            redirectUrl = clientUrl + "/checkout-result ?status=successful&orderId=" + order.getId();
+            redirectUrl = clientUrl + "/checkout-result?status=successful&orderId=" + order.getId();
             response.sendRedirect(redirectUrl);
         } else {
             String cancelledStatus = "cancelled";
@@ -203,6 +203,14 @@ public class OrderCommandService {
                                 .build()).collect(Collectors.toList())
                 )
                 .build();
+        if (!model.getPaymentMethod().equals("cash")) {
+            command.setPayment(CreateOrderCommand.Payment.builder()
+                    .id(UUID.randomUUID().toString())
+                    .paymentMethod(model.getPaymentMethod())
+                    .totalAmount(model.getTotalPrice())
+                    .status(PaymentStatus.PENDING)
+                    .build());
+        }
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         return result;

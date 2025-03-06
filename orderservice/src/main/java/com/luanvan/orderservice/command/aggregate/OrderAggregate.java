@@ -33,6 +33,7 @@ public class OrderAggregate {
     private String orderStatus;
     private String transactionId;
     private PaymentStatus paymentStatus;
+    private OrderCreateEvent.Payment paymentCreate;
     private OrderCreateEvent.Delivery deliveryCreate;
     private List<OrderCreateEvent.OrderDetail> orderDetailsCreate;
 
@@ -44,6 +45,15 @@ public class OrderAggregate {
                 .totalPrice(command.getTotalPrice())
                 .discountPrice(command.getDiscountPrice())
                 .paymentMethod(command.getPaymentMethod())
+                .payment(command.getPayment() == null
+                            ? null
+                            : OrderCreateEvent.Payment.builder()
+                        .id(command.getPayment().getId())
+                        .totalAmount(command.getPayment().getTotalAmount())
+                        .paymentMethod(command.getPayment().getPaymentMethod())
+                        .status(command.getPayment().getStatus())
+                        .build()
+                )
                 .delivery(OrderCreateEvent.Delivery.builder()
                         .id(command.getDelivery().getId())
                         .recipientName(command.getDelivery().getRecipientName())
@@ -98,6 +108,7 @@ public class OrderAggregate {
         this.totalPrice = event.getTotalPrice();
         this.discountPrice = event.getDiscountPrice();
         this.paymentMethod = event.getPaymentMethod();
+        this.paymentCreate = event.getPayment();
         this.deliveryCreate = event.getDelivery();
         this.orderDetailsCreate = event.getOrderDetails();
     }
