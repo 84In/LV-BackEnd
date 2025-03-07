@@ -1,5 +1,7 @@
 package com.luanvan.userservice.dto;
 
+import com.luanvan.userservice.entity.District;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ProvinceResponseModel {
+public class WardResponseModel {
 
     private Integer id;
     private String codeName;

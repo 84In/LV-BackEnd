@@ -2,13 +2,15 @@ package com.luanvan.userservice.dto;
 
 import lombok.*;
 
-@Setter
 @Getter
+@Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProvinceRequestModel {
-    private Integer code;
-    private String name;
+@ToString
+public class DistrictResponseModel {
+    private Integer id;
     private String codeName;
+    private String name;
     private String divisionType;
 }

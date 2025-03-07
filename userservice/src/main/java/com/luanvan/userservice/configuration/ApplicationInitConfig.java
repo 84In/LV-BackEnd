@@ -1,13 +1,16 @@
 package com.luanvan.userservice.configuration;
 
+import com.luanvan.userservice.command.command.CreateUserCommand;
 import com.luanvan.userservice.service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.InputStream;
+import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,6 +33,26 @@ public class ApplicationInitConfig {
                 log.error("❌ File dataLocation.json not found");
             }
             log.info("✅ Data Viet Nam location is successfully initialized!");
+        };
+    }
+
+    @Bean
+    ApplicationRunner addDefaultUsers(CommandGateway commandGateway) {
+        return args -> {
+            CreateUserCommand createUserCommand = new CreateUserCommand(
+                    UUID.randomUUID().toString(),
+                    "admin",
+                    "admin123",
+                    true,
+                    "Vanoushop@gmail.com",
+                    "1800108123",
+                    "admin",
+                    "admin",
+                    "admin"
+            );
+            commandGateway.send(createUserCommand);
+            log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",createUserCommand.getPassword());
+            log.info("Command create admin: {}",createUserCommand.getId());
         };
     }
 
