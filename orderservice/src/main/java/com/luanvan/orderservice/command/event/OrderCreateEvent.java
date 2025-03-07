@@ -21,7 +21,6 @@ public class OrderCreateEvent {
     private Delivery delivery;
     private List<OrderDetail> orderDetails;
 
-
     @Getter
     @Setter
     @Builder

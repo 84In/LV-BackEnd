@@ -19,14 +19,15 @@ public class Delivery {
     @Id
     private String id;
 
-    @Column(name = "carrier_name")
-    private String carrierName;
-
-    @Column(name = "tracking_code")
-    private String trackingCode;
-
-    @Column(name = "shipping_cost")
-    private BigDecimal shippingCost;
+//    Tạm ẩn vì chưa được sử dụng
+//    @Column(name = "carrier_name")
+//    private String carrierName;
+//
+//    @Column(name = "tracking_code")
+//    private String trackingCode;
+//
+//    @Column(name = "shipping_cost")
+//    private BigDecimal shippingCost;
 
     @Column(name = "recipent_name")
     private String recipientName;

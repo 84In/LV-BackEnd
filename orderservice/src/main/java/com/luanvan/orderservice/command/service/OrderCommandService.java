@@ -78,6 +78,7 @@ public class OrderCommandService {
     }
 
     public void vnPayCallBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        log.info("VNPay callback");
         String vnpResponseCode = request.getParameter("vnp_ResponseCode");
         String vnpTxnRef = request.getParameter("vnp_TxnRef");
         String vnpTransactionNo = request.getParameter("vnp_TransactionNo");
