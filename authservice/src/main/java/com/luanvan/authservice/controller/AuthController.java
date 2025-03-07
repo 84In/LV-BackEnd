@@ -96,10 +96,13 @@ public class AuthController {
 
         String accessToken = jwtUtil.generateToken(username, claims, false);
 
+        Map<String, String> result = new HashMap<>();
+        result.put("accessToken", accessToken);
+
         return ApiResponse.builder()
                 .code(0)
                 .message("Refresh success")
-                .data(Map.of("accessToken", accessToken))
+                .data(result)
                 .build();
     }
 

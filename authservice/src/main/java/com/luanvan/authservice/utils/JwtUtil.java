@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.xml.crypto.AlgorithmMethod;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
@@ -75,7 +76,11 @@ public class JwtUtil {
         try {
             Claims claims = extractClaims(token);
             String issuer = claims.getIssuer(); // Lấy giá trị "iss"
-
+            Instant now = Instant.now();
+            Instant exp = claims.getExpiration().toInstant();
+            if (now.isAfter(exp)) {
+                return false;
+            }
             // Kiểm tra issuer có hợp lệ không
             if (!this.issuer.equals(issuer)) {
                 return false;
