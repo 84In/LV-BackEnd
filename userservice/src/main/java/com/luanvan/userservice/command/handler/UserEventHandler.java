@@ -70,8 +70,6 @@ public class UserEventHandler {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-
-            Optional.ofNullable(event.getUsername()).ifPresent(user::setUsername);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);

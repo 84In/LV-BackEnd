@@ -88,7 +88,6 @@ public class UserAggregate {
     @EventSourcingHandler
     public void on(UserUpdatedEvent event) {
         this.id = event.getId();
-        this.username = event.getUsername();
         this.email = event.getEmail();
         this.phone = event.getPhone();
         this.lastName = event.getLastName();
