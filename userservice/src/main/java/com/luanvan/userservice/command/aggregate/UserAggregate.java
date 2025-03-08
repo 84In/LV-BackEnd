@@ -81,7 +81,7 @@ public class UserAggregate {
         this.firstName = event.getFirstName();
         this.roleName = event.getRoleName();
 
-        log.info("UserCreatedEventSourcingHandler: {}", event);
+        log.info("UserCreatedEventSourcingHandler id: {}", event.getId());
 
     }
 

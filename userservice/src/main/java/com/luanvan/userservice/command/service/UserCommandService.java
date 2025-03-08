@@ -51,7 +51,7 @@ public class UserCommandService {
                 model.getPassword(),
                 true,
                 model.getEmail(),
-                model.getPhone(),
+           null,
                 model.getLastName(),
                 model.getFirstName(),
                 model.getRoleName());
@@ -60,7 +60,7 @@ public class UserCommandService {
                 .id(UUID.randomUUID().toString())
                 .username(model.getUsername())
                 .build();
-        log.info("Send command create user: {}", command);
+        log.info("Send command create user id: {}, username: {}", command.getId(),command.getUsername());
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         commandGateway.sendAndWait(cartCommand);

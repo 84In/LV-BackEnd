@@ -7,10 +7,10 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 jwt:
   secret: "YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg="
-  #expiration: 3600000  # 1 giờ (Access Token)
-  expiration: 60000  # 1 phút (Access Token)
+  expiration: 3600000  # 1 giờ (Access Token)
+  #expiration: 60000  # 1 phút (Access Token)
   refresh-expiration: 604800000  # 7 ngày (Refresh Token)
-  issuer: http://localhost:9009/api/v1/auth
+  issuer: http://localhost:8080/api/v1/auth
   permitted-urls:
     - "/**"
     - "/api/v1/auth/login"
