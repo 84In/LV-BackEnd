@@ -22,9 +22,6 @@ public class Payment {
     @Column(name = "transaction_id")
     private String transactionId;
 
-    @Column(name = "payment_method")
-    private String paymentMethod;
-
     @Column(name = "total_amount")
     private BigDecimal totalAmount;
 

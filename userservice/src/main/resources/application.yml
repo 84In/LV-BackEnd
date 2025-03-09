@@ -6,6 +6,18 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
+axon:
+  eventhandling:
+    processors:
+      default:
+        mode: tracking
+        token-store:
+          type: jdbc   # Lưu trạng thái vào database
+        retry-max-attempts: 3
+        retry-exponential-backoff:
+          initial-interval: 1000  # Lần đầu retry sau 1s
+          max-interval: 60000     # Giới hạn tối đa 60s
+          multiplier: 2.0         # Tăng dần thời gian retry (1s, 2s, 4s, ...)
 
 
 #Dataconfig

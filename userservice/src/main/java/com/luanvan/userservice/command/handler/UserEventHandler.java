@@ -36,6 +36,14 @@ public class UserEventHandler {
     public void on(UserCreatedEvent event) {
         try {
             log.info("User created user event handler");
+            if (userRepository.existsByUsername(event.getUsername())) {
+                log.warn("User '{}' already exists, skipping event processing", event.getUsername());
+                return; // Bỏ qua sự kiện nếu user đã tồn tại
+            }
+            if (userRepository.existsByEmail(event.getEmail())) {
+                log.warn("User '{}' already exists, skipping event processing", event.getEmail());
+                return; // Bỏ qua sự kiện nếu user đã tồn tại
+            }
 
             Role role = roleRepository.findByName(event.getRoleName());
             log.info("User created role event handler");
@@ -50,7 +58,7 @@ public class UserEventHandler {
             user.setActive(event.getActive());
             user.setRole(role);
             userRepository.save(user);
-            log.info("User created successfully");
+            log.info("User created successfully {}",user.getUsername());
         } catch (Exception e) {
             log.info(e.getMessage());
         }
@@ -62,8 +70,6 @@ public class UserEventHandler {
             User user = userRepository.findById(event.getId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-
-            Optional.ofNullable(event.getUsername()).ifPresent(user::setUsername);
             Optional.ofNullable(event.getEmail()).ifPresent(user::setEmail);
             Optional.ofNullable(event.getPhone()).ifPresent(user::setPhone);
             Optional.ofNullable(event.getFirstName()).ifPresent(user::setFirstName);

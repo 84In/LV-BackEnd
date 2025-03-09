@@ -30,7 +30,6 @@ public class CreateOrderCommand {
     @AllArgsConstructor
     public static class Payment{
         private String id;
-        private String paymentMethod;
         private BigDecimal totalAmount;
         private PaymentStatus status;
     }

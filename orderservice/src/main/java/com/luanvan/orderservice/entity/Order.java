@@ -28,6 +28,9 @@ public class Order {
     @Column(name = "discount_price")
     private BigDecimal discountPrice = BigDecimal.ZERO;
 
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
     @Column(name = "user_id", nullable = false)
     private String userId;
 

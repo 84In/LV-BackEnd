@@ -51,7 +51,7 @@ public class UserCommandService {
                 model.getPassword(),
                 true,
                 model.getEmail(),
-                model.getPhone(),
+           null,
                 model.getLastName(),
                 model.getFirstName(),
                 model.getRoleName());
@@ -60,7 +60,7 @@ public class UserCommandService {
                 .id(UUID.randomUUID().toString())
                 .username(model.getUsername())
                 .build();
-        log.info("Send command create user: {}", command);
+        log.info("Send command create user id: {}, username: {}", command.getId(),command.getUsername());
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         commandGateway.sendAndWait(cartCommand);
@@ -73,12 +73,13 @@ public class UserCommandService {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
 
-        if (!model.getUsername().isEmpty() && userRepository.existsByUsername(model.getUsername())) {
-            throw new AppException(ErrorCode.USERNAME_EXISTED);
-        }
-
-        if(!model.getEmail().isEmpty() && userRepository.existsByEmail(model.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        if(!model.getEmail().isEmpty()) {
+            User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            if(!user.getEmail().equals(model.getEmail())) {
+                if(userRepository.existsByEmail(model.getEmail())) {
+                    throw new AppException(ErrorCode.EMAIL_EXISTED);
+                }
+            }
         }
 
         if(!model.getRoleName().isEmpty() && !roleRepository.existsById(model.getRoleName())) {
@@ -88,14 +89,13 @@ public class UserCommandService {
 
         UpdateUserCommand command = new UpdateUserCommand(
                 userId,
-                model.getUsername(),
                 model.getEmail(),
                 model.getPhone(),
                 model.getLastName(),
                 model.getFirstName(),
                 model.getRoleName()
         );
-        log.info("Send command update user: {}", command);
+        log.info("Send command update user id: {}", command.getId());
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
         return result;

@@ -81,14 +81,13 @@ public class UserAggregate {
         this.firstName = event.getFirstName();
         this.roleName = event.getRoleName();
 
-        log.info("UserCreatedEventSourcingHandler: {}", event);
+        log.info("UserCreatedEventSourcingHandler id: {}", event.getId());
 
     }
 
     @EventSourcingHandler
     public void on(UserUpdatedEvent event) {
         this.id = event.getId();
-        this.username = event.getUsername();
         this.email = event.getEmail();
         this.phone = event.getPhone();
         this.lastName = event.getLastName();

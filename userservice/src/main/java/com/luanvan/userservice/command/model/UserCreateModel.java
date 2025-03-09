@@ -25,10 +25,6 @@ public class UserCreateModel {
     @Email(message = "Email không hợp lệ")
     private String email;
 
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "^(0[3-9][0-9]{8})$", message = "Số điện thoại không hợp lệ")
-    private String phone;
-
     @NotBlank(message = "Họ không được để trống")
     private String lastName;
 

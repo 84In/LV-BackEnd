@@ -1,6 +1,7 @@
 package com.luanvan.userservice.configuration;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
+import com.luanvan.userservice.repository.UserRepository;
 import com.luanvan.userservice.service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,22 +38,25 @@ public class ApplicationInitConfig {
     }
 
     @Bean
-    ApplicationRunner addDefaultUsers(CommandGateway commandGateway) {
+    ApplicationRunner addDefaultUsers(CommandGateway commandGateway, UserRepository userRepository) {
         return args -> {
-            CreateUserCommand createUserCommand = new CreateUserCommand(
-                    UUID.randomUUID().toString(),
-                    "admin",
-                    "admin123",
-                    true,
-                    "Vanoushop@gmail.com",
-                    "1800108123",
-                    "admin",
-                    "admin",
-                    "admin"
-            );
-            commandGateway.send(createUserCommand);
-            log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",createUserCommand.getPassword());
-            log.info("Command create admin: {}",createUserCommand.getId());
+
+            if (!userRepository.existsByUsername("admin")) {
+                CreateUserCommand createUserCommand = new CreateUserCommand(
+                        UUID.randomUUID().toString(),
+                        "admin",
+                        "admin123",
+                        true,
+                        "Vanoushop@gmail.com",
+                        "1800108123",
+                        "admin",
+                        "admin",
+                        "admin"
+                );
+                commandGateway.send(createUserCommand);
+                log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",createUserCommand.getPassword());
+                log.info("Command create admin: {}",createUserCommand.getId());
+            }
         };
     }
 

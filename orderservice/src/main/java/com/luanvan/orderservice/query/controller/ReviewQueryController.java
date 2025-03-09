@@ -4,10 +4,7 @@ package com.luanvan.orderservice.query.controller;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
-import com.luanvan.orderservice.query.model.OrderResponseModel;
-import com.luanvan.orderservice.query.model.PageOrderResponse;
-import com.luanvan.orderservice.query.model.PageReviewResponse;
-import com.luanvan.orderservice.query.model.ReviewResponseModel;
+import com.luanvan.orderservice.query.model.*;
 import com.luanvan.orderservice.query.queries.*;
 import com.luanvan.orderservice.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +39,7 @@ public class ReviewQueryController {
     }
 
     @GetMapping
-    public ApiResponse<Page<ReviewResponseModel>> getProductAllReview(
+    public ApiResponse<PageReviewResponseModel> getProductAllReview(
             @RequestParam(defaultValue = "", required = false) String productId,
             @RequestParam(required = false) Integer rating,
             @RequestParam(defaultValue = "0") int pageNumber,
@@ -55,8 +52,13 @@ public class ReviewQueryController {
                     throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);
                 })
                 .join();
-        Page<ReviewResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
-        return ApiResponse.<Page<ReviewResponseModel>>builder()
+        Page<ReviewResponseModel> page = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
+        var pageResponse = PageReviewResponseModel.builder()
+                .averageRating(response.getAverageRating())
+                .totalReviews(response.getTotalElements())
+                .reviews(page)
+                .build();
+        return ApiResponse.<PageReviewResponseModel>builder()
                 .data(pageResponse)
                 .build();
     }

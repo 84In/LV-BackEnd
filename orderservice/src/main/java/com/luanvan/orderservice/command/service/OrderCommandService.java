@@ -134,7 +134,7 @@ public class OrderCommandService {
 
         // Refund Payment
         if (order.getPayment() != null && order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)) {
-            if (order.getPayment().getPaymentMethod().equals("vnpay")) {
+            if (order.getPaymentMethod().equals("vnpay")) {
                 Boolean response = vnPayService.refundVNPay(request, order);
                 if (response != Boolean.TRUE) {
                     throw new AppException(ErrorCode.PAYMENT_CANNOT_REFUND_VNPAY);
@@ -207,7 +207,6 @@ public class OrderCommandService {
         if (!model.getPaymentMethod().equals("cash")) {
             command.setPayment(CreateOrderCommand.Payment.builder()
                     .id(UUID.randomUUID().toString())
-                    .paymentMethod(model.getPaymentMethod())
                     .totalAmount(model.getTotalPrice())
                     .status(PaymentStatus.PENDING)
                     .build());

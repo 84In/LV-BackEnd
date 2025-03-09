@@ -50,7 +50,6 @@ public class OrderAggregate {
                             : OrderCreateEvent.Payment.builder()
                         .id(command.getPayment().getId())
                         .totalAmount(command.getPayment().getTotalAmount())
-                        .paymentMethod(command.getPayment().getPaymentMethod())
                         .status(command.getPayment().getStatus())
                         .build()
                 )

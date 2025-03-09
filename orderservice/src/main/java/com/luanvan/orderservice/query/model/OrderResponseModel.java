@@ -22,6 +22,7 @@ public class OrderResponseModel {
     private String id;
     private BigDecimal totalPrice;
     private BigDecimal discountPrice;
+    private String paymentMethod;
     private String userId;
     private Collection<OrderDetailResponse> orderDetails;
     private OrderStatus orderStatus;
@@ -54,7 +55,6 @@ public class OrderResponseModel {
     public static class Payment{
         private String id;
         private String transactionId;
-        private String paymentMethod;
         private BigDecimal totalAmount;
         private PaymentStatus status;
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
