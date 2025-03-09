@@ -52,7 +52,11 @@ public class OrderQueryController {
             @RequestParam(defaultValue = "") String sorts
     ) {
         GetUserOrderQuery query = new GetUserOrderQuery(userId, status, pageNumber, pageSize, sorts);
-        PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class)).join();
+        PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class))
+                .exceptionally((ex) -> {
+                    throw new AppException(ErrorCode.ORDER_NOT_EXISTED);
+                })
+                .join();
         Page<OrderResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
         return ApiResponse.<Page<OrderResponseModel>>builder()
                 .data(pageResponse)

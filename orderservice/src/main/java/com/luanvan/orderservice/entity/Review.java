@@ -1,6 +1,9 @@
 package com.luanvan.orderservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,6 +21,9 @@ public class Review {
     @Id
     private String id;
 
+    @NotNull(message = "Rating không được để trống")
+    @Min(value = 1, message = "Rating phải từ 1 đến 5")
+    @Max(value = 5, message = "Rating phải từ 1 đến 5")
     @Column(name = "rating")
     private Integer rating;
 
@@ -34,6 +40,9 @@ public class Review {
 
     @Column(name = "user_id", nullable = false)
     private String userId;
+
+    @Column(name = "product_id", nullable = false)
+    private String productId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
