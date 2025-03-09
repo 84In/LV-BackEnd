@@ -67,7 +67,6 @@ public class OrderEventHandler {
         if (!event.getPaymentMethod().equals("cash") && event.getPayment() != null) {
             Payment payment = Payment.builder()
                     .id(event.getPayment().getId())
-                    .paymentMethod(event.getPayment().getPaymentMethod())
                     .totalAmount(event.getPayment().getTotalAmount())
                     .status(event.getPayment().getStatus())
                     .build();
@@ -76,6 +75,7 @@ public class OrderEventHandler {
                     .userId(user.getId())
                     .totalPrice(event.getTotalPrice())
                     .discountPrice(event.getDiscountPrice())
+                    .paymentMethod(event.getPaymentMethod())
                     .payment(payment)
                     .orderStatus(orderStatusRepository.findById(confirmedStatus).get())
                     .delivery(delivery)
@@ -86,6 +86,7 @@ public class OrderEventHandler {
                     .userId(user.getId())
                     .totalPrice(event.getTotalPrice())
                     .discountPrice(event.getDiscountPrice())
+                    .paymentMethod(event.getPaymentMethod())
                     .orderStatus(orderStatusRepository.findById(confirmedStatus).get())
                     .delivery(delivery)
                     .build();
@@ -151,7 +152,7 @@ public class OrderEventHandler {
     @EventHandler
     @Transactional
     public void handle(OrderCancelEvent event) {
-        log.info("OrderChangeStatusEvent: " + event.getId());
+        log.info("OrderCancelEvent: " + event.getId());
         String cancelledStatus = "cancelled";
 
         // Chuyển order thành cancelled

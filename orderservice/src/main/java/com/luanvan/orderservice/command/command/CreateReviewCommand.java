@@ -1,6 +1,5 @@
 package com.luanvan.orderservice.command.command;
 
-import com.luanvan.commonservice.entity.PaymentStatus;
 import lombok.*;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 
@@ -9,9 +8,12 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChangePaymentStatusOrderCommand {
+public class CreateReviewCommand {
     @TargetAggregateIdentifier
     private String id;
-    private String transactionId;
-    private PaymentStatus paymentStatus;
+    private Integer rating;
+    private String comment;
+    private String userId;
+    private String orderDetailId;
+    private String productId;
 }

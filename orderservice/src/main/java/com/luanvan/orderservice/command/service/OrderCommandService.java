@@ -3,6 +3,8 @@ package com.luanvan.orderservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.command.SendConfirmedOrderMailCommand;
+import com.luanvan.commonservice.entity.PaymentStatus;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
@@ -16,7 +18,6 @@ import com.luanvan.orderservice.command.model.OrderChangeStatusModel;
 import com.luanvan.orderservice.command.model.OrderCreateModel;
 import com.luanvan.orderservice.command.model.PaymentUrlResponse;
 import com.luanvan.orderservice.entity.Order;
-import com.luanvan.orderservice.entity.PaymentStatus;
 import com.luanvan.orderservice.repository.OrderRepository;
 import com.luanvan.orderservice.services.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -50,6 +52,8 @@ public class OrderCommandService {
     private OrderRepository orderRepository;
     @Autowired
     private VNPayService vnPayService;
+    @Autowired
+    private KafkaTemplate<String, SendConfirmedOrderMailCommand> kafkaTemplate;
 
     public HashMap<?, ?> createWithCash(OrderCreateModel model) {
         log.info("Create order command service with cash for username: {}", model.getUsername());
@@ -134,7 +138,7 @@ public class OrderCommandService {
 
         // Refund Payment
         if (order.getPayment() != null && order.getPayment().getStatus().equals(PaymentStatus.SUCCESS)) {
-            if (order.getPayment().getPaymentMethod().equals("vnpay")) {
+            if (order.getPaymentMethod().equals("vnpay")) {
                 Boolean response = vnPayService.refundVNPay(request, order);
                 if (response != Boolean.TRUE) {
                     throw new AppException(ErrorCode.PAYMENT_CANNOT_REFUND_VNPAY);
@@ -207,13 +211,22 @@ public class OrderCommandService {
         if (!model.getPaymentMethod().equals("cash")) {
             command.setPayment(CreateOrderCommand.Payment.builder()
                     .id(UUID.randomUUID().toString())
-                    .paymentMethod(model.getPaymentMethod())
                     .totalAmount(model.getTotalPrice())
                     .status(PaymentStatus.PENDING)
                     .build());
         }
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
+
+        // Gửi mail cho người dùng khi tạo đơn hàng thành công
+        if (result.get("id") != null) {
+            log.info("Send confirmed order mail for username: {}", model.getUsername());
+            var sendMailCommand = SendConfirmedOrderMailCommand.builder()
+                    .username(model.getUsername())
+                    .orderId(String.valueOf(result.get("id")))
+                    .build();
+            kafkaTemplate.send("send-confirmed-order-mail-topic", sendMailCommand);
+        }
         return result;
     }
 }

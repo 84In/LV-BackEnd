@@ -2,22 +2,19 @@ package com.luanvan.orderservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.response.ProductResponseModel;
-import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.orderservice.entity.Order;
-import com.luanvan.orderservice.entity.OrderDetail;
 import com.luanvan.orderservice.entity.OrderStatus;
-import com.luanvan.orderservice.query.model.OrderResponseModel;
+import com.luanvan.orderservice.mapper.OrderMapper;
+import com.luanvan.commonservice.model.response.OrderResponseModel;
 import com.luanvan.orderservice.query.model.PageOrderResponse;
 import com.luanvan.orderservice.query.queries.GetAllOrderQuery;
-import com.luanvan.orderservice.query.queries.GetOrderQuery;
+import com.luanvan.commonservice.queries.GetOrderQuery;
 import com.luanvan.orderservice.query.queries.GetUserOrderQuery;
 import com.luanvan.orderservice.repository.OrderRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,6 +34,8 @@ public class OrderProjection {
     private OrderRepository orderRepository;
     @Autowired
     private QueryGateway queryGateway;
+    @Autowired
+    private OrderMapper orderMapper;
 
     @QueryHandler
     public PageOrderResponse handle(GetAllOrderQuery queryParams) {
@@ -60,7 +58,7 @@ public class OrderProjection {
         };
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
         var orderPage = orderRepository.findAll(specification, pageable);
-        var responsePage = orderPage.getContent().stream().map(this::toOderResponseModel).collect(Collectors.toList());
+        var responsePage = orderPage.getContent().stream().map(orderMapper::toOrderResponseModel).collect(Collectors.toList());
         return PageOrderResponse.builder()
                 .content(new ArrayList<>(responsePage))
                 .pageNumber(orderPage.getNumber())
@@ -94,7 +92,7 @@ public class OrderProjection {
         };
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
         var orderPage = orderRepository.findAll(specification, pageable);
-        var responsePage = orderPage.getContent().stream().map(this::toOderResponseModel).collect(Collectors.toList());
+        var responsePage = orderPage.getContent().stream().map(orderMapper::toOrderResponseModel).collect(Collectors.toList());
         return PageOrderResponse.builder()
                 .content(new ArrayList<>(responsePage))
                 .pageNumber(orderPage.getNumber())
@@ -111,164 +109,7 @@ public class OrderProjection {
         var order = orderRepository.findById(query.getOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
 
-        return toOderResponseModel(order);
+        return orderMapper.toOrderResponseModel(order);
     }
 
-    private OrderResponseModel toOderResponseModel(Order order) {
-        var cartDetailsByProduct = order.getOrderDetails().stream()
-                .collect(Collectors.groupingBy(OrderDetail::getProductId));
-
-        // Truy vấn sản phẩm cho mỗi productId một lần và lưu vào map
-        var productMap = cartDetailsByProduct.keySet().stream()
-                .collect(Collectors.toMap(
-                        pid -> pid,
-                        pid -> queryGateway.query(new GetProductQuery(pid),
-                                        ResponseTypes.instanceOf(ProductResponseModel.class))
-                                .exceptionally(ex -> {
-                                    throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
-                                })
-                                .join()
-                ));
-        return OrderResponseModel.builder()
-                .id(order.getId())
-                .totalPrice(order.getTotalPrice())
-                .discountPrice(order.getDiscountPrice())
-                .userId(order.getUserId())
-                .orderDetails(order.getOrderDetails().stream()
-                        .map(od -> mapOrderDetail(od, productMap.get(od.getProductId())))
-                        .collect(Collectors.toList()))
-                .orderStatus(OrderResponseModel.OrderStatus.builder()
-                        .codeName(order.getOrderStatus().getCodeName())
-                        .name(order.getOrderStatus().getName())
-                        .build())
-                .delivery(OrderResponseModel.Delivery.builder()
-                        .id(order.getDelivery().getId())
-                        .recipientName(order.getDelivery().getRecipientName())
-                        .phone(order.getDelivery().getPhone())
-                        .province(order.getDelivery().getProvince())
-                        .district(order.getDelivery().getDistrict())
-                        .ward(order.getDelivery().getWard())
-                        .street(order.getDelivery().getStreet())
-                        .address(order.getDelivery().getAddress())
-                        .startDate(order.getDelivery().getStartDate())
-                        .endDate(order.getDelivery().getEndDate())
-                        .build())
-                .payment(order.getPayment() == null
-                        ? null
-                        : OrderResponseModel.Payment.builder()
-                        .id(order.getPayment().getId())
-                        .transactionId(order.getPayment().getTransactionId())
-                        .paymentMethod(order.getPayment().getPaymentMethod())
-                        .totalAmount(order.getPayment().getTotalAmount())
-                        .status(order.getPayment().getStatus())
-                        .createdAt(order.getPayment().getCreatedAt())
-                        .updatedAt(order.getPayment().getUpdatedAt())
-                        .build())
-                .createdAt(order.getCreatedAt())
-                .updatedAt(order.getUpdatedAt())
-                .build();
-    }
-
-    private OrderResponseModel.OrderDetail mapOrderDetail(OrderDetail od, ProductResponseModel product) {
-        // Lấy productColor theo colorId
-        var productColor = product.getProductColors().stream()
-                .filter(pc -> pc.getColor().getId().equals(od.getColorId()))
-                .findFirst()
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXISTED));
-
-        var colorResponse = OrderResponseModel.Color.builder()
-                .id(productColor.getColor().getId())
-                .name(productColor.getColor().getName())
-                .codeName(productColor.getColor().getCodeName())
-                .colorCode(productColor.getColor().getColorCode())
-                .description(productColor.getColor().getDescription())
-                .isActive(productColor.getColor().getIsActive())
-                .build();
-
-        // Lấy productVariant theo sizeId
-        var productVariant = productColor.getProductVariants().stream()
-                .filter(pv -> pv.getSize().getId().equals(od.getSizeId()))
-                .findFirst()
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
-
-        var sizeResponse = OrderResponseModel.Size.builder()
-                .id(productVariant.getSize().getId())
-                .name(productVariant.getSize().getName())
-                .codeName(productVariant.getSize().getCodeName())
-                .isActive(productVariant.getSize().getIsActive())
-                .build();
-
-        return OrderResponseModel.OrderDetail.builder()
-                .id(od.getId())
-                .quantity(od.getQuantity())
-                .originalPrice(od.getOriginalPrice())
-                .purchasePrice(od.getPurchasePrice())
-                .isReview(od.getIsReview())
-                .color(colorResponse)
-                .size(sizeResponse)
-                .product(toProductResponseModel(product))
-                .build();
-    }
-
-    public OrderResponseModel.Product toProductResponseModel(ProductResponseModel product) {
-        return OrderResponseModel.Product.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .description(product.getDescription())
-                .images(product.getImages())
-                .isActive(product.getIsActive())
-                .createdAt(product.getCreatedAt())
-                .updatedAt(product.getUpdatedAt())
-                .category(OrderResponseModel.Category.builder()
-                        .id(product.getCategory().getId())
-                        .name(product.getCategory().getName())
-                        .codeName(product.getCategory().getCodeName())
-                        .images(product.getCategory().getImages())
-                        .description(product.getCategory().getDescription())
-                        .isActive(product.getCategory().getIsActive())
-                        .build())
-                .productColors(product.getProductColors().stream()
-                        .filter(pc -> Boolean.TRUE.equals(pc.getIsActive()))
-                        .map(pc -> OrderResponseModel.ProductColor.builder()
-                                .id(pc.getId())
-                                .price(pc.getPrice())
-                                .finalPrice(pc.getFinalPrice())
-                                .isActive(pc.getIsActive())
-                                .color(OrderResponseModel.Color.builder()
-                                        .id(pc.getColor().getId())
-                                        .name(pc.getColor().getName())
-                                        .codeName(pc.getColor().getCodeName())
-                                        .colorCode(pc.getColor().getColorCode())
-                                        .description(pc.getColor().getDescription())
-                                        .isActive(pc.getColor().getIsActive())
-                                        .build())
-                                .promotion(Optional.ofNullable(pc.getPromotion())
-                                        .map(promo -> OrderResponseModel.Promotion.builder()
-                                                .id(promo.getId())
-                                                .name(promo.getName())
-                                                .codeName(promo.getCodeName())
-                                                .discountPercentage(promo.getDiscountPercentage())
-                                                .startDate(promo.getStartDate())
-                                                .endDate(promo.getEndDate())
-                                                .isActive(promo.getIsActive())
-                                                .build())
-                                        .orElse(null))
-                                .productVariants(pc.getProductVariants().stream()
-                                        .map(pv -> OrderResponseModel.ProductVariant.builder()
-                                                .id(pv.getId())
-                                                .stock(pv.getStock())
-                                                .sold(pv.getSold())
-                                                .isActive(pv.getIsActive())
-                                                .size(OrderResponseModel.Size.builder()
-                                                        .id(pv.getSize().getId())
-                                                        .name(pv.getSize().getName())
-                                                        .codeName(pv.getSize().getCodeName())
-                                                        .isActive(pv.getSize().getIsActive())
-                                                        .build())
-                                                .build())
-                                        .collect(Collectors.toList()))
-                                .build())
-                        .collect(Collectors.toList()))
-                .build();
-    }
 }

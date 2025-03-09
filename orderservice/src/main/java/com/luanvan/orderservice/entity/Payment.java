@@ -1,5 +1,6 @@
 package com.luanvan.orderservice.entity;
 
+import com.luanvan.commonservice.entity.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,9 +22,6 @@ public class Payment {
 
     @Column(name = "transaction_id")
     private String transactionId;
-
-    @Column(name = "payment_method")
-    private String paymentMethod;
 
     @Column(name = "total_amount")
     private BigDecimal totalAmount;

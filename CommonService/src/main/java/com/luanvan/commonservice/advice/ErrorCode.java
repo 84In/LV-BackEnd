@@ -16,6 +16,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(102, "Chưa xác thực", HttpStatus.UNAUTHORIZED),
     QUERY_ERROR(103, "Truy vấn thất bại", HttpStatus.BAD_REQUEST),
     COMMAND_ERROR(104, "Lệnh thực hiện thất bại", HttpStatus.BAD_REQUEST),
+    EMAIL_SENDING_FAILED(104, "Gửi email thất bại", HttpStatus.BAD_REQUEST),
 
     // Lỗi xác thực
     INVALID_KEY(201, "Khóa không hợp lệ", HttpStatus.BAD_REQUEST),
@@ -77,7 +78,8 @@ public enum ErrorCode {
     ORDER_EXISTED(59, "Đơn hàng đã tồn tại", HttpStatus.BAD_REQUEST),
     ORDER_NOT_EXISTED(60, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_BE_UPDATED(61, "Không thể cập nhật đơn hàng", HttpStatus.BAD_REQUEST),
-    ORDER_CANNOT_BE_CANCELED(62, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST);
+    ORDER_CANNOT_BE_CANCELED(62, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
+    ORDER_DETAIL_NOT_EXISTED(63, "Chi tiết đơn hàng không tồn tại", HttpStatus.BAD_REQUEST);
 
     private final Integer code;
     private final String message;

@@ -1,4 +1,4 @@
-package com.luanvan.orderservice.entity;
+package com.luanvan.commonservice.entity;
 
 public enum PaymentStatus {
     PENDING, SUCCESS, FAILED;

@@ -4,10 +4,10 @@ package com.luanvan.orderservice.query.controller;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
-import com.luanvan.orderservice.query.model.OrderResponseModel;
+import com.luanvan.commonservice.model.response.OrderResponseModel;
 import com.luanvan.orderservice.query.model.PageOrderResponse;
 import com.luanvan.orderservice.query.queries.GetAllOrderQuery;
-import com.luanvan.orderservice.query.queries.GetOrderQuery;
+import com.luanvan.commonservice.queries.GetOrderQuery;
 import com.luanvan.orderservice.query.queries.GetUserOrderQuery;
 import com.luanvan.orderservice.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +52,11 @@ public class OrderQueryController {
             @RequestParam(defaultValue = "") String sorts
     ) {
         GetUserOrderQuery query = new GetUserOrderQuery(userId, status, pageNumber, pageSize, sorts);
-        PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class)).join();
+        PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class))
+                .exceptionally((ex) -> {
+                    throw new AppException(ErrorCode.ORDER_NOT_EXISTED);
+                })
+                .join();
         Page<OrderResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
         return ApiResponse.<Page<OrderResponseModel>>builder()
                 .data(pageResponse)

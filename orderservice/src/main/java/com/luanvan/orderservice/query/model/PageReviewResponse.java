@@ -1,6 +1,5 @@
 package com.luanvan.orderservice.query.model;
 
-import com.luanvan.commonservice.model.response.OrderResponseModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +11,13 @@ import java.util.ArrayList;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageOrderResponse {
-    private ArrayList<OrderResponseModel> content;
+public class PageReviewResponse {
+    private ArrayList<ReviewResponseModel> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;
     private int totalPages;
+    private Double averageRating;
+    private Long totalReviews;
 }
 
