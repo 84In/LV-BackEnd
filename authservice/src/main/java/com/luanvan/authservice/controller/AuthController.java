@@ -50,6 +50,10 @@ public class AuthController {
             throw new AppException(ErrorCode.INCORRECT_PASSWORD);
         }
 
+        if(!userResponse.getActive()){
+            throw new AppException(ErrorCode.ACCOUNT_LOCKED);
+        }
+
         log.info(userResponse.toString());
 
         log.info("Login success");

@@ -63,7 +63,6 @@ public class UserCommandService {
         log.info("Send command create user id: {}, username: {}", command.getId(),command.getUsername());
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
-        commandGateway.sendAndWait(cartCommand);
         return result;
     }
 

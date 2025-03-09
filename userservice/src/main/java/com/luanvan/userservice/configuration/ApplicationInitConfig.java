@@ -1,6 +1,8 @@
 package com.luanvan.userservice.configuration;
 
 import com.luanvan.userservice.command.command.CreateUserCommand;
+import com.luanvan.userservice.command.model.UserCreateModel;
+import com.luanvan.userservice.command.service.UserCommandService;
 import com.luanvan.userservice.repository.UserRepository;
 import com.luanvan.userservice.service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
@@ -38,25 +40,25 @@ public class ApplicationInitConfig {
     }
 
     @Bean
-    ApplicationRunner addDefaultUsers(CommandGateway commandGateway, UserRepository userRepository) {
+    ApplicationRunner addDefaultUsers(UserCommandService userCommandService) {
         return args -> {
 
-            if (!userRepository.existsByUsername("admin")) {
-                CreateUserCommand createUserCommand = new CreateUserCommand(
-                        UUID.randomUUID().toString(),
-                        "admin",
-                        "admin123",
-                        true,
-                        "Vanoushop@gmail.com",
-                        "1800108123",
-                        "admin",
-                        "admin",
-                        "admin"
-                );
-                commandGateway.send(createUserCommand);
-                log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",createUserCommand.getPassword());
-                log.info("Command create admin: {}",createUserCommand.getId());
-            }
+         try {
+             UserCreateModel userCreateModel = new UserCreateModel(
+                     "admin",
+                     "admin123",
+                     "Vanoushop@gmail.com",
+                     "admin",
+                     "admin",
+                     "admin"
+             );
+
+             var result =  userCommandService.save(userCreateModel);
+             log.info(result.toString());
+             log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",userCreateModel.getPassword());
+         } catch (Exception e) {
+             log.error(e.getMessage());
+         }
         };
     }
 

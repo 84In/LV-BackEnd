@@ -95,9 +95,10 @@ public class UserEventHandler {
 
     @EventHandler
     public void on(UserChangeStatusEvent event) {
-        User user = userRepository.findByUserId(event.getId());
+        User user = userRepository.findById(event.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        log.info("User change status: {}",user.getUsername());
         user.setActive(event.getActive());
-        log.info("User change status event handler");
+        log.info("User change status event handler {}",event.getId());
         userRepository.save(user);
     }
 

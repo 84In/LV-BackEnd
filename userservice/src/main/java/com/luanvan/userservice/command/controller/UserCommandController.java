@@ -48,7 +48,7 @@ public class UserCommandController {
     }
 
     @PutMapping("/changeStatus/{userId}")
-    public ApiResponse<?> changeStatusUser(@PathVariable String userId, UserChangeStatusModel model) {
+    public ApiResponse<?> changeStatusUser(@PathVariable String userId, @RequestBody UserChangeStatusModel model) {
         var response = userCommandService.changeStatus(userId, model);
         return ApiResponse.builder()
                 .message("Người dùng đã bị vô hiệu hoá")

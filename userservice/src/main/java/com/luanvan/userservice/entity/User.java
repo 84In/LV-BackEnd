@@ -24,11 +24,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
 
     @Id
-    @EqualsAndHashCode.Include
     private String id;
 
     @NotBlank
