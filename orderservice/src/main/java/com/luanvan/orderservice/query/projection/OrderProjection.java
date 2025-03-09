@@ -2,24 +2,19 @@ package com.luanvan.orderservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.response.ProductResponseModel;
-import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.orderservice.entity.Order;
-import com.luanvan.orderservice.entity.OrderDetail;
 import com.luanvan.orderservice.entity.OrderStatus;
 import com.luanvan.orderservice.mapper.OrderMapper;
-import com.luanvan.orderservice.query.model.OrderDetailResponse;
-import com.luanvan.orderservice.query.model.OrderResponseModel;
+import com.luanvan.commonservice.model.response.OrderResponseModel;
 import com.luanvan.orderservice.query.model.PageOrderResponse;
 import com.luanvan.orderservice.query.queries.GetAllOrderQuery;
-import com.luanvan.orderservice.query.queries.GetOrderQuery;
+import com.luanvan.commonservice.queries.GetOrderQuery;
 import com.luanvan.orderservice.query.queries.GetUserOrderQuery;
 import com.luanvan.orderservice.repository.OrderRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j

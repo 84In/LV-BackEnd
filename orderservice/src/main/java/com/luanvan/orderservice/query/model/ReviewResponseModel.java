@@ -5,13 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.luanvan.commonservice.model.response.OrderDetailResponseModel;
 import com.luanvan.commonservice.model.response.UserResponseModel;
-import com.luanvan.orderservice.entity.PaymentStatus;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 
 @Getter
 @Setter
@@ -26,7 +24,7 @@ public class ReviewResponseModel {
     private Boolean isActive;
     private UserResponseModel user;
     private String productId;
-    private OrderDetailResponse orderDetail;
+    private OrderDetailResponseModel orderDetail;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

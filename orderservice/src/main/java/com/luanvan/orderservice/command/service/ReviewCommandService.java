@@ -7,35 +7,19 @@ import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.commonservice.queries.GetUserDetailQuery;
-import com.luanvan.commonservice.queries.GetUserQuery;
-import com.luanvan.commonservice.utils.VNPayUtils;
 import com.luanvan.orderservice.command.command.*;
-import com.luanvan.orderservice.command.model.OrderChangeStatusModel;
-import com.luanvan.orderservice.command.model.OrderCreateModel;
-import com.luanvan.orderservice.command.model.PaymentUrlResponse;
 import com.luanvan.orderservice.command.model.ReviewCreateModel;
-import com.luanvan.orderservice.entity.Order;
-import com.luanvan.orderservice.entity.PaymentStatus;
 import com.luanvan.orderservice.repository.OrderDetailRepository;
-import com.luanvan.orderservice.repository.OrderRepository;
 import com.luanvan.orderservice.repository.ReviewRepository;
-import com.luanvan.orderservice.services.VNPayService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Nhận Đơn Hàng</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f9fafb; font-family: Arial, sans-serif;">
+<table cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #f9fafb;">
+    <tr>
+        <td align="center" style="padding: 20px 0;">
+            <table cellpadding="0" cellspacing="0" border="0" width="600"
+                   style="background-color: white; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: rgba(0, 0, 0, 0.05) 0px 4px 12px;">
+                <tr>
+                    <td align="center" style="border-bottom: 1px solid #e5e7eb; padding: 20px 0;">
+                        <img src="https://res.cloudinary.com/dy5pyi09x/image/upload/v1741417830/logo-removebg_ddsy0l.png"
+                             alt="Logo" width="180" height="40"
+                             style="display: block;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 30px 25px; border-bottom: 1px solid #e5e7eb;">
+                        <p style="margin: 0 0 15px 0; font-size: 16px; color: #1f2937; padding-left: 15px; padding-right: 15px;">Xin chào <strong th:text="${username}"></strong>,</p>
+                        <p style="margin: 0 0 20px 0; font-size: 16px; color: #1f2937; padding-left: 15px; padding-right: 15px;">Cảm ơn bạn đã đặt hàng tại <strong>VanouS Shoes!</strong></p>
+                        <h3 style="margin: 0 0 10px 0; color: #111827; font-size: 16px; padding-left: 15px; padding-right: 15px;">Đơn hàng: <span
+                                th:text="${orderId}"></span></h3>
+                        <p style="margin: 0 0 15px 0; font-size: 14px; color: #6b7280; padding-left: 15px; padding-right: 15px;">Ngày đặt: <span
+                                th:text="${createdAt}"></span></p>
+
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top: 10px; background-color: #f9fafb; border-radius: 6px; padding: 15px;">
+                            <tr>
+                                <td style="padding-bottom: 8px;">
+                                    <p style="margin: 0; font-size: 14px; color: #374151;"><strong>Tên:</strong> <span th:text="${delivery.recipientName}"></span></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding-bottom: 8px;">
+                                    <p style="margin: 0; font-size: 14px; color: #374151;"><strong>SĐT:</strong> <span th:text="${delivery.phone}"></span></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p style="margin: 0; font-size: 14px; color: #374151;"><strong>Địa chỉ:</strong> <span th:text="${delivery.address}"></span></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 30px 25px; border-bottom: 1px solid #e5e7eb;">
+                        <h3 style="margin: 0 0 20px 0; color: #111827; font-size: 16px; padding-left: 15px; padding-right: 15px;">Sản phẩm đã mua:</h3>
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%"
+                               style="border-collapse: collapse; border-radius: 6px; overflow: hidden;">
+                            <tr>
+                                <th style="padding: 12px 15px; text-align: left; background-color: #111827; color: white; font-weight: 500;">
+                                    Sản phẩm
+                                </th>
+                                <th style="padding: 12px 15px; text-align: center; background-color: #111827; color: white; font-weight: 500;">
+                                    Số lượng
+                                </th>
+                                <th style="padding: 12px 15px; text-align: right; background-color: #111827; color: white; font-weight: 500;">
+                                    Giá
+                                </th>
+                            </tr>
+                            <tr th:each="detail : ${orderDetails}"
+                                style="background-color: #ffffff;">
+                                <td style="padding: 15px; border-bottom: 1px solid #e5e7eb;">
+                                    <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                                        <tr>
+                                            <td width="60" style="vertical-align: top; padding-right: 15px;">
+                                                <!-- Xử lý chuỗi hình ảnh phân tách bằng dấu phẩy và lấy hình ảnh đầu tiên -->
+                                                <img th:if="${detail.product.images != null and detail.product.images != ''}"
+                                                     th:src="${#strings.arraySplit(detail.product.images, ',')[0]}"
+                                                     alt="Product" width="60" height="60" style="border-radius: 4px; object-fit: cover;"/>
+                                                <!-- Fallback if no image -->
+                                                <div th:unless="${detail.product.images != null and detail.product.images != ''}" style="width: 60px; height: 60px; background-color: #f3f4f6; border-radius: 4px;"></div>
+                                            </td>
+                                            <td style="vertical-align: middle;">
+                                                <div th:text="${detail.product.name}" style="font-weight: 500; color: #111827; margin-bottom: 4px;"></div>
+                                                <div th:if="${detail.color != null and detail.size != null}" style="font-size: 13px; color: #6b7280;">
+                                                    <span th:text="${detail.color.name}"></span> - <span th:text="${detail.size.name}"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                                <td style="padding: 15px; text-align: center; border-bottom: 1px solid #e5e7eb; color: #4b5563;"
+                                    th:text="${detail.quantity}"></td>
+                                <td style="padding: 15px; text-align: right; border-bottom: 1px solid #e5e7eb; font-weight: 500; color: #111827;">
+                                    <span th:text="${#numbers.formatInteger(detail.purchasePrice, 0, 'POINT')} + 'VND'"></span>
+                                </td>
+                            </tr>
+                        </table>
+                        <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-top: 20px; background-color: #f9fafb; border-radius: 6px; padding: 15px;">
+                            <tr>
+                                <td style="color: #111827; font-size: 16px;"><strong>Tổng giá trị đơn hàng:</strong></td>
+                                <td style="text-align: right; font-weight: bold; font-size: 16px; color: #111827;"><span
+                                        th:text="${#numbers.formatInteger(totalPrice, 0, 'POINT')} + 'VND'"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding: 30px 25px; text-align: center;">
+                        <p style="margin: 0 0 10px 0; color: #4b5563;">Trân trọng,</p>
+                        <strong style="color: #111827; font-size: 16px;">VanouS</strong>
+                        <p style="margin: 20px 0 0 0; font-size: 13px; color: #6b7280;">Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

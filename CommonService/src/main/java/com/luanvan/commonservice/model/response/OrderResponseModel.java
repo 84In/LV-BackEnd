@@ -1,11 +1,11 @@
-package com.luanvan.orderservice.query.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.luanvan.orderservice.entity.PaymentStatus;
+import com.luanvan.commonservice.entity.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -24,7 +24,7 @@ public class OrderResponseModel {
     private BigDecimal discountPrice;
     private String paymentMethod;
     private String userId;
-    private Collection<OrderDetailResponse> orderDetails;
+    private Collection<OrderDetailResponseModel> orderDetails;
     private OrderStatus orderStatus;
     private Delivery delivery;
     private Payment payment;

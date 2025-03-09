@@ -8,7 +8,7 @@ import com.luanvan.orderservice.command.event.OrderCancelEvent;
 import com.luanvan.orderservice.command.event.OrderChangePaymentStatusEvent;
 import com.luanvan.orderservice.command.event.OrderChangeStatusEvent;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
-import com.luanvan.orderservice.entity.PaymentStatus;
+import com.luanvan.commonservice.entity.PaymentStatus;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;

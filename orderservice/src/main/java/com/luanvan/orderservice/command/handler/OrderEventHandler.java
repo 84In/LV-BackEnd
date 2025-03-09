@@ -152,7 +152,7 @@ public class OrderEventHandler {
     @EventHandler
     @Transactional
     public void handle(OrderCancelEvent event) {
-        log.info("OrderChangeStatusEvent: " + event.getId());
+        log.info("OrderCancelEvent: " + event.getId());
         String cancelledStatus = "cancelled";
 
         // Chuyển order thành cancelled

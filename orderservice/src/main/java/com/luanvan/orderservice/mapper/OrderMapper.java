@@ -6,8 +6,8 @@ import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
 import com.luanvan.orderservice.entity.Order;
 import com.luanvan.orderservice.entity.OrderDetail;
-import com.luanvan.orderservice.query.model.OrderDetailResponse;
-import com.luanvan.orderservice.query.model.OrderResponseModel;
+import com.luanvan.commonservice.model.response.OrderDetailResponseModel;
+import com.luanvan.commonservice.model.response.OrderResponseModel;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,14 +76,14 @@ public class OrderMapper {
                 .build();
     }
 
-    public OrderDetailResponse mapOrderDetail(OrderDetail od, ProductResponseModel product) {
+    public OrderDetailResponseModel mapOrderDetail(OrderDetail od, ProductResponseModel product) {
         // Lấy productColor theo colorId
         var productColor = product.getProductColors().stream()
                 .filter(pc -> pc.getColor().getId().equals(od.getColorId()))
                 .findFirst()
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXISTED));
 
-        var colorResponse = OrderDetailResponse.Color.builder()
+        var colorResponse = OrderDetailResponseModel.Color.builder()
                 .id(productColor.getColor().getId())
                 .name(productColor.getColor().getName())
                 .codeName(productColor.getColor().getCodeName())
@@ -98,14 +98,14 @@ public class OrderMapper {
                 .findFirst()
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
 
-        var sizeResponse = OrderDetailResponse.Size.builder()
+        var sizeResponse = OrderDetailResponseModel.Size.builder()
                 .id(productVariant.getSize().getId())
                 .name(productVariant.getSize().getName())
                 .codeName(productVariant.getSize().getCodeName())
                 .isActive(productVariant.getSize().getIsActive())
                 .build();
 
-        return OrderDetailResponse.builder()
+        return OrderDetailResponseModel.builder()
                 .id(od.getId())
                 .quantity(od.getQuantity())
                 .originalPrice(od.getOriginalPrice())
@@ -117,8 +117,8 @@ public class OrderMapper {
                 .build();
     }
 
-    public OrderDetailResponse.Product toProductResponseModel(ProductResponseModel product) {
-        return OrderDetailResponse.Product.builder()
+    public OrderDetailResponseModel.Product toProductResponseModel(ProductResponseModel product) {
+        return OrderDetailResponseModel.Product.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
@@ -126,7 +126,7 @@ public class OrderMapper {
                 .isActive(product.getIsActive())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
-                .category(OrderDetailResponse.Category.builder()
+                .category(OrderDetailResponseModel.Category.builder()
                         .id(product.getCategory().getId())
                         .name(product.getCategory().getName())
                         .codeName(product.getCategory().getCodeName())
@@ -136,12 +136,12 @@ public class OrderMapper {
                         .build())
                 .productColors(product.getProductColors().stream()
                         .filter(pc -> Boolean.TRUE.equals(pc.getIsActive()))
-                        .map(pc -> OrderDetailResponse.ProductColor.builder()
+                        .map(pc -> OrderDetailResponseModel.ProductColor.builder()
                                 .id(pc.getId())
                                 .price(pc.getPrice())
                                 .finalPrice(pc.getFinalPrice())
                                 .isActive(pc.getIsActive())
-                                .color(OrderDetailResponse.Color.builder()
+                                .color(OrderDetailResponseModel.Color.builder()
                                         .id(pc.getColor().getId())
                                         .name(pc.getColor().getName())
                                         .codeName(pc.getColor().getCodeName())
@@ -150,7 +150,7 @@ public class OrderMapper {
                                         .isActive(pc.getColor().getIsActive())
                                         .build())
                                 .promotion(Optional.ofNullable(pc.getPromotion())
-                                        .map(promo -> OrderDetailResponse.Promotion.builder()
+                                        .map(promo -> OrderDetailResponseModel.Promotion.builder()
                                                 .id(promo.getId())
                                                 .name(promo.getName())
                                                 .codeName(promo.getCodeName())
@@ -161,12 +161,12 @@ public class OrderMapper {
                                                 .build())
                                         .orElse(null))
                                 .productVariants(pc.getProductVariants().stream()
-                                        .map(pv -> OrderDetailResponse.ProductVariant.builder()
+                                        .map(pv -> OrderDetailResponseModel.ProductVariant.builder()
                                                 .id(pv.getId())
                                                 .stock(pv.getStock())
                                                 .sold(pv.getSold())
                                                 .isActive(pv.getIsActive())
-                                                .size(OrderDetailResponse.Size.builder()
+                                                .size(OrderDetailResponseModel.Size.builder()
                                                         .id(pv.getSize().getId())
                                                         .name(pv.getSize().getName())
                                                         .codeName(pv.getSize().getCodeName())

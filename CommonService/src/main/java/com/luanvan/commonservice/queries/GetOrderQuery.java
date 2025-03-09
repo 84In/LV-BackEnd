@@ -1,4 +1,4 @@
-package com.luanvan.orderservice.query.queries;
+package com.luanvan.commonservice.queries;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

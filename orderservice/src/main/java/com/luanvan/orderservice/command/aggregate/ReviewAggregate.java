@@ -2,7 +2,6 @@ package com.luanvan.orderservice.command.aggregate;
 
 import com.luanvan.orderservice.command.command.*;
 import com.luanvan.orderservice.command.event.*;
-import com.luanvan.orderservice.entity.PaymentStatus;
 import lombok.NoArgsConstructor;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -10,10 +9,6 @@ import org.axonframework.modelling.command.AggregateIdentifier;
 import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Aggregate
 @NoArgsConstructor

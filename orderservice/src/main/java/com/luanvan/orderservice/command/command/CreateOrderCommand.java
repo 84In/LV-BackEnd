@@ -1,6 +1,6 @@
 package com.luanvan.orderservice.command.command;
 
-import com.luanvan.orderservice.entity.PaymentStatus;
+import com.luanvan.commonservice.entity.PaymentStatus;
 import lombok.*;
 import org.axonframework.modelling.command.TargetAggregateIdentifier;
 

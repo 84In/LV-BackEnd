@@ -1,4 +1,4 @@
-package com.luanvan.orderservice.query.model;
+package com.luanvan.commonservice.model.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,7 +16,7 @@ import java.util.Collection;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetailResponse{
+public class OrderDetailResponseModel {
     private String id;
     private Integer quantity;
     private BigDecimal originalPrice;

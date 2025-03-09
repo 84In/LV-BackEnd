@@ -1,6 +1,6 @@
 package com.luanvan.orderservice.command.event;
 
-import com.luanvan.orderservice.entity.PaymentStatus;
+import com.luanvan.commonservice.entity.PaymentStatus;
 import lombok.*;
 
 import java.math.BigDecimal;

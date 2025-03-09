@@ -1,5 +1,6 @@
 package com.luanvan.orderservice.entity;
 
+import com.luanvan.commonservice.entity.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
