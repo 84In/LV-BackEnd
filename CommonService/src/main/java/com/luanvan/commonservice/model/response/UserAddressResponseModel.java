@@ -16,12 +16,16 @@ import java.time.LocalDateTime;
 @Builder
 public class UserAddressResponseModel {
     private String userId;          // ID của người dùng
+    private String name;
     private String addressId;       // ID của địa chỉ
     private String addressPhone;    // Số điện thoại liên quan đến địa chỉ
     private String houseNumberAndStreet; // Địa chỉ nhà và đường
     private String provinceName;    // Tên tỉnh
+    private Integer provinceId;
     private String districtName;    // Tên quận/huyện
+    private Integer districtId;
     private String wardName;        // Tên phường/xã
+    private Integer wardId;
     private boolean isDefault;      // Địa chỉ mặc định hay không
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)

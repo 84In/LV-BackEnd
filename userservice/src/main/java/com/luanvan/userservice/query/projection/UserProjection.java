@@ -58,11 +58,15 @@ public class UserProjection {
 
                                 // Lấy thông tin từ Address và mapping vào UserAddressResponse
                                 Address address = userAddress.getAddress();
+                                userAddressResponse.setName(address.getName());
                                 userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
                                 userAddressResponse.setAddressPhone(address.getPhone());
                                 userAddressResponse.setProvinceName(address.getProvince().getName());
+                                userAddressResponse.setProvinceId(address.getProvince().getId());
                                 userAddressResponse.setDistrictName(address.getDistrict().getName());
+                                userAddressResponse.setDistrictId(address.getDistrict().getId());
                                 userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+                                userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
                                 userAddressResponse.setDefault(userAddress.isDefault());
                                 userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
                                 userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
@@ -106,11 +110,15 @@ public class UserProjection {
 
             // Lấy thông tin từ Address và mapping vào UserAddressResponse
             Address address = userAddress.getAddress();
+            userAddressResponse.setName(address.getName());
             userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
             userAddressResponse.setAddressPhone(address.getPhone());
             userAddressResponse.setProvinceName(address.getProvince().getName());
+            userAddressResponse.setProvinceId(address.getProvince().getId());
             userAddressResponse.setDistrictName(address.getDistrict().getName());
+            userAddressResponse.setDistrictId(address.getDistrict().getId());
             userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+            userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
             userAddressResponse.setDefault(userAddress.isDefault());
             userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
             userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
@@ -153,14 +161,19 @@ public class UserProjection {
 
                 // Lấy thông tin từ Address và mapping vào UserAddressResponse
                 Address address = userAddress.getAddress();
+                userAddressResponse.setName(address.getName());
                 userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
                 userAddressResponse.setAddressPhone(address.getPhone());
                 userAddressResponse.setProvinceName(address.getProvince().getName());
+                userAddressResponse.setProvinceId(address.getProvince().getId());
                 userAddressResponse.setDistrictName(address.getDistrict().getName());
+                userAddressResponse.setDistrictId(address.getDistrict().getId());
                 userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
+                userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
                 userAddressResponse.setDefault(userAddress.isDefault());
                 userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
                 userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
+
                 return userAddressResponse;
             }
 
