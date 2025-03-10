@@ -1,19 +1,18 @@
 package com.luanvan.userservice.configuration;
 
-import com.luanvan.userservice.command.command.CreateUserCommand;
 import com.luanvan.userservice.command.model.UserCreateModel;
 import com.luanvan.userservice.command.service.UserCommandService;
+import com.luanvan.userservice.repository.RoleRepository;
 import com.luanvan.userservice.repository.UserRepository;
 import com.luanvan.userservice.service.DataLoaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 import java.io.InputStream;
-import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ import java.util.UUID;
 public class ApplicationInitConfig {
 
     @Bean
+    @Order(1)
     ApplicationRunner addDefaultRoles(DataLoaderService dataLoaderService) {
         return args -> dataLoaderService.initDataRole();
     }
@@ -40,25 +40,28 @@ public class ApplicationInitConfig {
     }
 
     @Bean
-    ApplicationRunner addDefaultUsers(UserCommandService userCommandService) {
+    @Order(2)
+    ApplicationRunner addDefaultUsers(UserCommandService userCommandService, RoleRepository roleRepository) {
         return args -> {
+            try {
+                if (!roleRepository.existsById("admin")) {
+                    throw new RuntimeException("Role admin chưa được tạo thành");
+                }
+                UserCreateModel userCreateModel = new UserCreateModel(
+                        "admin",
+                        "admin123",
+                        "Vanoushop@gmail.com",
+                        "admin",
+                        "admin",
+                        "admin"
+                );
 
-         try {
-             UserCreateModel userCreateModel = new UserCreateModel(
-                     "admin",
-                     "admin123",
-                     "Vanoushop@gmail.com",
-                     "admin",
-                     "admin",
-                     "admin"
-             );
-
-             var result =  userCommandService.save(userCreateModel);
-             log.info(result.toString());
-             log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}",userCreateModel.getPassword());
-         } catch (Exception e) {
-             log.error(e.getMessage());
-         }
+                var result = userCommandService.save(userCreateModel);
+                log.info(result.toString());
+                log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}", userCreateModel.getPassword());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
         };
     }
 

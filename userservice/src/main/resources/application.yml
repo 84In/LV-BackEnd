@@ -18,6 +18,7 @@ axon:
           initial-interval: 1000  # Lần đầu retry sau 1s
           max-interval: 60000     # Giới hạn tối đa 60s
           multiplier: 2.0         # Tăng dần thời gian retry (1s, 2s, 4s, ...)
+#        error-handler: logging  # Chỉ log lỗi, không retry
 
 
 #Dataconfig
@@ -48,5 +49,7 @@ logging:
     org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
     org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
     org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: info               # Kiểm soát log của Spring
+    org.springframework: INFO               # Kiểm soát log của Spring
+    org.axonframework.eventhandling: DEBUG
+    org.axonframework.commandhandling: DEBUG
 
