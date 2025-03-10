@@ -22,8 +22,8 @@ spring:
     import: optional:file:../commonservice/src/main/resources/application.yml
   kafka:
     bootstrap-servers: localhost:9092
-    consumer:
-      group-id: mail-group
+    #consumer:
+     # group-id: mail-group
 logging:
   level:
     org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL
