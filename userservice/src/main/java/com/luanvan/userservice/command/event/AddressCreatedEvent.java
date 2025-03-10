@@ -12,6 +12,7 @@ import lombok.Setter;
 public class AddressCreatedEvent {
     private String id;
     private Boolean isActive;
+    private String name;
     private String phone;
     private String houseNumberAndStreet;
     private Integer provinceId;

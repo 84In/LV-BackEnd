@@ -42,6 +42,7 @@ public class AddressEventHandler {
 
             Address address = new Address();
             address.setId(event.getId());
+            address.setName(event.getName());
             address.setPhone(event.getPhone());
             address.setHouseNumberAndStreet(event.getHouseNumberAndStreet());
             address.setIsActive(event.getIsActive());
@@ -106,6 +107,7 @@ public class AddressEventHandler {
             });
             Optional.ofNullable(event.getHouseNumberAndStreet()).ifPresent(address::setHouseNumberAndStreet);
             Optional.ofNullable(event.getIsActive()).ifPresent(address::setIsActive);
+            Optional.ofNullable(event.getName()).ifPresent(address::setName);
             Optional.ofNullable(event.getPhone()).ifPresent(address::setPhone);
             addressRepository.save(address);
 

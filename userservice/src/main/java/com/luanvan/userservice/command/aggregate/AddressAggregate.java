@@ -24,7 +24,7 @@ import org.springframework.beans.BeanUtils;
 public class AddressAggregate {
     @AggregateIdentifier
     private String id;
-    private Boolean isActive;
+    private String name;
     private String phone;
     private String houseNumberAndStreet;
     private Integer provinceId;
@@ -32,6 +32,7 @@ public class AddressAggregate {
     private Integer wardId;
     private String userId;
     private Boolean isDefault;
+    private Boolean isActive;
 
 
     @CommandHandler
@@ -70,6 +71,7 @@ public class AddressAggregate {
     public void on(AddressCreatedEvent event) {
         this.id = event.getId();
         this.isActive = event.getIsActive();
+        this.name = event.getName();
         this.phone = event.getPhone();
         this.houseNumberAndStreet = event.getHouseNumberAndStreet();
         this.provinceId = event.getProvinceId();
@@ -83,6 +85,7 @@ public class AddressAggregate {
     public void on(AddressUpdatedEvent event) {
         this.id = event.getId();
         this.isActive = event.getIsActive();
+        this.name = event.getName();
         this.phone = event.getPhone();
         this.houseNumberAndStreet = event.getHouseNumberAndStreet();
         this.provinceId = event.getProvinceId();

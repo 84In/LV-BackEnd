@@ -20,8 +20,8 @@ public class Address {
     @Id
     private String id;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "phone", nullable = false)
     private String phone;
@@ -38,16 +38,18 @@ public class Address {
     private District district;
 
     @ManyToOne
-    @JoinColumn(name = "ward_id") // Dùng khóa ngoại là `ward_code` của Ward
+    @JoinColumn(name = "ward_id")
     private Ward ward;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false) // Không cho phép cập nhật giá trị này
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at") // Tự động cập nhật khi có thay đổi
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 }

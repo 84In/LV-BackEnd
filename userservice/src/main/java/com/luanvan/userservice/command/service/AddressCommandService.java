@@ -54,14 +54,16 @@ public class AddressCommandService {
 
         CreateAddressCommand command = new CreateAddressCommand(
                 UUID.randomUUID().toString(),
-                true,
+                model.getName(),
                 model.getPhone(),
                 model.getHouseNumberAndStreet(),
                 model.getProvinceId(),
                 model.getDistrictId(),
                 model.getWardId(),
                 model.getUserId(),
-                model.getIsDefault());
+                model.getIsDefault(),
+                true
+        );
         log.info("Send command create address: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
@@ -89,14 +91,16 @@ public class AddressCommandService {
         }
         UpdateAddressCommand command = new UpdateAddressCommand(
                 addressId,
-                true,
+                model.getName(),
                 model.getPhone(),
                 model.getHouseNumberAndStreet(),
                 model.getProvinceId(),
                 model.getDistrictId(),
                 model.getWardId(),
                 model.getUserId(),
-                model.getIsDefault());
+                model.getIsDefault(),
+                true
+                );
         log.info("Send command update address: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));

@@ -13,7 +13,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 public class CreateAddressCommand {
     @TargetAggregateIdentifier
     private String id;
-    private Boolean isActive;
+    private String name;
     private String phone;
     private String houseNumberAndStreet;
     private Integer provinceId;
@@ -21,4 +21,5 @@ public class CreateAddressCommand {
     private Integer wardId;
     private String userId;
     private Boolean isDefault;
+    private Boolean isActive;
 }
