@@ -64,6 +64,7 @@ public class UserAggregate {
     @CommandHandler
     public void handle(ChangePasswordUserCommand command) {
         UserChangePasswordEvent event = new UserChangePasswordEvent();
+        event.setId(command.getId());
         event.setPassword(command.getPassword());
         log.info("UserChangedEvent: {}", event);
         AggregateLifecycle.apply(event);

@@ -27,7 +27,7 @@ public class UploadController {
     private final KafkaTemplate<String, ProductImagesUploadModel> kafkaTemplate;
 
     @PostMapping("avatar/{userId}")
-    public ResponseEntity<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
+    public ApiResponse<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
 
         log.info("Saved uploadAvatar: {}", userId);
         AvatarUpdateModel avatarUpdateModel = new AvatarUpdateModel();
@@ -38,13 +38,13 @@ public class UploadController {
         log.info("Send message to kafka topic avatar-uploaded-topic with user-id {}", userId);
 
         kafkaService.sendMessage("avatar-uploaded-topic", avatarUpdateModel);
-
-
-        return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
+        return ApiResponse.builder()
+                .message("Cập nhật hình ảnh thành công!")
+                .build();
     }
 
     @PostMapping("categories/{categoryId}")
-    public ResponseEntity<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) {
+    public ApiResponse<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) {
 
         log.info("Saved uploadCategoriesImage: {}", categoryId);
         CategoryImageUpdateModel categoryImageUpdateModel = new CategoryImageUpdateModel();
@@ -56,7 +56,9 @@ public class UploadController {
 
         kafkaService.sendMessage("category-image-uploaded-topic", categoryImageUpdateModel);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Cập nhật hình ảnh thành công!");
+        return ApiResponse.builder()
+                .message("Cập nhật hình ảnh thành công!")
+                .build();
     }
 
     @PostMapping("products/{productId}")

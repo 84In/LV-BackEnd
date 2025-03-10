@@ -1,5 +1,7 @@
 package com.luanvan.userservice.command.handler;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.userservice.command.event.*;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
@@ -104,7 +106,8 @@ public class UserEventHandler {
 
     @EventHandler
     public void on(UserChangePasswordEvent event){
-        User user = userRepository.findByUserId(event.getId());
+        User user = userRepository.findById(event.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setPassword(passwordEncoder.encode(event.getPassword()));
         log.info("User change password event handler");
         userRepository.save(user);
