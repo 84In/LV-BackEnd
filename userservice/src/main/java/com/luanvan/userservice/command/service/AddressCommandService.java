@@ -25,22 +25,16 @@ import java.util.UUID;
 public class AddressCommandService {
     @Autowired
     private CommandGateway commandGateway;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserAddressRepository userAddressRepository;
-
     @Autowired
     private AddressRepository addressRepository;
-
     @Autowired
     private ProvinceRepository provinceRepository;
-
     @Autowired
     private DistrictRepository districtRepository;
-
     @Autowired
     private WardRepository wardRepository;
 

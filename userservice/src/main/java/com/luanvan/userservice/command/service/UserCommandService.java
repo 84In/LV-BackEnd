@@ -34,14 +34,14 @@ public class UserCommandService {
     @Autowired
     private CommandGateway commandGateway;
 
-    public HashMap<?,?> save(UserCreateModel model) throws AppException {
-        if(userRepository.existsByUsername(model.getUsername())) {
+    public HashMap<?, ?> save(UserCreateModel model) throws AppException {
+        if (userRepository.existsByUsername(model.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        if(userRepository.existsByEmail(model.getEmail())) {
+        if (userRepository.existsByEmail(model.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXISTED);
         }
-        if(!roleRepository.existsById(model.getRoleName())){
+        if (!roleRepository.existsById(model.getRoleName())) {
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
         }
 
@@ -51,37 +51,42 @@ public class UserCommandService {
                 model.getPassword(),
                 true,
                 model.getEmail(),
-           null,
+                null,
                 model.getLastName(),
                 model.getFirstName(),
                 model.getRoleName());
 
-        CreateEmptyCartCommand cartCommand = CreateEmptyCartCommand.builder()
-                .id(UUID.randomUUID().toString())
-                .username(model.getUsername())
-                .build();
-        log.info("Send command create user id: {}, username: {}", command.getId(),command.getUsername());
+        log.info("Send command create user id: {}, username: {}", command.getId(), command.getUsername());
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
+
+        if (result.get("id") != null) {
+            log.info("Create empty cart for username: {}", model.getUsername());
+            CreateEmptyCartCommand cartCommand = CreateEmptyCartCommand.builder()
+                    .id(UUID.randomUUID().toString())
+                    .username(model.getUsername())
+                    .build();
+            commandGateway.sendAndWait(cartCommand);
+        }
         return result;
     }
 
-    public HashMap<?,?> update(String userId, UserUpdateModel model) throws AppException {
+    public HashMap<?, ?> update(String userId, UserUpdateModel model) throws AppException {
 
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
 
-        if(!model.getEmail().isEmpty()) {
+        if (!model.getEmail().isEmpty()) {
             User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-            if(!user.getEmail().equals(model.getEmail())) {
-                if(userRepository.existsByEmail(model.getEmail())) {
+            if (!user.getEmail().equals(model.getEmail())) {
+                if (userRepository.existsByEmail(model.getEmail())) {
                     throw new AppException(ErrorCode.EMAIL_EXISTED);
                 }
             }
         }
 
-        if(!model.getRoleName().isEmpty() && !roleRepository.existsById(model.getRoleName())) {
+        if (!model.getRoleName().isEmpty() && !roleRepository.existsById(model.getRoleName())) {
             throw new AppException(ErrorCode.ROLE_NOT_EXISTED);
         }
 
@@ -99,8 +104,8 @@ public class UserCommandService {
         result.put("id", commandGateway.sendAndWait(command));
         return result;
     }
-    
-    public HashMap<?,?> delete(String userId) throws AppException {
+
+    public HashMap<?, ?> delete(String userId) throws AppException {
         DeleteUserCommand command = new DeleteUserCommand(userId);
         log.info("Send command delete user: {}", command);
         var result = new HashMap<>();
@@ -109,30 +114,30 @@ public class UserCommandService {
         return result;
     }
 
-    public HashMap<?,?> changeStatus(String userId, UserChangeStatusModel model) throws AppException {
-        if(!userRepository.existsById(userId)) {
+    public HashMap<?, ?> changeStatus(String userId, UserChangeStatusModel model) throws AppException {
+        if (!userRepository.existsById(userId)) {
             throw new AppException(ErrorCode.USER_NOT_EXISTED);
         }
-        ChangeStatusUserCommand command = new ChangeStatusUserCommand(userId,model.getActive());
+        ChangeStatusUserCommand command = new ChangeStatusUserCommand(userId, model.getActive());
         log.info("Send command change status user: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
-        result.put("message","Trạng thái tài khoản đã được cập nhật");
+        result.put("message", "Trạng thái tài khoản đã được cập nhật");
         return result;
     }
 
-    public HashMap<?,?> changePassword(String userId, UserChangePasswordModel model) throws AppException {
+    public HashMap<?, ?> changePassword(String userId, UserChangePasswordModel model) throws AppException {
         User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if(!passwordEncoder.matches(model.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(model.getOldPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INCORRECT_PASSWORD);
         }
 
-        ChangePasswordUserCommand command = new ChangePasswordUserCommand(userId,model.getNewPassword());
+        ChangePasswordUserCommand command = new ChangePasswordUserCommand(userId, model.getNewPassword());
         log.info("Send command change password user: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
-        result.put("message","Mật khẩu đã được thay đổi");
+        result.put("message", "Mật khẩu đã được thay đổi");
         return result;
     }
 }

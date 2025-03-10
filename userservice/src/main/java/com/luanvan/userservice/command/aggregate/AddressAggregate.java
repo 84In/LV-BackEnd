@@ -51,7 +51,7 @@ public class AddressAggregate {
     }
 
     @CommandHandler
-    public void hanle(ChangeDefaultAddressCommand command) {
+    public void handle(ChangeDefaultAddressCommand command) {
         AddressChangeDefaultEvent event = new AddressChangeDefaultEvent();
         BeanUtils.copyProperties(command, event);
         log.info("AddressChangeDefaultEvent: {}",event);
@@ -59,7 +59,7 @@ public class AddressAggregate {
     }
 
     @CommandHandler
-    public void hanle(RemoveAddressCommand command) {
+    public void handle(RemoveAddressCommand command) {
         AddressRemoveEvent event = new AddressRemoveEvent();
         BeanUtils.copyProperties(command, event);
         log.info("AddressRemoveEvent: {}",event);

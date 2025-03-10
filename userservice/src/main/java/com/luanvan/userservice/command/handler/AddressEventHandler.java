@@ -69,7 +69,7 @@ public class AddressEventHandler {
             */
             if (event.getIsDefault() != null && event.getIsDefault() && userAddressRepository.existsByUserIdAndIsDefault(user.getId(), true)) {
                 userAddress.setDefault(true);
-            }else {
+            } else {
                 userAddress.setDefault(false);
             }
             userAddress.setUser(user);
@@ -116,7 +116,7 @@ public class AddressEventHandler {
 
             Optional.ofNullable(event.getIsDefault()).ifPresent(isDefault -> {
                 if (isDefault) {
-                    UserAddress oldDefaultUserAddress =  userAddressRepository.findOneByUserIdAndIsDefault(user.getId(), isDefault).orElseThrow(()-> new RuntimeException("Not found userAddress is default"));
+                    UserAddress oldDefaultUserAddress = userAddressRepository.findOneByUserIdAndIsDefault(user.getId(), isDefault).orElseThrow(() -> new RuntimeException("Not found userAddress is default"));
                     oldDefaultUserAddress.setDefault(!isDefault);
                     userAddressRepository.save(oldDefaultUserAddress);
                     userAddress.setDefault(isDefault);
@@ -137,10 +137,11 @@ public class AddressEventHandler {
             }
             userAddress.setDefault(false);
             userAddressRepository.save(userAddress);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
+
     @EventHandler
     public void on(AddressRemoveEvent event) {
         try {
@@ -148,10 +149,11 @@ public class AddressEventHandler {
             Address address = addressRepository.findById(event.getId()).orElseThrow(() -> new RuntimeException("Not found address"));
             if (userAddressRepository.existsByUserIdAndAddressIdAndIsDefault(user.getId(), address.getId(), true)) {
                 throw new RuntimeException("User address is default not remove");
-            };
+            }
+            ;
             address.setIsActive(false);
             addressRepository.save(address);
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
