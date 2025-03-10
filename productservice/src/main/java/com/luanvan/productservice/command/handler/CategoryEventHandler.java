@@ -2,6 +2,7 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.event.CategoryChangeStatusEvent;
 import com.luanvan.productservice.command.event.CategoryCreateEvent;
 import com.luanvan.productservice.command.event.CategoryDeleteEvent;
 import com.luanvan.productservice.command.event.CategoryUpdateEvent;
@@ -41,6 +42,13 @@ public class CategoryEventHandler {
         category.setCodeName(event.getCodeName());
         category.setDescription(event.getDescription());
         category.setImages(event.getImages());
+        category.setIsActive(event.getIsActive());
+        categoryRepository.save(category);
+    }
+    @EventHandler
+    public void on(CategoryChangeStatusEvent event) {
+        log.info("Category changed status");
+        var category = categoryRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         category.setIsActive(event.getIsActive());
         categoryRepository.save(category);
     }

@@ -1,8 +1,10 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.productservice.command.command.ChangeStatusCategoryCommand;
 import com.luanvan.productservice.command.command.CreateCategoryCommand;
 import com.luanvan.productservice.command.command.DeleteCategoryCommand;
 import com.luanvan.productservice.command.command.UpdateCategoryCommand;
+import com.luanvan.productservice.command.event.CategoryChangeStatusEvent;
 import com.luanvan.productservice.command.event.CategoryCreateEvent;
 import com.luanvan.productservice.command.event.CategoryDeleteEvent;
 import com.luanvan.productservice.command.event.CategoryUpdateEvent;
@@ -44,6 +46,13 @@ public class CategoryAggregate {
     }
 
     @CommandHandler
+    public void handle(ChangeStatusCategoryCommand command) {
+        CategoryChangeStatusEvent event = new CategoryChangeStatusEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
     public void handle(DeleteCategoryCommand command) {
         CategoryDeleteEvent event = new CategoryDeleteEvent();
         BeanUtils.copyProperties(command, event);
@@ -67,6 +76,12 @@ public class CategoryAggregate {
         this.codeName = event.getCodeName();
         this.description = event.getDescription();
         this.images = event.getImages();
+        this.isActive = event.getIsActive();
+    }
+
+    @EventSourcingHandler
+    public void on(CategoryChangeStatusEvent event) {
+        this.id = event.getId();
         this.isActive = event.getIsActive();
     }
 

@@ -1,6 +1,7 @@
 package com.luanvan.productservice.command.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.productservice.command.model.CategoryChangeStatusModel;
 import com.luanvan.productservice.command.model.CategoryCreateModel;
 import com.luanvan.productservice.command.model.CategoryUpdateModel;
 import com.luanvan.productservice.command.service.CategoryCommandService;
@@ -33,6 +34,15 @@ public class CategoryCommandController {
                 .data(response)
                 .build();
     }
+
+    @PutMapping("/changeStatus/{categoryId}")
+    public ApiResponse<?> changeStatus(@PathVariable String categoryId, @RequestBody CategoryChangeStatusModel model) {
+        var response = categoryCommandService.changeStatus(categoryId, model);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
 
     @DeleteMapping("/{categoryId}")
     public ApiResponse<?> delete(@PathVariable String categoryId) {

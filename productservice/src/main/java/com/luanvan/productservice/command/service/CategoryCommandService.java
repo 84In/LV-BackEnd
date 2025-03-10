@@ -2,9 +2,11 @@ package com.luanvan.productservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.command.ChangeStatusCategoryCommand;
 import com.luanvan.productservice.command.command.CreateCategoryCommand;
 import com.luanvan.productservice.command.command.DeleteCategoryCommand;
 import com.luanvan.productservice.command.command.UpdateCategoryCommand;
+import com.luanvan.productservice.command.model.CategoryChangeStatusModel;
 import com.luanvan.productservice.command.model.CategoryCreateModel;
 import com.luanvan.productservice.command.model.CategoryUpdateModel;
 import com.luanvan.productservice.repository.CategoryRepository;
@@ -51,6 +53,19 @@ public class CategoryCommandService {
                 .codeName(model.getCodeName())
                 .description(model.getDescription())
                 .images(model.getImages())
+                .isActive(model.getIsActive())
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
+
+    public HashMap<?, ?> changeStatus(String categoryId, CategoryChangeStatusModel model) throws AppException {
+        if (!categoryRepository.existsById(categoryId)) {
+            throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+        }
+        ChangeStatusCategoryCommand command =  ChangeStatusCategoryCommand.builder()
+                .id(categoryId)
                 .isActive(model.getIsActive())
                 .build();
         var result = new HashMap<>();
