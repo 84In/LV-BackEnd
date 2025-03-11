@@ -68,7 +68,7 @@ public class AddressEventHandler {
             /* isDefault != null, giá trị isDefault phải là true và userId này chưa tồn tại địa chỉ default thì mới được gán true
             ngược lại là false
             */
-            if (event.getIsDefault() != null && event.getIsDefault() && userAddressRepository.existsByUserIdAndIsDefault(user.getId(), true)) {
+            if (event.getIsDefault() != null && !userAddressRepository.existsByUserIdAndIsDefault(user.getId(), true)) {
                 userAddress.setDefault(true);
             } else {
                 userAddress.setDefault(false);
