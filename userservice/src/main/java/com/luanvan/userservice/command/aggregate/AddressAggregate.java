@@ -99,6 +99,7 @@ public class AddressAggregate {
     public void on(AddressChangeDefaultEvent event){
         this.id = event.getId();
         this.userId = event.getUserId();
+        this.isDefault = event.getIsDefault();
     }
 
     @EventSourcingHandler

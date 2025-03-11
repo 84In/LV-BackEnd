@@ -111,7 +111,7 @@ public class AddressCommandService {
         if(userAddressRepository.existsByUserIdAndAddressId(model.getUserId(),addressId)){
             throw new AppException(ErrorCode.ADDRESS_NOT_EXISTED);
         }
-        ChangeDefaultAddressCommand command = new ChangeDefaultAddressCommand(addressId,model.getUserId());
+        ChangeDefaultAddressCommand command = new ChangeDefaultAddressCommand(addressId,model.getUserId(), model.getIsDefault());
         log.info("Send command change default address: {}", command);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));

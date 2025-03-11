@@ -14,4 +14,5 @@ public class ChangeDefaultAddressCommand {
     @TargetAggregateIdentifier
     private String id;
     private String userId;
+    private Boolean isDefault;
 }

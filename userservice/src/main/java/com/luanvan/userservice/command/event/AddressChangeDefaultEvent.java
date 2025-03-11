@@ -12,4 +12,5 @@ import lombok.Setter;
 public class AddressChangeDefaultEvent {
     private String id;
     private String userId;
+    private Boolean isDefault;
 }

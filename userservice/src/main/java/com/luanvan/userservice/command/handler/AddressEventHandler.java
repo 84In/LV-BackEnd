@@ -11,6 +11,7 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -92,8 +93,9 @@ public class AddressEventHandler {
 
             Address address = addressRepository.findById(event.getId()).orElseThrow(() -> new RuntimeException("Not found address"));
 
-            Optional.ofNullable(event.getProvinceId()).ifPresent(id -> {
-                Province province = provinceRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found province"));
+
+            if (event.getProvinceId() != null) {
+                Province province = provinceRepository.findById(event.getProvinceId()).orElseThrow(() -> new RuntimeException("Not found province"));
                 address.setProvince(province);
                 District district = districtRepository.findById(event.getDistrictId()).orElseThrow(() -> new RuntimeException("Not found district"));
                 address.setDistrict(district);
@@ -104,11 +106,22 @@ public class AddressEventHandler {
                 } else {
                     address.setWard(null);
                 }
-            });
-            Optional.ofNullable(event.getHouseNumberAndStreet()).ifPresent(address::setHouseNumberAndStreet);
-            Optional.ofNullable(event.getIsActive()).ifPresent(address::setIsActive);
-            Optional.ofNullable(event.getName()).ifPresent(address::setName);
-            Optional.ofNullable(event.getPhone()).ifPresent(address::setPhone);
+            }
+
+            if (event.getHouseNumberAndStreet() != null) {
+                address.setHouseNumberAndStreet(event.getHouseNumberAndStreet());
+            }
+
+            if (event.getIsActive() != null) {
+                address.setIsActive(event.getIsActive());
+            }
+            if (event.getName() != null) {
+                address.setName(event.getName());
+            }
+            if (event.getPhone() != null) {
+                address.setPhone(event.getPhone());
+            }
+
             addressRepository.save(address);
 
             UserAddress userAddress = userAddressRepository.findByUserIdAndAddressId(user.getId(), address.getId());
@@ -116,14 +129,26 @@ public class AddressEventHandler {
                 throw new RuntimeException("Not found userAddress");
             }
 
-            Optional.ofNullable(event.getIsDefault()).ifPresent(isDefault -> {
-                if (isDefault) {
-                    UserAddress oldDefaultUserAddress = userAddressRepository.findOneByUserIdAndIsDefault(user.getId(), isDefault).orElseThrow(() -> new RuntimeException("Not found userAddress is default"));
-                    oldDefaultUserAddress.setDefault(!isDefault);
-                    userAddressRepository.save(oldDefaultUserAddress);
-                    userAddress.setDefault(isDefault);
+            if (event.getIsDefault() != null) {
+                if (event.getIsDefault()) {
+                    UserAddress oldDefaultUserAddress = userAddressRepository.findOneByUserIdAndIsDefault(user.getId(), true).orElseThrow(() -> new RuntimeException("Not found userAddress is default"));
+                    if (oldDefaultUserAddress.getAddress().getId().equals(userAddress.getAddress().getId())) {
+                        userAddress.setDefault(true);
+                    } else {
+                        oldDefaultUserAddress.setDefault(!oldDefaultUserAddress.isDefault());
+                        userAddressRepository.save(oldDefaultUserAddress);
+                        userAddress.setDefault(userAddress.isDefault());
+                    }
+                } else {
+                    if (userAddress.isDefault()) {
+                        throw new RuntimeException("Not change status because it is default");
+                    } else {
+                        userAddress.setDefault(false);
+                    }
                 }
-            });
+
+
+            }
             userAddressRepository.save(userAddress);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -137,7 +162,26 @@ public class AddressEventHandler {
             if (userAddress == null) {
                 throw new RuntimeException("Not found userAddress");
             }
-            userAddress.setDefault(false);
+            if (userAddress.isDefault()) { //true
+                if (event.getIsDefault()) { //true
+                    userAddress.setDefault(true);
+                } else {
+                    List<UserAddress> userAddresses = userAddressRepository.findAllByUserId(event.getUserId());
+                    userAddresses.get(0).setDefault(true);
+                    userAddressRepository.save(userAddresses.get(0));
+                    userAddress.setDefault(event.getIsDefault());
+                }
+            }else{ //user address false
+                if (event.getIsDefault()) {
+                    UserAddress old = userAddressRepository.findOneByUserIdAndIsDefault(event.getUserId(), true).orElseThrow(() -> new RuntimeException("Not found userAddress is default"));
+                    old.setDefault(false);
+                    userAddressRepository.save(old);
+                    userAddress.setDefault(event.getIsDefault());
+                }else{
+                    userAddress.setDefault(false);
+                }
+
+            }
             userAddressRepository.save(userAddress);
         } catch (Exception e) {
             log.error(e.getMessage());
