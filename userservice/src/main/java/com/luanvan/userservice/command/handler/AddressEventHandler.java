@@ -137,13 +137,21 @@ public class AddressEventHandler {
                     } else {
                         oldDefaultUserAddress.setDefault(!oldDefaultUserAddress.isDefault());
                         userAddressRepository.save(oldDefaultUserAddress);
-                        userAddress.setDefault(userAddress.isDefault());
+                        userAddress.setDefault(!userAddress.isDefault());
                     }
                 } else {
                     if (userAddress.isDefault()) {
-                        throw new RuntimeException("Not change status because it is default");
+                        List<UserAddress> userAddresses = userAddressRepository.findAllByUserId(event.getUserId());
+                        for (UserAddress userAddress1 : userAddresses){
+                            if (!userAddress1.isDefault()) {
+                                userAddress1.setDefault(true);
+                                userAddressRepository.save(userAddress1);
+                                userAddress.setDefault(event.getIsDefault());
+                                break;
+                            }
+                        }
                     } else {
-                        userAddress.setDefault(false);
+                        userAddress.setDefault(event.getIsDefault());
                     }
                 }
 
@@ -167,17 +175,23 @@ public class AddressEventHandler {
                     userAddress.setDefault(true);
                 } else {
                     List<UserAddress> userAddresses = userAddressRepository.findAllByUserId(event.getUserId());
-                    userAddresses.get(0).setDefault(true);
-                    userAddressRepository.save(userAddresses.get(0));
-                    userAddress.setDefault(event.getIsDefault());
+                    for (UserAddress userAddress1 : userAddresses){
+                        if (!userAddress1.isDefault()) {
+                            userAddress1.setDefault(true);
+                            userAddressRepository.save(userAddress1);
+                            userAddress.setDefault(event.getIsDefault());
+                            break;
+                        }
+                    }
+
                 }
-            }else{ //user address false
+            } else { //user address false
                 if (event.getIsDefault()) {
                     UserAddress old = userAddressRepository.findOneByUserIdAndIsDefault(event.getUserId(), true).orElseThrow(() -> new RuntimeException("Not found userAddress is default"));
                     old.setDefault(false);
                     userAddressRepository.save(old);
                     userAddress.setDefault(event.getIsDefault());
-                }else{
+                } else {
                     userAddress.setDefault(false);
                 }
 

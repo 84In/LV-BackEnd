@@ -3,7 +3,6 @@ package com.luanvan.userservice.command.handler;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.userservice.command.event.*;
-import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.Role;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.repository.CartRepository;
@@ -14,10 +13,6 @@ import org.axonframework.eventhandling.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Component
