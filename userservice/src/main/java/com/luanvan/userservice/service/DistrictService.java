@@ -2,7 +2,7 @@ package com.luanvan.userservice.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.userservice.dto.DistrictResponseModel;
+import com.luanvan.commonservice.model.response.DistrictResponseModel;
 import com.luanvan.userservice.entity.District;
 import com.luanvan.userservice.repository.DistrictRepository;
 import com.luanvan.userservice.repository.ProvinceRepository;

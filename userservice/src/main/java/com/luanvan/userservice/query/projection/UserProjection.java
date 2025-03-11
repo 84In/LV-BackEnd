@@ -2,17 +2,16 @@ package com.luanvan.userservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.model.response.*;
+import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.commonservice.queries.GetUserQuery;
-import com.luanvan.commonservice.model.response.RoleResponseModel;
-import com.luanvan.commonservice.model.response.UserAddressResponseModel;
-import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
-import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,6 +40,7 @@ public class UserProjection {
         var userPages = userRepository.findAll(pageable);
 
         return userPages.getContent().stream().map(user -> {
+
                     UserResponseModel userResponseModel = UserResponseModel.builder()
                             .id(user.getId())
                             .username(user.getUsername())
@@ -61,12 +61,19 @@ public class UserProjection {
                                 userAddressResponse.setName(address.getName());
                                 userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
                                 userAddressResponse.setAddressPhone(address.getPhone());
-                                userAddressResponse.setProvinceName(address.getProvince().getName());
-                                userAddressResponse.setProvinceId(address.getProvince().getId());
-                                userAddressResponse.setDistrictName(address.getDistrict().getName());
-                                userAddressResponse.setDistrictId(address.getDistrict().getId());
-                                userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
-                                userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
+                                ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
+                                BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
+                                userAddressResponse.setProvince(provinceResponseModel);
+                                DistrictResponseModel districtResponseModel = new DistrictResponseModel();
+                                BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
+                                userAddressResponse.setDistrict(districtResponseModel);
+                                if(address.getWard() != null){
+                                    WardResponseModel wardResponseModel = new WardResponseModel();
+                                    BeanUtils.copyProperties(address.getWard(), wardResponseModel);
+                                    userAddressResponse.setWard(wardResponseModel);
+                                }else{
+                                    userAddressResponse.setWard(null);
+                                }
                                 userAddressResponse.setDefault(userAddress.isDefault());
                                 userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
                                 userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
@@ -113,12 +120,19 @@ public class UserProjection {
             userAddressResponse.setName(address.getName());
             userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
             userAddressResponse.setAddressPhone(address.getPhone());
-            userAddressResponse.setProvinceName(address.getProvince().getName());
-            userAddressResponse.setProvinceId(address.getProvince().getId());
-            userAddressResponse.setDistrictName(address.getDistrict().getName());
-            userAddressResponse.setDistrictId(address.getDistrict().getId());
-            userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
-            userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
+            ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
+            BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
+            userAddressResponse.setProvince(provinceResponseModel);
+            DistrictResponseModel districtResponseModel = new DistrictResponseModel();
+            BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
+            userAddressResponse.setDistrict(districtResponseModel);
+            if(address.getWard() != null){
+                WardResponseModel wardResponseModel = new WardResponseModel();
+                BeanUtils.copyProperties(address.getWard(), wardResponseModel);
+                userAddressResponse.setWard(wardResponseModel);
+            }else{
+                userAddressResponse.setWard(null);
+            }
             userAddressResponse.setDefault(userAddress.isDefault());
             userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
             userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
@@ -164,12 +178,19 @@ public class UserProjection {
                 userAddressResponse.setName(address.getName());
                 userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
                 userAddressResponse.setAddressPhone(address.getPhone());
-                userAddressResponse.setProvinceName(address.getProvince().getName());
-                userAddressResponse.setProvinceId(address.getProvince().getId());
-                userAddressResponse.setDistrictName(address.getDistrict().getName());
-                userAddressResponse.setDistrictId(address.getDistrict().getId());
-                userAddressResponse.setWardName(address.getWard() != null ? address.getWard().getName() : null);
-                userAddressResponse.setWardId(address.getWard() != null ? address.getWard().getId(): null);
+                ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
+                BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
+                userAddressResponse.setProvince(provinceResponseModel);
+                DistrictResponseModel districtResponseModel = new DistrictResponseModel();
+                BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
+                userAddressResponse.setDistrict(districtResponseModel);
+                if(address.getWard() != null){
+                    WardResponseModel wardResponseModel = new WardResponseModel();
+                    BeanUtils.copyProperties(address.getWard(), wardResponseModel);
+                    userAddressResponse.setWard(wardResponseModel);
+                }else{
+                    userAddressResponse.setWard(null);
+                }
                 userAddressResponse.setDefault(userAddress.isDefault());
                 userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
                 userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());

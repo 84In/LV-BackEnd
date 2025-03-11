@@ -1,4 +1,4 @@
-package com.luanvan.userservice.dto;
+package com.luanvan.commonservice.model.response;
 
 import lombok.*;
 
@@ -8,8 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ProvinceResponseModel {
-
+public class DistrictResponseModel {
     private Integer id;
     private String codeName;
     private String name;

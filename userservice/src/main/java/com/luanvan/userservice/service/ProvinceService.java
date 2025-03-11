@@ -2,7 +2,7 @@ package com.luanvan.userservice.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.userservice.dto.ProvinceResponseModel;
+import com.luanvan.commonservice.model.response.ProvinceResponseModel;
 import com.luanvan.userservice.entity.Province;
 import com.luanvan.userservice.repository.ProvinceRepository;
 import lombok.AccessLevel;
