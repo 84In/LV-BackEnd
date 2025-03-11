@@ -25,6 +25,7 @@ public class SizeAggregate {
     public SizeAggregate(CreateSizeCommand command) {
         SizeCreateEvent event = new SizeCreateEvent();
         BeanUtils.copyProperties(command, event);
+        log.info("Create size: {}", event.toString());
         AggregateLifecycle.apply(event);
     }
 

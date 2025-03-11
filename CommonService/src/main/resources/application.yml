@@ -5,6 +5,19 @@ spring:
       group-id: ${KAFKA_GROUP_ID:default-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+axon:
+  eventhandling:
+    processors:
+      default:
+        mode: tracking
+        token-store:
+          type: jdbc   # Lưu trạng thái vào database
+        retry-max-attempts: 3
+        retry-exponential-backoff:
+          initial-interval: 1000  # Lần đầu retry sau 1s
+          max-interval: 60000     # Giới hạn tối đa 60s
+          multiplier: 2.0         # Tăng dần thời gian retry (1s, 2s, 4s, ...)
+#        error-handler: logging  # Chỉ log lỗi, không retry
 jwt:
   secret: "YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg="
   expiration: 3600000  # 1 giờ (Access Token)

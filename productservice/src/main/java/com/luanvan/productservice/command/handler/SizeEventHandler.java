@@ -20,8 +20,8 @@ public class SizeEventHandler {
     private final SizeRepository sizeRepository;
 
     @EventHandler
-    public void on(SizeCreateEvent event) throws Exception {
-        log.info("Size created");
+    public void on(SizeCreateEvent event) {
+        log.info("Size {} created", event.getName());
         var size = Size.builder()
                 .id(event.getId())
                 .name(event.getName())

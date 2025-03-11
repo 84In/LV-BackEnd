@@ -1,5 +1,7 @@
 package com.luanvan.mediaservice.command.controller;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.request.AvatarUpdateModel;
 import com.luanvan.commonservice.model.request.CategoryImageUpdateModel;
@@ -27,38 +29,52 @@ public class UploadController {
     private final KafkaTemplate<String, ProductImagesUploadModel> kafkaTemplate;
 
     @PostMapping("avatar/{userId}")
-    public ApiResponse<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) {
+    public ApiResponse<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) throws AppException {
 
-        log.info("Saved uploadAvatar: {}", userId);
-        AvatarUpdateModel avatarUpdateModel = new AvatarUpdateModel();
+        try {
+            log.info("Saved uploadAvatar: {}", userId);
+            AvatarUpdateModel avatarUpdateModel = new AvatarUpdateModel();
 
-        avatarUpdateModel.setUserId(userId);
-        avatarUpdateModel.setAvatarUrl(cloudinaryService.uploadAvatar(avatar, userId));
+            avatarUpdateModel.setUserId(userId);
+            avatarUpdateModel.setAvatarUrl(cloudinaryService.uploadAvatar(avatar, userId));
 
-        log.info("Send message to kafka topic avatar-uploaded-topic with user-id {}", userId);
+            log.info("Send message to kafka topic avatar-uploaded-topic with user-id {}", userId);
 
-        kafkaService.sendMessage("avatar-uploaded-topic", avatarUpdateModel);
-        return ApiResponse.builder()
-                .message("Cập nhật hình ảnh thành công!")
-                .build();
+            kafkaService.sendMessage("avatar-uploaded-topic", avatarUpdateModel);
+            return ApiResponse.builder()
+                    .message("Cập nhật hình ảnh thành công!")
+                    .build();
+        }catch (Exception e) {
+            log.error("Upload avatar failed for user {}: {}", userId, e.getMessage(), e);
+            // Trả về thông báo lỗi cho người dùng ngay lập tức
+            throw new AppException(ErrorCode.FILE_ERROR);
+        }
+
+
     }
 
     @PostMapping("categories/{categoryId}")
-    public ApiResponse<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) {
+    public ApiResponse<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) throws AppException {
 
-        log.info("Saved uploadCategoriesImage: {}", categoryId);
-        CategoryImageUpdateModel categoryImageUpdateModel = new CategoryImageUpdateModel();
+        try{
+            log.info("Saved uploadCategoriesImage: {}", categoryId);
+            CategoryImageUpdateModel categoryImageUpdateModel = new CategoryImageUpdateModel();
 
-        categoryImageUpdateModel.setCategoryId(categoryId);
-        categoryImageUpdateModel.setCategoryUrl(cloudinaryService.uploadCategoryImage(images, categoryId));
+            categoryImageUpdateModel.setCategoryId(categoryId);
+            categoryImageUpdateModel.setCategoryUrl(cloudinaryService.uploadCategoryImage(images, categoryId));
 
-        log.info("Send message to kafka topic category-uploaded-topic with categoryId {}", categoryId);
+            log.info("Send message to kafka topic category-uploaded-topic with categoryId {}", categoryId);
 
-        kafkaService.sendMessage("category-image-uploaded-topic", categoryImageUpdateModel);
+            kafkaService.sendMessage("category-image-uploaded-topic", categoryImageUpdateModel);
 
-        return ApiResponse.builder()
-                .message("Cập nhật hình ảnh thành công!")
-                .build();
+            return ApiResponse.builder()
+                    .message("Cập nhật hình ảnh thành công!")
+                    .build();
+        }catch (Exception e) {
+            log.error("Upload category failed for user {}: {}", categoryId, e.getMessage(), e);
+            // Trả về thông báo lỗi cho người dùng ngay lập tức
+            throw new AppException(ErrorCode.FILE_ERROR);
+        }
     }
 
     @PostMapping("products/{productId}")

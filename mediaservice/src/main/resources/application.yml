@@ -15,7 +15,7 @@ cloudinary:
 
 logging:
   level:
-    org.springframework: DEBUG
+    org.springframework: INFO
 spring:
   kafka:
     bootstrap-servers: localhost:9092

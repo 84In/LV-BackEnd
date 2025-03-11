@@ -14,12 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/sizes")
 public class SizeCommandController {
     @Autowired
-    private  CommandGateway commandGateway;
-    @Autowired
     private SizeCommandService sizeCommandService;
 
     @PostMapping
     public ApiResponse<?> create(@RequestBody SizeCreateModel model) {
+        log.info(model.toString());
         var response = sizeCommandService.save(model);
         return ApiResponse.builder()
                 .data(response)
