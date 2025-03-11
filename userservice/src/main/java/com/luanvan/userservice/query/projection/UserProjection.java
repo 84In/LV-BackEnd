@@ -7,6 +7,7 @@ import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
+import com.luanvan.userservice.entity.UserAddress;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -31,179 +33,95 @@ public class UserProjection {
 
     @QueryHandler
     public List<UserResponseModel> handle(GetAllUserQuery query) {
-        Pageable pageable = PageRequest.of(
-                query.getPage(),
-                query.getSize(),
-                Sort.by(query.getSortDirection(), query.getSortBy())
-        );
-
-        var userPages = userRepository.findAll(pageable);
-
-        return userPages.getContent().stream().map(user -> {
-
-                    UserResponseModel userResponseModel = UserResponseModel.builder()
-                            .id(user.getId())
-                            .username(user.getUsername())
-                            .email(user.getEmail())
-                            .phone(user.getPhone())
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .avatar(user.getAvatar())
-                            .active(user.getActive())
-                            .role(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()))
-                            .addresses(user.getAddresses().stream().map(userAddress -> {
-                                UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
-                                userAddressResponse.setAddressId(userAddress.getId().getAddressId());
-                                userAddressResponse.setUserId(userAddress.getId().getUserId());
-
-                                // Lấy thông tin từ Address và mapping vào UserAddressResponse
-                                Address address = userAddress.getAddress();
-                                userAddressResponse.setName(address.getName());
-                                userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
-                                userAddressResponse.setAddressPhone(address.getPhone());
-                                ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
-                                BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
-                                userAddressResponse.setProvince(provinceResponseModel);
-                                DistrictResponseModel districtResponseModel = new DistrictResponseModel();
-                                BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
-                                userAddressResponse.setDistrict(districtResponseModel);
-                                if(address.getWard() != null){
-                                    WardResponseModel wardResponseModel = new WardResponseModel();
-                                    BeanUtils.copyProperties(address.getWard(), wardResponseModel);
-                                    userAddressResponse.setWard(wardResponseModel);
-                                }else{
-                                    userAddressResponse.setWard(null);
-                                }
-                                userAddressResponse.setDefault(userAddress.isDefault());
-                                userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
-                                userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
-
-                                return userAddressResponse;
-                            }).collect(Collectors.toList()))
-                            .createdAt(user.getCreatedAt())
-                            .updatedAt(user.getUpdatedAt())
-                            .build();
-                    log.info("handle get all users dto");
-                    log.info(userResponseModel.toString());
-                    return userResponseModel;
-                }
-        ).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), Sort.by(query.getSortDirection(), query.getSortBy()));
+        var userPage = userRepository.findAll(pageable);
+        return userPage.getContent().stream()
+                .map(this::mapToUserResponse)
+                .peek(dto -> {
+                    log.info("Mapped user DTO: {}", dto);
+                })
+                .collect(Collectors.toList());
     }
 
     @QueryHandler
     public UserResponseModel handle(GetUserQuery query) {
         User user = userRepository.findByUsername(query.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        UserResponseModel userResponseModel = new UserResponseModel();
-        userResponseModel.setId(user.getId());
-        userResponseModel.setUsername(user.getUsername());
-        userResponseModel.setPassword(user.getPassword());
-        userResponseModel.setEmail(user.getEmail());
-        userResponseModel.setPhone(user.getPhone());
-        userResponseModel.setFirstName(user.getFirstName());
-        userResponseModel.setLastName(user.getLastName());
-        userResponseModel.setAvatar(user.getAvatar());
-        userResponseModel.setActive(user.getActive());
-
-        // Mapping Role
-        userResponseModel.setRole(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()));
-
-        // Mapping UserAddressResponse
-        userResponseModel.setAddresses(user.getAddresses().stream().map(userAddress -> {
-            UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
-            userAddressResponse.setAddressId(userAddress.getId().getAddressId());
-            userAddressResponse.setUserId(userAddress.getId().getUserId());
-
-            // Lấy thông tin từ Address và mapping vào UserAddressResponse
-            Address address = userAddress.getAddress();
-            userAddressResponse.setName(address.getName());
-            userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
-            userAddressResponse.setAddressPhone(address.getPhone());
-            ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
-            BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
-            userAddressResponse.setProvince(provinceResponseModel);
-            DistrictResponseModel districtResponseModel = new DistrictResponseModel();
-            BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
-            userAddressResponse.setDistrict(districtResponseModel);
-            if(address.getWard() != null){
-                WardResponseModel wardResponseModel = new WardResponseModel();
-                BeanUtils.copyProperties(address.getWard(), wardResponseModel);
-                userAddressResponse.setWard(wardResponseModel);
-            }else{
-                userAddressResponse.setWard(null);
-            }
-            userAddressResponse.setDefault(userAddress.isDefault());
-            userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
-            userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
-
-            return userAddressResponse;
-        }).collect(Collectors.toList())); // Thu thập thành danh sách
-
-        // Mapping thời gian tạo và cập nhật
-        userResponseModel.setCreatedAt(user.getCreatedAt());
-        userResponseModel.setUpdatedAt(user.getUpdatedAt());
-        return userResponseModel;
+        return mapToUserResponse(user);
     }
 
     @QueryHandler
     public UserResponseModel handle(GetUserDetailQuery query) {
         User user = userRepository.findById(query.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return mapToUserResponse(user);
+    }
 
-        UserResponseModel userResponseModel = new UserResponseModel();
-        userResponseModel.setId(user.getId());
-        userResponseModel.setUsername(user.getUsername());
-        userResponseModel.setEmail(user.getEmail());
-        userResponseModel.setPhone(user.getPhone());
-        userResponseModel.setFirstName(user.getFirstName());
-        userResponseModel.setLastName(user.getLastName());
-        userResponseModel.setAvatar(user.getAvatar());
-        userResponseModel.setActive(user.getActive());
+    // Helper method: Mapping User entity to UserResponseModel DTO
+    private UserResponseModel mapToUserResponse(User user) {
+        return UserResponseModel.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .avatar(user.getAvatar())
+                .active(user.getActive())
+                .role(mapToRoleResponse(user))
+                .addresses(mapAddressResponse(user))
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
+    }
 
-        // Mapping Role
-        userResponseModel.setRole(new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription()));
+    // Helper method: Mapping Role from User entity
+    private RoleResponseModel mapToRoleResponse(User user) {
+        return new RoleResponseModel(user.getRole().getName(), user.getRole().getDescription());
+    }
 
-        // Mapping UserAddressResponse
-        userResponseModel.setAddresses(user.getAddresses().stream().map(userAddress -> {
+    // Helper method: Mapping addresses
+    private List<UserAddressResponseModel> mapAddressResponse(User user) {
+        return user.getAddresses().stream()
+                .sorted(Comparator.comparing(UserAddress::getCreatedAt).reversed())
+                .filter(ad -> ad.getAddress().getIsActive().equals(Boolean.TRUE))
+                .map(this::mapAddress)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
-
-            if (userAddress.getAddress().getIsActive() == true) {
-                UserAddressResponseModel userAddressResponse = new UserAddressResponseModel();
-                userAddressResponse.setAddressId(userAddress.getId().getAddressId());
-                userAddressResponse.setUserId(userAddress.getId().getUserId());
-
-                // Lấy thông tin từ Address và mapping vào UserAddressResponse
-                Address address = userAddress.getAddress();
-                userAddressResponse.setName(address.getName());
-                userAddressResponse.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
-                userAddressResponse.setAddressPhone(address.getPhone());
-                ProvinceResponseModel provinceResponseModel = new ProvinceResponseModel();
-                BeanUtils.copyProperties(address.getProvince(), provinceResponseModel);
-                userAddressResponse.setProvince(provinceResponseModel);
-                DistrictResponseModel districtResponseModel = new DistrictResponseModel();
-                BeanUtils.copyProperties(address.getDistrict(),districtResponseModel);
-                userAddressResponse.setDistrict(districtResponseModel);
-                if(address.getWard() != null){
-                    WardResponseModel wardResponseModel = new WardResponseModel();
-                    BeanUtils.copyProperties(address.getWard(), wardResponseModel);
-                    userAddressResponse.setWard(wardResponseModel);
-                }else{
-                    userAddressResponse.setWard(null);
-                }
-                userAddressResponse.setDefault(userAddress.isDefault());
-                userAddressResponse.setCreatedAt(userAddress.getCreatedAt());
-                userAddressResponse.setUpdatedAt(userAddress.getUpdatedAt());
-
-                return userAddressResponse;
-            }
-
+    // Helper method: Mapping a single address
+    private UserAddressResponseModel mapAddress(UserAddress userAddress) {
+        if (userAddress == null || userAddress.getAddress() == null || !userAddress.getAddress().getIsActive()) {
             return null;
-        }) .filter(Objects::nonNull).collect(Collectors.toList())); // Thu thập thành danh sách bỏ qua các giá trị not active
-
-        // Mapping thời gian tạo và cập nhật
-        userResponseModel.setCreatedAt(user.getCreatedAt());
-        userResponseModel.setUpdatedAt(user.getUpdatedAt());
-        return userResponseModel;
+        }
+        Address address = userAddress.getAddress();
+        UserAddressResponseModel dto = new UserAddressResponseModel();
+        dto.setAddressId(userAddress.getId().getAddressId());
+        dto.setUserId(userAddress.getId().getUserId());
+        dto.setName(address.getName());
+        dto.setHouseNumberAndStreet(address.getHouseNumberAndStreet());
+        dto.setPhone(address.getPhone());
+        // Mapping Province
+        ProvinceResponseModel province = new ProvinceResponseModel();
+        BeanUtils.copyProperties(address.getProvince(), province);
+        dto.setProvince(province);
+        // Mapping District
+        DistrictResponseModel district = new DistrictResponseModel();
+        BeanUtils.copyProperties(address.getDistrict(), district);
+        dto.setDistrict(district);
+        // Mapping Ward if exists
+        if (address.getWard() != null) {
+            WardResponseModel ward = new WardResponseModel();
+            BeanUtils.copyProperties(address.getWard(), ward);
+            dto.setWard(ward);
+        } else {
+            dto.setWard(null);
+        }
+        dto.setIsDefault(userAddress.isDefault());
+        dto.setCreatedAt(userAddress.getCreatedAt());
+        dto.setUpdatedAt(userAddress.getUpdatedAt());
+        return dto;
     }
 }

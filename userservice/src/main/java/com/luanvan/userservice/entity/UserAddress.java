@@ -13,6 +13,7 @@ import java.util.Objects;
 @Table(name = "user_addresses")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserAddress {
@@ -55,6 +56,7 @@ public class UserAddress {
     @JoinColumn(name = "address_id", referencedColumnName = "id", insertable = false, updatable = false)
     private Address address;
 
+    @Builder.Default
     @Column(name = "is_default", nullable = false)
     private boolean isDefault = false;
 

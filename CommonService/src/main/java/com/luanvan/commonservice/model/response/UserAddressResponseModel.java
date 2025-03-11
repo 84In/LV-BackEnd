@@ -18,12 +18,12 @@ public class UserAddressResponseModel {
     private String userId;          // ID của người dùng
     private String name;
     private String addressId;       // ID của địa chỉ
-    private String addressPhone;    // Số điện thoại liên quan đến địa chỉ
+    private String phone;    // Số điện thoại liên quan đến địa chỉ
     private String houseNumberAndStreet; // Địa chỉ nhà và đường
     private ProvinceResponseModel province;
     private DistrictResponseModel district;    // Tên quận/huyện
     private WardResponseModel ward;
-    private boolean isDefault;      // Địa chỉ mặc định hay không
+    private Boolean isDefault;      // Địa chỉ mặc định hay không
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

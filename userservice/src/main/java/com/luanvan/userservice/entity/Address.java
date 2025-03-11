@@ -1,10 +1,7 @@
 package com.luanvan.userservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "addresses")
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Address {
@@ -41,6 +39,7 @@ public class Address {
     @JoinColumn(name = "ward_id")
     private Ward ward;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 

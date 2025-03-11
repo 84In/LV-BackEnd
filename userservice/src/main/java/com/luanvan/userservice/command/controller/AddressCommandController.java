@@ -49,7 +49,7 @@ public class AddressCommandController {
                 .build();
     }
 
-    @DeleteMapping("/remove/{addressId}")
+    @DeleteMapping("/{addressId}")
     public ApiResponse<?> removeAddress(@PathVariable String addressId, @RequestBody AddressRemoveModel model) {
         var response = addressCommandService.remove(addressId, model);
         return ApiResponse.builder()
