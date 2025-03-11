@@ -22,6 +22,7 @@ public enum ErrorCode {
     INVALID_KEY(201, "Khóa không hợp lệ", HttpStatus.BAD_REQUEST),
     FILE_EMPTY(202, "Tệp tin trống", HttpStatus.BAD_REQUEST),
     PARSE_ERROR(203, "Lỗi phân tích cú pháp", HttpStatus.BAD_REQUEST),
+    FILE_ERROR(204, "Lỗi từ file hình ảnh", HttpStatus.BAD_REQUEST),
 
     // Lỗi người dùng
     USER_NOT_EXISTED(301, "Người dùng không tồn tại", HttpStatus.BAD_REQUEST),
