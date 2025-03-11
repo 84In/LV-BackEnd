@@ -76,7 +76,9 @@ public class UserEventHandler {
                 if(!userRepository.existsByEmail(event.getEmail())){
                     user.setEmail(event.getEmail());
                 }else{
-                    throw new RuntimeException("Email already exists");
+                    if(!event.getEmail().equals(user.getEmail())){
+                        user.setEmail(event.getEmail());
+                    }
                 }
             }
 
