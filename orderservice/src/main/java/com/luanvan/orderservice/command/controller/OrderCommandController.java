@@ -21,7 +21,7 @@ public class OrderCommandController {
 
     @PostMapping("/cash")
     public ApiResponse<?> createOrderWithCash(@RequestBody OrderCreateModel model){
-        var response = orderCommandService.createWithCash(model);
+        var response = orderCommandService.createOrderWithCash(model);
         return ApiResponse.builder()
                 .data(response)
                 .build();
@@ -29,13 +29,22 @@ public class OrderCommandController {
 
     @PostMapping("/vnpay")
     public ApiResponse<?> createOrderWithVNPay(HttpServletRequest request, @RequestBody OrderCreateModel model){
-        var response = orderCommandService.createWithVNPay(request, model);
+        var response = orderCommandService.createOrderWithVNPay(request, model);
         return ApiResponse.builder()
                 .data(response)
                 .build();
     }
 
-    @GetMapping("/vnpay-callback")
+
+    @PutMapping("/vnpay/retry/{orderId}")
+    public ApiResponse<?> retryPaymentOrderWithVNPay(HttpServletRequest request, @PathVariable String orderId){
+        var response = orderCommandService.retryPaymentOrderWithVNPay(request, orderId);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
+    @GetMapping("/vnpay/callback")
     public void vnPayCallBack(HttpServletRequest request, HttpServletResponse response) throws IOException {
         orderCommandService.vnPayCallBack(request, response);
     }

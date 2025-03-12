@@ -157,6 +157,7 @@ public class ProductProjection {
 
             // Điều kiện: sản phẩm active
             predicates.add(cb.isTrue(root.get("isActive")));
+            predicates.add(cb.isTrue(categoryJoin.get("isActive")));
 
             // 1. Lọc theo query hoặc category
             if (StringUtils.hasText(queryParams.getQuery())) {

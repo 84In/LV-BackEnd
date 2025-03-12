@@ -55,23 +55,45 @@ public class OrderCommandService {
     @Autowired
     private KafkaTemplate<String, SendConfirmedOrderMailCommand> kafkaTemplate;
 
-    public HashMap<?, ?> createWithCash(OrderCreateModel model) {
+    public HashMap<?, ?> createOrderWithCash(OrderCreateModel model) {
         log.info("Create order command service with cash for username: {}", model.getUsername());
         var result = createOrder(model);
         return result;
     }
 
-    public PaymentUrlResponse createWithVNPay(HttpServletRequest request, OrderCreateModel model) {
-        log.info("Create order VNPay command service with cash for username: {}", model.getUsername());
+    public PaymentUrlResponse createOrderWithVNPay(HttpServletRequest request, OrderCreateModel model) {
+        log.info("Create order command service with VNPay for username: {}", model.getUsername());
         var result = createOrder(model);
         log.info(String.valueOf(result.get("id")));
+
         long amount = Long.parseLong(String.valueOf(model.getTotalPrice())) * 100L;
-        // String bankCode = request.getParameter("bankCode");
         Map<String, String> vnpParamsMap = vnPayService.getVNPayConfig();
         vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
         vnpParamsMap.put("vnp_TxnRef", String.valueOf(result.get("id")));
         vnpParamsMap.put("vnp_OrderInfo", "Thanh toán đơn hàng:" + result.get("id"));
         vnpParamsMap.put("vnp_IpAddr", VNPayUtils.getIpAddress(request));
+
+        // Build query url
+        String queryUrl = vnPayService.generateUrl(vnpParamsMap);
+        String paymentUrl = vnPayService.getVnp_PayUrl() + "?" + queryUrl;
+
+        return PaymentUrlResponse.builder()
+                .paymentUrl(paymentUrl)
+                .build();
+    }
+
+    public PaymentUrlResponse retryPaymentOrderWithVNPay(HttpServletRequest request, String orderId) {
+        log.info("Retry payment order command service with VNPay for orderId: {}", orderId);
+        var order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
+
+        long amount = Long.parseLong(String.valueOf(order.getPayment().getTotalAmount().longValue())) * 100L;
+        Map<String, String> vnpParamsMap = vnPayService.getVNPayConfig();
+        vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+        vnpParamsMap.put("vnp_TxnRef", String.valueOf(order.getId()));
+        vnpParamsMap.put("vnp_OrderInfo", "Thanh toán đơn hàng:" + order.getId());
+        vnpParamsMap.put("vnp_IpAddr", VNPayUtils.getIpAddress(request));
+
         // Build query url
         String queryUrl = vnPayService.generateUrl(vnpParamsMap);
         String paymentUrl = vnPayService.getVnp_PayUrl() + "?" + queryUrl;
