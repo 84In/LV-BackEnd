@@ -2,10 +2,10 @@ package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.commonservice.model.response.ColorResponseModel;
-import com.luanvan.productservice.query.queries.GetAllColorQuery;
 import com.luanvan.commonservice.queries.GetColorQuery;
+import com.luanvan.commonservice.utils.SearchParamsUtils;
+import com.luanvan.productservice.query.queries.GetAllColorQuery;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

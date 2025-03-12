@@ -41,11 +41,14 @@ public class ApplicationInitConfig {
 
     @Bean
     @Order(2)
-    ApplicationRunner addDefaultUsers(UserCommandService userCommandService, RoleRepository roleRepository) {
+    ApplicationRunner addDefaultUsers(UserCommandService userCommandService, RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
             try {
                 if (!roleRepository.existsById("admin")) {
                     throw new RuntimeException("Role admin chưa được tạo thành");
+                }
+                if(userRepository.existsByUsername("admin")) {
+                    throw new RuntimeException("Tài khoản quản trị đã khởi tạo sẵn");
                 }
                 UserCreateModel userCreateModel = new UserCreateModel(
                         "admin",
