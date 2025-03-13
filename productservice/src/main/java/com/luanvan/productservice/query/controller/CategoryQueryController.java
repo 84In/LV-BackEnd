@@ -2,6 +2,7 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.productservice.query.model.CategoryResponseModel;
+import com.luanvan.productservice.query.model.PageCategoryResponse;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -31,13 +32,8 @@ public class CategoryQueryController {
 
         GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sorts);
 
-        List<CategoryResponseModel> response;
-        try {
-            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(CategoryResponseModel.class)).join();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        Page<CategoryResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
+        PageCategoryResponse response= queryGateway.query(query, ResponseTypes.instanceOf(PageCategoryResponse.class)).join();
+        Page<CategoryResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<CategoryResponseModel>>builder()
                 .data(pageResponse)

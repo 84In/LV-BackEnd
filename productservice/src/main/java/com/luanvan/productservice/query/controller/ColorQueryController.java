@@ -5,6 +5,7 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.ColorResponseModel;
 import com.luanvan.commonservice.queries.GetColorQuery;
+import com.luanvan.productservice.query.model.PageColorResponse;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
 import com.luanvan.productservice.query.service.TotalPageColor;
 import com.luanvan.productservice.repository.ColorRepository;
@@ -26,7 +27,6 @@ import java.util.List;
 public class ColorQueryController {
     private final QueryGateway queryGateway;
     private final ColorRepository colorRepository;
-    private final TotalPageColor totalPageColor;
 
     @GetMapping
     public ApiResponse<Page<ColorResponseModel>> getAll(
@@ -36,14 +36,8 @@ public class ColorQueryController {
 
         GetAllColorQuery query = new GetAllColorQuery(pageNumber, pageSize, sorts);
 
-        List<ColorResponseModel> response;
-        try {
-            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(ColorResponseModel.class)).join();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        log.info(response.size()+" colors found");
-        Page<ColorResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), totalPageColor.getTotalPageColor());
+        PageColorResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageColorResponse.class)).join();
+        Page<ColorResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<ColorResponseModel>>builder()
                 .data(pageResponse)

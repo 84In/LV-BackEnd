@@ -2,6 +2,7 @@ package com.luanvan.productservice.query.projection;
 
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.productservice.query.model.CategoryResponseModel;
+import com.luanvan.productservice.query.model.PageCategoryResponse;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
 import com.luanvan.productservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +25,7 @@ public class CategoryProjection {
     private final CategoryRepository categoryRepository;
 
     @QueryHandler
-    public List<CategoryResponseModel> handle(GetAllCategoryQuery query) {
+    public PageCategoryResponse handle(GetAllCategoryQuery query) {
         // Tạo PageRequest từ các tham số
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
@@ -31,13 +33,20 @@ public class CategoryProjection {
 
         var categoryPage = categoryRepository.findAll(pageable);
 
-        return categoryPage.getContent().stream()
+        var responsePage = categoryPage.getContent().stream()
                 .map(category -> {
                     CategoryResponseModel response = new CategoryResponseModel();
                     BeanUtils.copyProperties(category, response);
                     return response;
                 })
                 .collect(Collectors.toList());
+        return PageCategoryResponse.builder()
+                .content(new ArrayList<>(responsePage))
+                .pageNumber(categoryPage.getNumber())
+                .pageSize(categoryPage.getSize())
+                .totalElements(categoryPage.getTotalElements())
+                .totalPages(categoryPage.getTotalPages())
+                .build();
     }
 
 }

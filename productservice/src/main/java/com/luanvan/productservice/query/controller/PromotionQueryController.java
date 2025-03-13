@@ -2,6 +2,7 @@ package com.luanvan.productservice.query.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.PromotionResponseModel;
+import com.luanvan.productservice.query.model.PagePromotionResponse;
 import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
@@ -31,13 +32,8 @@ public class PromotionQueryController {
 
         GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sorts);
 
-        List<PromotionResponseModel> response;
-        try {
-            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(PromotionResponseModel.class)).join();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        Page<PromotionResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
+        PagePromotionResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PagePromotionResponse.class)).join();
+        Page<PromotionResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<PromotionResponseModel>>builder()
                 .data(pageResponse)

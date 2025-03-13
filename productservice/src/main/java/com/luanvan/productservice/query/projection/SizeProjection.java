@@ -4,6 +4,7 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.commonservice.model.response.SizeResponseModel;
+import com.luanvan.productservice.query.model.PageSizeResponse;
 import com.luanvan.productservice.query.queries.GetAllSizeQuery;
 import com.luanvan.commonservice.queries.GetSizeQuery;
 import com.luanvan.productservice.repository.SizeRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +28,7 @@ public class SizeProjection {
     private final SizeRepository sizeRepository;
 
     @QueryHandler
-    public List<SizeResponseModel> handle(GetAllSizeQuery query) {
+    public PageSizeResponse handle(GetAllSizeQuery query) {
         // Tạo PageRequest từ các tham số
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
@@ -34,13 +36,20 @@ public class SizeProjection {
 
         var sizePage = sizeRepository.findAll(pageable);
 
-        return sizePage.getContent().stream()
+        var responsePage = sizePage.getContent().stream()
                 .map(size -> {
                     SizeResponseModel response = new SizeResponseModel();
                     BeanUtils.copyProperties(size, response);
                     return response;
                 })
                 .collect(Collectors.toList());
+        return PageSizeResponse.builder()
+                .content(new ArrayList<>(responsePage))
+                .pageNumber(sizePage.getNumber())
+                .pageSize(sizePage.getSize())
+                .totalElements(sizePage.getTotalElements())
+                .totalPages(sizePage.getTotalPages())
+                .build();
     }
 
     @QueryHandler

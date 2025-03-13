@@ -4,6 +4,7 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.SizeResponseModel;
+import com.luanvan.productservice.query.model.PageSizeResponse;
 import com.luanvan.productservice.query.queries.GetAllSizeQuery;
 import com.luanvan.commonservice.queries.GetSizeQuery;
 import com.luanvan.productservice.repository.SizeRepository;
@@ -33,13 +34,8 @@ public class SizeQueryController {
 
         GetAllSizeQuery query = new GetAllSizeQuery(pageNumber, pageSize, sorts);
 
-        List<SizeResponseModel> response;
-        try {
-            response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(SizeResponseModel.class)).join();
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        Page<SizeResponseModel> pageResponse = new PageImpl<>(response, PageRequest.of(pageNumber, pageSize), response.size());
+        PageSizeResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageSizeResponse.class)).join();
+        Page<SizeResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<SizeResponseModel>>builder()
                 .data(pageResponse)
