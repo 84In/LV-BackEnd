@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -16,8 +17,7 @@ import java.util.Collection;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-public class ProductResponseModel {
+public class ProductResponseModel implements Serializable {
     private String id;
     private String name;
     private String description;
@@ -39,7 +39,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Category {
+    public static class Category implements Serializable  {
         private String id;
         private String name;
         private String codeName;
@@ -53,7 +53,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ProductColor {
+    public static class ProductColor implements Serializable  {
         private String id;
         private BigDecimal price;
         private BigDecimal finalPrice;
@@ -68,7 +68,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Color {
+    public static class Color implements Serializable  {
         private String id;
         private String name;
         private String codeName;
@@ -82,7 +82,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Promotion {
+    public static class Promotion implements Serializable  {
         private String id;
         private String name;
         private String codeName;
@@ -97,7 +97,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ProductVariant {
+    public static class ProductVariant implements Serializable  {
         private String id;
         private Size size;
         private Integer stock;
@@ -110,7 +110,7 @@ public class ProductResponseModel {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Size {
+    public static class Size implements Serializable  {
         private String id;
         private String name;
         private String codeName;

@@ -1,4 +1,4 @@
-package com.luanvan.commonservice.model.response;
+package com.luanvan.productservice.query.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageProductResponse implements Serializable {
-    private ArrayList<ProductResponseModel> content;
+public class PageCategoryResponse implements Serializable {
+    private ArrayList<CategoryResponseModel> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;

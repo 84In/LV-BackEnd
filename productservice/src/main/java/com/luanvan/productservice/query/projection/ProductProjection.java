@@ -18,6 +18,7 @@ import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.queryhandling.QueryHandler;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +38,7 @@ public class ProductProjection {
     private final ProductRepository productRepository;
 
     @QueryHandler
+    @Cacheable(value = "products", key = "'allProducts:' + #queryParams.pageNumber + ':' + #queryParams.pageSize + ':' + #queryParams.query + ':' + #queryParams.category + ':' + #queryParams.price + ':' + #queryParams.color + ':' + #queryParams.size + ':' + #queryParams.sortOrder")
     public PageAllProductResponse handle(GetAllProductQuery queryParams) {
         log.info("Get all products for admin");
 
@@ -125,6 +127,7 @@ public class ProductProjection {
     }
 
     @QueryHandler
+    @Cacheable(value = "products", key = "'allProductsWithFilter:' + #queryParams.pageNumber + ':' + #queryParams.pageSize + ':' + #queryParams.query + ':' + #queryParams.category + ':' + #queryParams.price + ':' + #queryParams.color + ':' + #queryParams.size + ':' + #queryParams.sortOrder")
     public PageProductResponse handle(GetAllProductWithFilterQuery queryParams) {
         log.info("Get all products with query, filter");
 
@@ -172,7 +175,7 @@ public class ProductProjection {
 
             // 2. Áp dụng sắp xếp theo các biểu thức aggregate
             // Tính giá thấp nhất của các productColor
-            var minPriceExpr = cb.min(productColorJoin.get("price"));
+            var minPriceExpr = cb.avg(productColorJoin.get("price"));
             // Tính tổng sold của các productVariant
             var totalSoldExpr = cb.sum(productVariantJoin.get("sold"));
             String sortParam = queryParams.getSortOrder();
@@ -234,6 +237,7 @@ public class ProductProjection {
     }
 
     @QueryHandler
+    @Cacheable(value = "products", key = "'product:' + #queryParams.productId")
     public ProductResponseModel handle(GetProductQuery queryParams) {
         log.info("Get products detail with query, filter");
 

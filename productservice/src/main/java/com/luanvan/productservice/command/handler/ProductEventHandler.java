@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class ProductEventHandler {
 
     @EventHandler
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void on(ProductCreateEvent event) {
         log.info("Product created");
 
@@ -101,6 +103,7 @@ public class ProductEventHandler {
 
     @EventHandler
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void on(ProductUpdateEvent event) {
         log.info("Product updated");
 
@@ -204,6 +207,8 @@ public class ProductEventHandler {
     }
 
     @EventHandler
+    @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void on(ProductChangeStatusEvent event) {
         var product = productRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
@@ -212,6 +217,8 @@ public class ProductEventHandler {
     }
 
     @EventHandler
+    @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void on(ProductUpdateStockEvent event) {
         log.info("ProductUpdateStockEvent for productId: {}", event.getId());
         var product = productRepository.findById(event.getId())
@@ -238,6 +245,8 @@ public class ProductEventHandler {
     }
 
     @EventHandler
+    @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void on(ProductRollBackStockEvent event) {
         log.info("ProductRollBackStockEvent for productId: {}", event.getId());
         var product = productRepository.findById(event.getId())
