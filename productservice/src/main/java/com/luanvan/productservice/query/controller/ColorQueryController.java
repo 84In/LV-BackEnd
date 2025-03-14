@@ -7,7 +7,7 @@ import com.luanvan.commonservice.model.response.ColorResponseModel;
 import com.luanvan.commonservice.queries.GetColorQuery;
 import com.luanvan.productservice.query.model.PageColorResponse;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
-import com.luanvan.productservice.query.service.TotalPageColor;
+import com.luanvan.productservice.query.queries.GetAllColorWithPageQuery;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,23 @@ public class ColorQueryController {
             @RequestParam(defaultValue = "10") int pageSize,
             @RequestParam(defaultValue = "") String sorts) {
 
-        GetAllColorQuery query = new GetAllColorQuery(pageNumber, pageSize, sorts);
+        GetAllColorWithPageQuery query = new GetAllColorWithPageQuery(pageNumber, pageSize, sorts);
 
         PageColorResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageColorResponse.class)).join();
         Page<ColorResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
 
         return ApiResponse.<Page<ColorResponseModel>>builder()
                 .data(pageResponse)
+                .build();
+    }
+
+    @GetMapping("/all")
+    public ApiResponse<List<ColorResponseModel>> getAllColors() {
+        GetAllColorQuery query = new GetAllColorQuery();
+        var response = queryGateway.query(query, ResponseTypes.multipleInstancesOf(ColorResponseModel.class)).join();
+
+        return ApiResponse.<List<ColorResponseModel>>builder()
+                .data(response)
                 .build();
     }
 

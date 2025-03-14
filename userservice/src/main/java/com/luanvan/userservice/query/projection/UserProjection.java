@@ -8,6 +8,7 @@ import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.userservice.entity.Address;
 import com.luanvan.userservice.entity.User;
 import com.luanvan.userservice.entity.UserAddress;
+import com.luanvan.userservice.query.model.PageUserResponse;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -32,15 +34,17 @@ public class UserProjection {
     private UserRepository userRepository;
 
     @QueryHandler
-    public List<UserResponseModel> handle(GetAllUserQuery query) {
+    public PageUserResponse handle(GetAllUserQuery query) {
         Pageable pageable = PageRequest.of(query.getPage(), query.getSize(), Sort.by(query.getSortDirection(), query.getSortBy()));
         var userPage = userRepository.findAll(pageable);
-        return userPage.getContent().stream()
-                .map(this::mapToUserResponse)
-                .peek(dto -> {
-                    log.info("Mapped user DTO: {}", dto);
-                })
-                .collect(Collectors.toList());
+        var responsePage = userPage.getContent().stream().map(this::mapToUserResponse).collect(Collectors.toList());
+        return PageUserResponse.builder()
+                .content(new ArrayList<>(responsePage))
+                .totalElements(userPage.getTotalElements())
+                .pageNumber(userPage.getNumber())
+                .pageSize(userPage.getSize())
+                .totalPages(userPage.getTotalPages())
+                .build();
     }
 
     @QueryHandler

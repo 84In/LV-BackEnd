@@ -5,9 +5,9 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ColorResponseModel;
 import com.luanvan.commonservice.queries.GetColorQuery;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
-import com.luanvan.productservice.query.model.PageCategoryResponse;
 import com.luanvan.productservice.query.model.PageColorResponse;
 import com.luanvan.productservice.query.queries.GetAllColorQuery;
+import com.luanvan.productservice.query.queries.GetAllColorWithPageQuery;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class ColorProjection {
     private final ColorRepository colorRepository;
 
     @QueryHandler
-    public PageColorResponse handle(GetAllColorQuery query) {
+    public PageColorResponse handle(GetAllColorWithPageQuery query) {
         Sort sort = SearchParamsUtils.getSortParams(query.getSortOrder());
 
         Pageable pageable = PageRequest.of(query.getPageNumber(), query.getPageSize(), sort);
@@ -50,6 +50,16 @@ public class ColorProjection {
                 .totalElements(colorPage.getTotalElements())
                 .totalPages(colorPage.getTotalPages())
                 .build();
+    }
+
+    @QueryHandler
+    public List<ColorResponseModel> handle(GetAllColorQuery query){
+        var response = colorRepository.findAll();
+        return response.stream().map(color -> {
+            ColorResponseModel responseModel = new ColorResponseModel();
+            BeanUtils.copyProperties(color, responseModel);
+            return responseModel;
+        }).collect(Collectors.toList());
     }
 
     @QueryHandler

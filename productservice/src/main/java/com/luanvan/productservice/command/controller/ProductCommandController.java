@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductCommandController {

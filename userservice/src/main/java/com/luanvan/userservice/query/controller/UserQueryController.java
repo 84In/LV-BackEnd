@@ -5,15 +5,13 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.commonservice.queries.GetUserQuery;
+import com.luanvan.userservice.query.model.PageUserResponse;
 import com.luanvan.userservice.query.queries.GetAllUserQuery;
 import com.luanvan.userservice.repository.UserRepository;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,14 +50,14 @@ public class UserQueryController {
                 sortDirection
         );
 
-        List<UserResponseModel> response = queryGateway
-                .query(query, ResponseTypes.multipleInstancesOf(UserResponseModel.class))
+        PageUserResponse response = queryGateway
+                .query(query, ResponseTypes.instanceOf(PageUserResponse.class))
                 .exceptionally((ex) -> {
                     throw new AppException(ErrorCode.QUERY_ERROR);
                 })
                 .join();
 
-        Page<UserResponseModel> page = new PageImpl<UserResponseModel>(response, pageable, response.size());
+        Page<UserResponseModel> page = new PageImpl<UserResponseModel>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
         return ApiResponse.<Page<UserResponseModel>>builder()
                 .data(page)
                 .build();
