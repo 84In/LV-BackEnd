@@ -35,3 +35,17 @@ jwt:
     - "/swagger-resources/**"
     - "/webjars/**"
 
+mysql:
+  backup-root-dir: "./data/backup-scripts/"
+  userservice:
+    user: userservice
+    password: userservice2425
+    database: userservicedb
+  orderservice:
+    user: orderservice
+    password: orderservice2425
+    database: orderservicedb
+  productservice:
+    user: productservice
+    password: productservice2425
+    database: productservicedb

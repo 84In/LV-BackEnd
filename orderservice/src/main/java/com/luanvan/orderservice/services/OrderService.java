@@ -1,12 +1,14 @@
 package com.luanvan.orderservice.services;
 
 import com.luanvan.commonservice.entity.PaymentStatus;
+import com.luanvan.commonservice.services.DatabaseBackupService;
 import com.luanvan.orderservice.command.command.CancelOrderCommand;
 import com.luanvan.orderservice.entity.Order;
 import com.luanvan.orderservice.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,13 @@ import java.util.List;
 @Slf4j
 @Service
 public class OrderService {
+    @Value("${spring.datasource.username}")
+    private String dbUser;
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+    private String dbName = "orderservicedb";
+    @Autowired
+    private DatabaseBackupService databaseBackupService;
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
@@ -42,5 +51,11 @@ public class OrderService {
             CancelOrderCommand cancelOrderCommand = new CancelOrderCommand(order.getId());
             commandGateway.send(cancelOrderCommand);
         }
+    }
+
+    @Scheduled(cron = "0 0 0 */7 * ?") // Chạy mỗi 7 ngày lúc 00:00
+    public void backupDatabase() {
+        log.info("🔹 Backup Order Database...");
+        databaseBackupService.backupDatabase(dbName, dbName, dbUser, dbPassword);
     }
 }
