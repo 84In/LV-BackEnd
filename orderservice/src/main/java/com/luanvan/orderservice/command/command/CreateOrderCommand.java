@@ -63,6 +63,7 @@ public class CreateOrderCommand {
         private String productId;
         private String colorId;
         private String sizeId;
+        private String promotionId;
         private Boolean isReview;
     }
 }

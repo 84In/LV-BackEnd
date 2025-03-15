@@ -128,6 +128,7 @@ public class OrderEventHandler {
                     .productId(od.getProductId())
                     .colorId(od.getColorId())
                     .sizeId(od.getSizeId())
+                    .promotionId(od.getPromotionId())
                     .isReview(od.getIsReview())
                     .order(finalOrder)
                     .build();

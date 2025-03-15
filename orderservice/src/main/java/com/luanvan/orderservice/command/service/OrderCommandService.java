@@ -226,6 +226,7 @@ public class OrderCommandService {
                                 .productId(od.getProductId())
                                 .colorId(od.getColorId())
                                 .sizeId(od.getSizeId())
+                                .promotionId(od.getPromotionId())
                                 .isReview(false)
                                 .build()).collect(Collectors.toList())
                 )
