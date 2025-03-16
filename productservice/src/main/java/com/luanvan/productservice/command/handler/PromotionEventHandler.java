@@ -2,6 +2,7 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.productservice.command.event.PromotionChangeStatusEvent;
 import com.luanvan.productservice.command.event.PromotionCreateEvent;
 import com.luanvan.productservice.command.event.PromotionDeleteEvent;
 import com.luanvan.productservice.command.event.PromotionUpdateEvent;
@@ -45,6 +46,14 @@ public class PromotionEventHandler {
         promotion.setDiscountPercentage(event.getDiscountPercentage());
         promotion.setStartDate(event.getStartDate());
         promotion.setEndDate(event.getEndDate());
+        promotion.setIsActive(event.getIsActive());
+        promotionRepository.save(promotion);
+    }
+
+    @EventHandler
+    public void on(PromotionChangeStatusEvent event){
+        log.info("Promotion changed status");
+        var promotion = promotionRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXISTED));
         promotion.setIsActive(event.getIsActive());
         promotionRepository.save(promotion);
     }

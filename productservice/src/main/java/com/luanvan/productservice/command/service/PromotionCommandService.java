@@ -2,10 +2,8 @@ package com.luanvan.productservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.command.CreatePromotionCommand;
-import com.luanvan.productservice.command.command.DeletePromotionCommand;
-import com.luanvan.productservice.command.command.DeleteSizeCommand;
-import com.luanvan.productservice.command.command.UpdatePromotionCommand;
+import com.luanvan.productservice.command.command.*;
+import com.luanvan.productservice.command.model.PromotionChangeStatusModel;
 import com.luanvan.productservice.command.model.PromotionCreateModel;
 import com.luanvan.productservice.command.model.PromotionUpdateModel;
 import com.luanvan.productservice.repository.PromotionRepository;
@@ -56,6 +54,18 @@ public class PromotionCommandService {
                 .discountPercentage(model.getDiscountPercentage())
                 .startDate(model.getStartDate())
                 .endDate(model.getEndDate())
+                .isActive(model.getIsActive())
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
+    public HashMap<?, ?> changeStatus(String id, PromotionChangeStatusModel model) throws AppException {
+        if (!promotionRepository.existsById(id)) {
+            throw new AppException(ErrorCode.PROMOTION_NOT_EXISTED);
+        }
+        ChangeStatusPromotionCommand command = ChangeStatusPromotionCommand.builder()
+                .id(id)
                 .isActive(model.getIsActive())
                 .build();
         var result = new HashMap<>();

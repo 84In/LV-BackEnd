@@ -18,7 +18,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderResponseModel {
+public class    OrderResponseModel {
     private String id;
     private BigDecimal totalPrice;
     private BigDecimal discountPrice;

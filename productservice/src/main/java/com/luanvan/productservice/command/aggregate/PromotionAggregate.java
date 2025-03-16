@@ -43,6 +43,13 @@ public class PromotionAggregate {
     }
 
     @CommandHandler
+    public void handle(ChangeStatusPromotionCommand command) {
+        PromotionChangeStatusEvent event = new PromotionChangeStatusEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
     public void handle(DeletePromotionCommand command) {
         PromotionDeleteEvent event = new PromotionDeleteEvent();
         BeanUtils.copyProperties(command, event);
@@ -70,6 +77,11 @@ public class PromotionAggregate {
         this.discountPercentage = event.getDiscountPercentage();
         this.startDate = event.getStartDate();
         this.endDate = event.getEndDate();
+        this.isActive = event.getIsActive();
+    }
+    @EventSourcingHandler
+    public void on(PromotionChangeStatusEvent event) {
+        this.id = event.getId();
         this.isActive = event.getIsActive();
     }
 

@@ -11,7 +11,10 @@ import com.luanvan.orderservice.command.event.OrderCancelEvent;
 import com.luanvan.orderservice.command.event.OrderChangePaymentStatusEvent;
 import com.luanvan.orderservice.command.event.OrderChangeStatusEvent;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
-import com.luanvan.orderservice.entity.*;
+import com.luanvan.orderservice.entity.Delivery;
+import com.luanvan.orderservice.entity.Order;
+import com.luanvan.orderservice.entity.OrderDetail;
+import com.luanvan.orderservice.entity.Payment;
 import com.luanvan.orderservice.repository.OrderDetailRepository;
 import com.luanvan.orderservice.repository.OrderRepository;
 import com.luanvan.orderservice.repository.OrderStatusRepository;
@@ -26,7 +29,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -133,7 +135,8 @@ public class OrderEventHandler {
                     .build();
             orderDetails.add(orderDetail);
         }
-        orderDetailRepository.saveAll(orderDetails);
+        var response = orderDetailRepository.saveAll(orderDetails);
+
     }
 
     @EventHandler
@@ -183,7 +186,7 @@ public class OrderEventHandler {
         var order = orderRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
         order.getPayment().setStatus(event.getPaymentStatus());
-        if(event.getTransactionId() != null && !event.getTransactionId().isEmpty()) {
+        if (event.getTransactionId() != null && !event.getTransactionId().isEmpty()) {
             order.getPayment().setTransactionId(event.getTransactionId());
         }
         orderRepository.save(order);

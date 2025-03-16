@@ -4,6 +4,7 @@ import com.luanvan.commonservice.command.RollBackStockProductCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
 import com.luanvan.orderservice.command.command.ChangeStatusOrderCommand;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
+import com.luanvan.orderservice.services.OrderKafkaService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.SagaEventHandler;
@@ -14,12 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Saga
 public class OrderSaga {
     @Autowired
     private transient CommandGateway commandGateway;
+
+    @Autowired
+    private OrderKafkaService orderKafkaService;
+
 
     //Danh sách các product update stock sold thành công
     private List<UpdateStockProductCommand> successfulUpdates = new ArrayList<>();
@@ -41,6 +47,8 @@ public class OrderSaga {
                 commandGateway.sendAndWait(updateStockProductCommand);
                 successfulUpdates.add(updateStockProductCommand);
             }
+            Thread.sleep(500); // Đợi DB lưu hoàn tất
+            CompletableFuture.runAsync(() -> orderKafkaService.sendOrder(event.getId()));
             SagaLifecycle.end();
         } catch (Exception e) {
             log.error("Error OrderCreateEvent: " + e.getMessage());
