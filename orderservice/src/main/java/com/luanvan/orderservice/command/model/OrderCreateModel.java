@@ -41,5 +41,6 @@ public class OrderCreateModel {
         private String productId;
         private String colorId;
         private String sizeId;
+        private String promotionId;
     }
 }

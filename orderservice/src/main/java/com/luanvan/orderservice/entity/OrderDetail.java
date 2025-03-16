@@ -38,6 +38,9 @@ public class OrderDetail {
     @Column(name = "size_id", nullable = false)
     private String sizeId;
 
+    @Column(name = "promotion_id")
+    private String promotionId;
+
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
     private Order order;

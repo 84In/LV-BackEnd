@@ -4,6 +4,8 @@ import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetProductQuery;
+import com.luanvan.userservice.command.command.DeleteCartCommand;
+import com.luanvan.userservice.command.command.UpdateCartCommand;
 import com.luanvan.userservice.entity.Cart;
 import com.luanvan.userservice.entity.CartDetail;
 import com.luanvan.userservice.query.model.CartResponseModel;
@@ -11,6 +13,7 @@ import com.luanvan.userservice.query.queries.GetCartQuery;
 import com.luanvan.userservice.repository.CartRepository;
 import com.luanvan.userservice.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
@@ -18,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -31,6 +35,8 @@ public class CartProjection {
     private CartRepository cartRepository;
     @Autowired
     private QueryGateway queryGateway;
+    @Autowired
+    private CommandGateway commandGateway;
 
     @QueryHandler
     public CartResponseModel handle(GetCartQuery query) {
@@ -64,7 +70,40 @@ public class CartProjection {
         // Mapping CartDetail
         var cartDetailResponses = cart.getCartDetails().stream()
                 .sorted(Comparator.comparing(CartDetail::getUpdatedAt).reversed())
-                .map(cd -> mapCartDetail(cd, productMap.get(cd.getProductId())))
+                .map(cd -> {
+                    var product = productMap.get(cd.getProductId());
+                    var productColor = product.getProductColors().stream()
+                            .filter(pc -> pc.getColor().getId().equals(cd.getColorId()))
+                            .findFirst()
+                            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_COLOR_NOT_EXISTED));
+
+                    var productVariant = productColor.getProductVariants().stream()
+                            .filter(pv -> pv.getSize().getId().equals(cd.getSizeId()))
+                            .findFirst()
+                            .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
+
+                    // Kiểm tra số lượng có trong giỏ hàng so với số lượng của stock productVariant
+                    int stock = productVariant.getStock();
+                    if (stock == 0) {
+                        // Xóa cartDetail nếu stock = 0
+                        commandGateway.send(new DeleteCartCommand(cart.getId(), cd.getId()));
+                        return null;
+                    } else if (cd.getQuantity() > stock) {
+                        // Cập nhật quantity nếu vượt quá stock
+                        commandGateway.send(new UpdateCartCommand(cart.getId(), cart.getUser().getUsername(),
+                                UpdateCartCommand.CartDetail.builder()
+                                        .id(cd.getId())
+                                        .quantity(stock)
+                                        .productId(cd.getProductId())
+                                        .colorId(cd.getColorId())
+                                        .sizeId(cd.getSizeId())
+                                        .build()));
+                        cd.setQuantity(stock);
+                    }
+
+                    return mapCartDetail(cd, product);
+                })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return CartResponseModel.builder()

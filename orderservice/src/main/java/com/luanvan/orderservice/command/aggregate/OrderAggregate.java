@@ -72,6 +72,7 @@ public class OrderAggregate {
                                 .productId(od.getProductId())
                                 .colorId(od.getColorId())
                                 .sizeId(od.getSizeId())
+                                .promotionId(od.getPromotionId())
                                 .isReview(od.getIsReview())
                                 .build()).collect(Collectors.toList())
                 )
