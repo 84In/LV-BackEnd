@@ -9,10 +9,15 @@ import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.orderservice.entity.OrderDetail;
 import com.luanvan.orderservice.entity.Review;
 import com.luanvan.orderservice.mapper.OrderMapper;
+import com.luanvan.orderservice.query.model.PageReviewRatingResponse;
 import com.luanvan.orderservice.query.model.PageReviewResponse;
+import com.luanvan.orderservice.query.model.ReviewRatingResponse;
 import com.luanvan.orderservice.query.model.ReviewResponseModel;
 import com.luanvan.orderservice.query.queries.*;
 import com.luanvan.orderservice.repository.ReviewRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -21,8 +26,10 @@ import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +46,10 @@ public class ReviewProjection {
     private OrderMapper orderMapper;
     @Autowired
     private ReviewRepository reviewRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     @QueryHandler
     public PageReviewResponse handle(GetAllReviewQuery queryParams) {
@@ -137,4 +148,43 @@ public class ReviewProjection {
                 .updatedAt(review.getUpdatedAt())
                 .build();
     }
+
+    @QueryHandler
+    public PageReviewRatingResponse handle(GetAllReviewRatingQuery queryParams) {
+        Sort.Direction direction = queryParams.getOrder().equalsIgnoreCase("ASC")
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
+        String orderBy = queryParams.equals("avgRating") ? "ROUND(AVG(r.rating), 1)" : "COUNT(r.product_id)";
+
+        // Tạo query động
+        String queryStr = "SELECT r.product_id, ROUND(AVG(r.rating), 1), COUNT(r.product_id) " +
+                "FROM reviews r GROUP BY r.product_id ORDER BY " + orderBy + " " + direction;
+
+        Query query = entityManager.createNativeQuery(queryStr);
+        query.setFirstResult(queryParams.getPageNumber() * queryParams.getPageSize());
+        query.setMaxResults(queryParams.getPageSize());
+
+        List<ReviewRatingResponse> reviewRatingResponses = new ArrayList<>();
+
+        List<Object[]> results = query.getResultList();
+
+        results.forEach(rows -> {
+            ReviewRatingResponse ratingResponse = new ReviewRatingResponse();
+            GetProductQuery queryGT = new GetProductQuery((String) rows[0]);
+            ProductResponseModel productResponseModel = queryGateway.query(queryGT, ResponseTypes.instanceOf(ProductResponseModel.class)).join();
+            if (productResponseModel != null) {
+                ratingResponse.setProduct(productResponseModel);
+                ratingResponse.setRating(((Number) rows[1]).doubleValue());
+                ratingResponse.setTotalReviews(((Number) rows[2]).intValue());
+                reviewRatingResponses.add(ratingResponse);
+            }
+        });
+        PageReviewRatingResponse pageReviewRatingResponse = new PageReviewRatingResponse();
+        pageReviewRatingResponse.setContent(new ArrayList<>(reviewRatingResponses));
+        pageReviewRatingResponse.setPageNumber(queryParams.getPageNumber());
+        pageReviewRatingResponse.setPageSize(queryParams.getPageSize());
+        pageReviewRatingResponse.setTotalPages(queryParams.getPageSize());
+        return pageReviewRatingResponse;
+    }
+
 }

@@ -62,4 +62,19 @@ public class ReviewQueryController {
                 .data(pageResponse)
                 .build();
     }
+
+    @GetMapping("/get-review-statistics")
+    public ApiResponse<Page<ReviewRatingResponse>> queryReviewStatistics(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "avgRating") String sortBy,
+            @RequestParam(defaultValue = "desc") String order
+    ){
+        GetAllReviewRatingQuery query = new GetAllReviewRatingQuery(page, size, sortBy, order);
+        PageReviewRatingResponse response = queryGateway.query(query,ResponseTypes.instanceOf(PageReviewRatingResponse.class)).join();
+        Page<ReviewRatingResponse> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
+        return ApiResponse.<Page<ReviewRatingResponse>>builder()
+                .data(pageResponse)
+                .build();
+    }
 }
