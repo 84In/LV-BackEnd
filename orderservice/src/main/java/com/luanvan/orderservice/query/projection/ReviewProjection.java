@@ -154,10 +154,10 @@ public class ReviewProjection {
         Sort.Direction direction = queryParams.getOrder().equalsIgnoreCase("ASC")
                 ? Sort.Direction.ASC
                 : Sort.Direction.DESC;
-        String orderBy = queryParams.equals("avgRating") ? "ROUND(AVG(r.rating), 1)" : "COUNT(r.product_id)";
+        String orderBy = queryParams.getSortBy().equalsIgnoreCase("avgRating") ? "AVG(r.rating)" : "COUNT(r.product_id)";
 
         // Tạo query động
-        String queryStr = "SELECT r.product_id, ROUND(AVG(r.rating), 1), COUNT(r.product_id) " +
+        String queryStr = "SELECT r.product_id, AVG(r.rating), COUNT(r.product_id) " +
                 "FROM reviews r GROUP BY r.product_id ORDER BY " + orderBy + " " + direction;
 
         Query query = entityManager.createNativeQuery(queryStr);
