@@ -18,6 +18,7 @@ import com.luanvan.orderservice.entity.Payment;
 import com.luanvan.orderservice.repository.OrderDetailRepository;
 import com.luanvan.orderservice.repository.OrderRepository;
 import com.luanvan.orderservice.repository.OrderStatusRepository;
+import com.luanvan.orderservice.services.OrderKafkaService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class OrderEventHandler {
     private final OrderRepository orderRepository;
     private final OrderDetailRepository orderDetailRepository;
     private final CommandGateway commandGateway;
+    private final OrderKafkaService orderKafkaService;
 
     @EventHandler
     @Transactional
@@ -151,6 +153,7 @@ public class OrderEventHandler {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
         order.setOrderStatus(orderStatus);
         orderRepository.save(order);
+        orderKafkaService.sendOrder(event.getId());
     }
 
     @EventHandler
@@ -165,8 +168,6 @@ public class OrderEventHandler {
         var order = orderRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
         order.setOrderStatus(orderStatus);
-        orderRepository.save(order);
-
         // Rollback tất cả stock cho sản phẩm
         for (OrderDetail orderDetail : order.getOrderDetails()) {
             RollBackStockProductCommand rollBackCmd = RollBackStockProductCommand.builder()
@@ -177,6 +178,7 @@ public class OrderEventHandler {
                     .build();
             commandGateway.sendAndWait(rollBackCmd);
         }
+        orderKafkaService.sendOrder(event.getId());
     }
 
     @EventHandler

@@ -80,7 +80,8 @@ public enum ErrorCode {
     ORDER_NOT_EXISTED(60, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_BE_UPDATED(61, "Không thể cập nhật đơn hàng", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_BE_CANCELED(62, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
-    ORDER_DETAIL_NOT_EXISTED(63, "Chi tiết đơn hàng không tồn tại", HttpStatus.BAD_REQUEST);
+    ORDER_DETAIL_NOT_EXISTED(63, "Chi tiết đơn hàng không tồn tại", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_CANNOT_CHANGE(64, "Trạng thái đơn hàng đã cập nhật", HttpStatus.BAD_REQUEST);
 
     private final Integer code;
     private final String message;

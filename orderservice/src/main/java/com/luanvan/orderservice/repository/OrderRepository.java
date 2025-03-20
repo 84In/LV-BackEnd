@@ -28,4 +28,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "AND p.createdAt <= :expiredThreshold") // Payment quá 24h
     List<Order> findExpiredOrders(@Param("status") PaymentStatus status,
                                   @Param("expiredThreshold") LocalDateTime expiredThreshold);
+
+    String findOrderStatusByOrderId(String orderId);
 }
