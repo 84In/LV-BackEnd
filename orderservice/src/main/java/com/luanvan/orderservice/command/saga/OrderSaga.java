@@ -1,6 +1,7 @@
 package com.luanvan.orderservice.command.saga;
 
 import com.luanvan.commonservice.command.RollBackStockProductCommand;
+import com.luanvan.commonservice.command.SendCancelledOrderMailCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
 import com.luanvan.orderservice.command.command.ChangeStatusOrderCommand;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
@@ -12,6 +13,7 @@ import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,10 @@ import java.util.concurrent.CompletableFuture;
 public class OrderSaga {
     @Autowired
     private transient CommandGateway commandGateway;
-
     @Autowired
     private OrderKafkaService orderKafkaService;
+    @Autowired
+    private KafkaTemplate<String, SendCancelledOrderMailCommand> kafkaTemplate;
 
 
     //Danh sách các product update stock sold thành công
@@ -51,7 +54,7 @@ public class OrderSaga {
             CompletableFuture.runAsync(() -> orderKafkaService.sendOrder(event.getId()));
             SagaLifecycle.end();
         } catch (Exception e) {
-            log.error("Error OrderCreateEvent: " + e.getMessage());
+            log.error("Error OrderCreateEvent: {}", e.getMessage());
 
             // Rollback lại stock cho sản phẩm
             List<UpdateStockProductCommand> rollbackSuccessfulUpdates = new ArrayList<>(successfulUpdates);
@@ -71,8 +74,17 @@ public class OrderSaga {
 
     private void rollBackOrder(OrderCreateEvent event) {
         String cancelledStatus = "cancelled";
+        String cancelledReason = "Đơn hàng không hợp lệ hoặc có lỗi trong quá trình thanh toán";
+
         log.info("Rollback order event: {}", event.getId());
         ChangeStatusOrderCommand command = new ChangeStatusOrderCommand(event.getId(), cancelledStatus);
         commandGateway.sendAndWait(command);
+
+        SendCancelledOrderMailCommand cancelledOrderMailCommand = SendCancelledOrderMailCommand.builder()
+                .username(event.getUsername())
+                .orderId(event.getId())
+                .reason(cancelledReason)
+                .build();
+        kafkaTemplate.send("send-cancelled-order-mail-topic", cancelledOrderMailCommand);
     }
 }
