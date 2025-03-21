@@ -5,7 +5,7 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.*;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
 import com.luanvan.commonservice.queries.GetProductQuery;
-import com.luanvan.productservice.query.queries.GetAllProductWithFilterQuery;
+import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
 import com.luanvan.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.messaging.responsetypes.ResponseTypes;

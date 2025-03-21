@@ -10,7 +10,7 @@ import com.luanvan.commonservice.utils.PromotionUtils;
 import com.luanvan.productservice.entity.*;
 import com.luanvan.commonservice.model.response.AllProductResponseModel;
 import com.luanvan.productservice.query.queries.GetAllProductQuery;
-import com.luanvan.productservice.query.queries.GetAllProductWithFilterQuery;
+import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
 import com.luanvan.productservice.repository.ProductRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
