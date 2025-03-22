@@ -29,5 +29,5 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     List<Order> findExpiredOrders(@Param("status") PaymentStatus status,
                                   @Param("expiredThreshold") LocalDateTime expiredThreshold);
 
-    String findOrderStatusByOrderId(String orderId);
+    Order findOrderById(String id);
 }

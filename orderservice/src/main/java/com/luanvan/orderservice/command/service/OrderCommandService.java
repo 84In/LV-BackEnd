@@ -140,7 +140,7 @@ public class OrderCommandService {
 
     public HashMap<?, ?> changeOrderStatus(OrderChangeStatusModel model) {
 
-        if(orderRepository.findOrderStatusByOrderId(model.getId()).equals(model.getOrderStatus())){
+        if(orderRepository.findOrderById(model.getId()).getOrderStatus().getCodeName().equals(model.getOrderStatus())){
             throw new AppException(ErrorCode.ORDER_STATUS_CANNOT_CHANGE);
         }
 

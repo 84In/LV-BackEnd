@@ -16,7 +16,7 @@
         globalcors:
           cors-configurations:
             '[/**]':
-              allowedOrigins: "http://localhost:4000"
+              allowedOriginPatterns: "*"
               allowedMethods: "*"
               allowedHeaders: "*"
               allowCredentials: true
@@ -45,6 +45,10 @@
                   redis-rate-limiter.replenishRate: 10
                   redis-rate-limiter.burstCapacity: 20
                   redis-rate-limiter.requestedTokens: 1
+          - id: chatservice
+            uri: lb://chatservice
+            predicates:
+              - Path=/api/v1/webhook/**
           - id: productservice
             uri: lb://productservice
             predicates:

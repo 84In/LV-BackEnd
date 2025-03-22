@@ -1,14 +1,12 @@
 package com.luanvan.chatservice.controller;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.luanvan.chatservice.service.IntentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -18,15 +16,49 @@ public class DialogflowWebhookController {
     @Autowired
     private IntentService intentService;
 
+    //    @PostMapping
+//    public ResponseEntity<JsonObject> handleWebhook(@RequestBody JsonObject request) {
+//        log.info("handleWebhook request: {}", request);
+//        log.info("handleWebhook");
+//        JsonObject queryResult = request.getAsJsonObject("queryResult");
+//        log.info("queryResult: {}", queryResult);
+//        String intentName = queryResult.getAsJsonObject("intent").get("displayName").getAsString();
+//        log.info("intentName: {}", intentName);
+//        JsonObject parameters = queryResult.getAsJsonObject("parameters");
+//        log.info("handleWebhook parameters: {}", parameters);
+//        // Xử lý intent thông qua IntentService
+//        JsonObject response = intentService.handleIntent(intentName, parameters);
+//        log.info("handleWebhook response: {}", response);
+//        return ResponseEntity.ok(response);
+//    }
     @PostMapping
-    public ResponseEntity<JsonObject> handleWebhook(@RequestBody JsonObject request) {
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    public ResponseEntity<String> handleWebhook(@RequestBody String requestBody) {
+        log.info("handleWebhook: {}", requestBody); // Log payload nhận được
+
+        // Parse request từ String thành JsonObject
+        JsonObject request = JsonParser.parseString(requestBody).getAsJsonObject();
+
+        if (!request.has("queryResult") || request.get("queryResult").isJsonNull()) {
+            log.error("queryResult is missing or null!");
+            return ResponseEntity.badRequest().body("");
+        }
+
         JsonObject queryResult = request.getAsJsonObject("queryResult");
+        log.info("queryResult: {}", queryResult);
+
         String intentName = queryResult.getAsJsonObject("intent").get("displayName").getAsString();
+        log.info("intentName: {}", intentName);
+
         JsonObject parameters = queryResult.getAsJsonObject("parameters");
         log.info("handleWebhook parameters: {}", parameters);
+
         // Xử lý intent thông qua IntentService
-        JsonObject response = intentService.handleIntent(intentName, parameters);
+        String response = intentService.handleIntent(intentName, parameters);
         log.info("handleWebhook response: {}", response);
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "application/json")
+                .body(response);
     }
 }

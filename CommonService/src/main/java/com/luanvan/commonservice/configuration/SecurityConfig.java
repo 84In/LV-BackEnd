@@ -26,16 +26,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+            return http
+                    .csrf(csrf -> csrf.disable())
+                    .cors(cors -> cors.disable())
+                    .authorizeHttpRequests(auth -> auth
+                            .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                            .requestMatchers("/ws/**").permitAll()
+                            .anyRequest().authenticated()
+                    )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())).disable()) //tắt oauth2 để chạy chatservice
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
