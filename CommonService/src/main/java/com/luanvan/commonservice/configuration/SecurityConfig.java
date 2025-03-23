@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -36,7 +35,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated()
                     )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())).disable()) //tắt oauth2 để chạy chatservice
+                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
