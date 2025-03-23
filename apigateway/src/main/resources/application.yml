@@ -49,6 +49,8 @@
             uri: lb://chatservice
             predicates:
               - Path=/api/v1/webhook/**
+            filters:
+              - RemoveRequestHeader=Authorization
           - id: productservice
             uri: lb://productservice
             predicates:

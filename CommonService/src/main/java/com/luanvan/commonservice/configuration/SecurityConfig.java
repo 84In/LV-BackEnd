@@ -1,5 +1,6 @@
 package com.luanvan.commonservice.configuration;
 
+import com.luanvan.commonservice.services.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
@@ -23,20 +22,22 @@ public class SecurityConfig {
 
     @Autowired
     private JwtProperties jwtProperties;
+    @Autowired
+    private RedisService redisService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-            return http
-                    .csrf(csrf -> csrf.disable())
-                    .cors(cors -> cors.disable())
-                    .authorizeHttpRequests(auth -> auth
-                            .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
-                            .requestMatchers("/ws/**").permitAll()
-                            .anyRequest().authenticated()
-                    )
+        return http
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt ->
-                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())).disable()) //tắt oauth2 để chạy chatservice
+                        jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
@@ -49,16 +50,23 @@ public class SecurityConfig {
 
     }
 
+    //    @Bean
+//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//        var converter = new JwtGrantedAuthoritiesConverter();
+//        converter.setAuthorityPrefix("ROLE_");
+//        converter.setAuthoritiesClaimName("role");
+//
+//        var jwtConverter = new JwtAuthenticationConverter();
+//        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
+//        return jwtConverter;
+//    }
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        var converter = new JwtGrantedAuthoritiesConverter();
-        converter.setAuthorityPrefix("ROLE_");
-        converter.setAuthoritiesClaimName("role");
-
-        var jwtConverter = new JwtAuthenticationConverter();
-        jwtConverter.setJwtGrantedAuthoritiesConverter(converter);
-        return jwtConverter;
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(new RedisJwtAuthenticationConverter(redisService));
+        return converter;
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

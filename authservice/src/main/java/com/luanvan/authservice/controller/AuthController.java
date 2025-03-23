@@ -7,15 +7,20 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.UserResponseModel;
+import com.luanvan.commonservice.services.RedisService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +37,9 @@ public class AuthController {
 
     @Autowired
     private QueryGateway queryGateway;
+
+    @Autowired
+    private RedisService redisService;
 
     @PostMapping("/login")
     public ApiResponse<?> login(@RequestBody LoginModel loginModel, HttpServletResponse response) {
@@ -50,7 +58,7 @@ public class AuthController {
             throw new AppException(ErrorCode.INCORRECT_PASSWORD);
         }
 
-        if(!userResponse.getActive()){
+        if (!userResponse.getActive()) {
             throw new AppException(ErrorCode.ACCOUNT_LOCKED);
         }
 
@@ -72,7 +80,7 @@ public class AuthController {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false); //setFalse để debug
-        refreshTokenCookie.setPath("/api/v1/auth/refresh");
+        refreshTokenCookie.setPath("/api/v1/auth");
         response.addCookie(refreshTokenCookie);
 
         Map<String, String> result = new HashMap<>();
@@ -108,6 +116,58 @@ public class AuthController {
                 .message("Refresh success")
                 .data(result)
                 .build();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<?>> logout(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization");
+        String refreshToken = getRefreshTokenFromCookie(request);
+
+        log.info("Logout success, access_token:{}, refresh_token:{}", accessToken, refreshToken);
+
+        if (accessToken != null && accessToken.startsWith("Bearer ") && refreshToken != null) {
+            accessToken = accessToken.substring(7); // Loại bỏ "Bearer " để lấy token thực
+
+            // Lấy thời gian hết hạn của token
+            Instant accessTokenExpiry = jwtUtil.getTokenExpiration(accessToken);
+            Instant refreshTokenExpiry = jwtUtil.getTokenExpiration(refreshToken);
+
+            long accessTokenTtl = Math.max(0, accessTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
+            long refreshTokenTtl = Math.max(0, refreshTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
+
+            // Lưu vào Redis với TTL
+            redisService.storeToken(accessToken, accessTokenTtl);
+            redisService.storeToken(refreshToken, refreshTokenTtl);
+
+            // Xóa thông tin đăng nhập khỏi SecurityContext
+            SecurityContextHolder.clearContext();
+
+            // Xóa refresh token trên trình duyệt bằng Set-Cookie
+            return ResponseEntity.ok()
+                    .header("Set-Cookie", "refreshToken=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/")
+                    .body(ApiResponse.builder()
+                            .message("Logout success!")
+                            .code(0)
+                            .build());
+        }
+
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.builder()
+                        .message("Logout failed, because invalid token!")
+                        .code(1)
+                        .build());
+    }
+
+
+    private String getRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refreshToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
 

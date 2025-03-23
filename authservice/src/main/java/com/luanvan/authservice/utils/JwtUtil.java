@@ -90,4 +90,10 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public Instant getTokenExpiration(String token) {
+        Claims claims = extractClaims(token);
+        return claims.getExpiration().toInstant(); // Trả về thời gian hết hạn dạng Instant
+    }
+
 }
