@@ -80,7 +80,7 @@ public class AuthController {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false); //setFalse để debug
-        refreshTokenCookie.setPath("/api/v1/auth/refresh");
+        refreshTokenCookie.setPath("/api/v1/auth");
         response.addCookie(refreshTokenCookie);
 
         Map<String, String> result = new HashMap<>();
