@@ -1,4 +1,4 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.commonservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PromotionChangeStatusEvent {
+public class ProductChangeStatusEvent {
     private String id;
     private Boolean isActive;
 }
+

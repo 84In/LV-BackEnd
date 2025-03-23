@@ -100,8 +100,8 @@ public class ProductResponseModel implements Serializable {
     public static class ProductVariant implements Serializable  {
         private String id;
         private Size size;
-        private Integer stock;
-        private Integer sold;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 

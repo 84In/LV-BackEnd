@@ -11,7 +11,7 @@ import org.axonframework.modelling.command.TargetAggregateIdentifier;
 public class UpdateStockProductCommand {
     @TargetAggregateIdentifier
     private String id;
-    private Integer quantity;
+    private Long quantity;
     private String colorId;
     private String sizeId;
 }

@@ -94,11 +94,11 @@ public class CartEventHandler {
         if (cartDetailOpt.isPresent()) {
             // Đã tồn tại, cộng dồn
             var cartDetail = cartDetailOpt.get();
-            int newQuantity = cartDetail.getQuantity() + requestQuantity;
+            var newQuantity = cartDetail.getQuantity() + requestQuantity;
             cartDetail.setQuantity(Math.min(newQuantity, stockQuantity));
         } else {
             // Tạo mới
-            int finalQuantity = Math.min(requestQuantity, stockQuantity);
+            var finalQuantity = Math.min(requestQuantity, stockQuantity);
             var newDetail = CartDetail.builder()
                     .id(event.getCartDetail().getId())
                     .quantity(finalQuantity)
@@ -160,11 +160,11 @@ public class CartEventHandler {
         if (cartDetailOpt.isPresent()) {
             // Đã tồn tại, cập nhật số lượng
             var cartDetail = cartDetailOpt.get();
-            int newQuantity = requestQuantity;
+            var newQuantity = requestQuantity;
             cartDetail.setQuantity(Math.min(newQuantity, stockQuantity));
         } else {
             // Tạo mới
-            int finalQuantity = Math.min(requestQuantity, stockQuantity);
+            var finalQuantity = Math.min(requestQuantity, stockQuantity);
             var newDetail = CartDetail.builder()
                     .id(event.getCartDetail().getId())
                     .quantity(finalQuantity)
@@ -232,7 +232,7 @@ public class CartEventHandler {
         if (existCartDetailByColorSize.isPresent()) {
             // Nếu đã tồn tại một CartDetail khác thì cộng dồn số lượng:
             var otherDetail = existCartDetailByColorSize.get();
-            int newQuantity = otherDetail.getQuantity() + requestQuantity;
+            var newQuantity = otherDetail.getQuantity() + requestQuantity;
             cartDetailOpt.setQuantity(Math.min(newQuantity, stockQuantity));
             cartDetailOpt.setProductId(product.getId());
             cartDetailOpt.setColorId(productColorOpt.getColor().getId());

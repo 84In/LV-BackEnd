@@ -21,7 +21,7 @@ public class AddToCartCommand {
     @NoArgsConstructor
     public static class CartDetail {
         private String id;
-        private Integer quantity;
+        private Long quantity;
         private String productId;
         private String colorId;
         private String sizeId;

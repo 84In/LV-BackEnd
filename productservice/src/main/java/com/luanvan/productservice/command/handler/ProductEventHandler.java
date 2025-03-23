@@ -2,11 +2,11 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.event.ProductRollBackStockEvent;
-import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
-import com.luanvan.productservice.command.event.ProductCreateEvent;
-import com.luanvan.productservice.command.event.ProductUpdateEvent;
-import com.luanvan.productservice.command.event.ProductUpdateStockEvent;
+import com.luanvan.commonservice.event.ProductRollBackStockEvent;
+import com.luanvan.commonservice.event.ProductChangeStatusEvent;
+import com.luanvan.commonservice.event.ProductCreateEvent;
+import com.luanvan.commonservice.event.ProductUpdateEvent;
+import com.luanvan.commonservice.event.ProductUpdateStockEvent;
 import com.luanvan.productservice.entity.*;
 import com.luanvan.productservice.repository.*;
 import jakarta.transaction.Transactional;
@@ -92,6 +92,7 @@ public class ProductEventHandler {
                                 .id(variantItem.getId())
                                 .size(size)
                                 .stock(variantItem.getStock())
+                                .sold(variantItem.getSold())
                                 .isActive(variantItem.getIsActive())
                                 .productColor(productColor) // Gán ProductColor đã lưu
                                 .build();
@@ -178,6 +179,7 @@ public class ProductEventHandler {
                         .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
                 productVariant.setSize(size);
                 productVariant.setStock(variantEvent.getStock());
+                productVariant.setSold(variantEvent.getSold());
                 productVariant.setIsActive(variantEvent.getIsActive());
 
                 updatedVariants.add(productVariant);
@@ -234,9 +236,9 @@ public class ProductEventHandler {
             throw new AppException(ErrorCode.PRODUCT_OUT_OF_STOCK);
         }
         // Cập nhật stock và sold
-        int quantity = event.getQuantity();
-        int updatedStock = productVariant.getStock() - quantity;
-        int updatedSold = productVariant.getSold() + quantity;
+        var quantity = event.getQuantity();
+        var updatedStock = productVariant.getStock() - quantity;
+        var updatedSold = productVariant.getSold() + quantity;
 
         productVariant.setStock(updatedStock);
         productVariant.setSold(updatedSold);
@@ -260,9 +262,9 @@ public class ProductEventHandler {
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
 
         // Cập nhật stock và sold
-        int quantity = event.getQuantity();
-        int updatedStock = productVariant.getStock() + quantity;
-        int updatedSold = productVariant.getSold() - quantity;
+        var quantity = event.getQuantity();
+        var updatedStock = productVariant.getStock() + quantity;
+        var updatedSold = productVariant.getSold() - quantity;
 
         productVariant.setStock(updatedStock);
         productVariant.setSold(updatedSold);

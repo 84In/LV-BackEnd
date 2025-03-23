@@ -2,10 +2,10 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.event.CategoryChangeStatusEvent;
+import com.luanvan.commonservice.event.CategoryChangeStatusEvent;
 import com.luanvan.productservice.command.event.CategoryCreateEvent;
 import com.luanvan.productservice.command.event.CategoryDeleteEvent;
-import com.luanvan.productservice.command.event.CategoryUpdateEvent;
+import com.luanvan.commonservice.event.CategoryUpdateEvent;
 import com.luanvan.productservice.entity.Category;
 import com.luanvan.productservice.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +45,7 @@ public class CategoryEventHandler {
         category.setIsActive(event.getIsActive());
         categoryRepository.save(category);
     }
+
     @EventHandler
     public void on(CategoryChangeStatusEvent event) {
         log.info("Category changed status");

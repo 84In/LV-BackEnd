@@ -1,6 +1,8 @@
 package com.luanvan.productservice.command.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.productservice.command.model.CategoryChangeStatusModel;
+import com.luanvan.productservice.command.model.ColorChangeStatusModel;
 import com.luanvan.productservice.command.model.ColorCreateModel;
 import com.luanvan.productservice.command.model.ColorUpdateModel;
 import com.luanvan.productservice.command.service.ColorCommandService;
@@ -29,6 +31,14 @@ public class ColorCommandController {
     @PutMapping("/{colorId}")
     public ApiResponse<?> update(@PathVariable String colorId, @RequestBody ColorUpdateModel model) {
         var response = colorCommandService.update(colorId, model);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
+    @PutMapping("/changeStatus/{colorId}")
+    public ApiResponse<?> changeStatus(@PathVariable String colorId, @RequestBody ColorChangeStatusModel model) {
+        var response = colorCommandService.changeStatus(colorId, model);
         return ApiResponse.builder()
                 .data(response)
                 .build();

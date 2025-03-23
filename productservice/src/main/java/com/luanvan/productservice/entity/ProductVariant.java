@@ -23,12 +23,12 @@ public class ProductVariant {
     @Builder.Default
     @ColumnDefault("0")
     @Column(name = "stock", nullable = false)
-    private Integer stock = 0;
+    private Long stock = 0L;
 
     @Builder.Default
     @ColumnDefault("0")
     @Column(name = "sold", nullable = false)
-    private Integer sold = 0;
+    private Long sold = 0L;
 
     @Builder.Default
     @Column(name = "is_active", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")

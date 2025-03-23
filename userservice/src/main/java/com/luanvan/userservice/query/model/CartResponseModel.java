@@ -29,7 +29,7 @@ public class CartResponseModel {
     @NoArgsConstructor
     public static class CartDetail {
         private String id;
-        private Integer quantity;
+        private Long quantity;
         private Product product;
         private Color color;
         private Size size;
@@ -132,8 +132,8 @@ public class CartResponseModel {
     public static class ProductVariant {
         private String id;
         private Size size;
-        private Integer stock;
-        private Integer sold;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 

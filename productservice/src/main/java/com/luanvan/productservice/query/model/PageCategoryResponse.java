@@ -1,5 +1,6 @@
 package com.luanvan.productservice.query.model;
 
+import com.luanvan.commonservice.model.response.CategoryResponseModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

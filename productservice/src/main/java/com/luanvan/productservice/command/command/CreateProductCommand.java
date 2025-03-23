@@ -44,7 +44,8 @@ public class CreateProductCommand {
     public static class CreateProductVariantCommand {
         private String id;
         private String sizeId;
-        private Integer stock;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 }

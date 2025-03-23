@@ -13,7 +13,7 @@ public class GetAllProductWithFilterQuery {
     private String price;
     private String size;
     private String color;
-    private int pageNumber;
-    private int pageSize;
+    private int pageNumber = 0;
+    private int pageSize = 10;
     private String sortOrder;
 }

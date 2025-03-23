@@ -104,6 +104,7 @@ public class ProductCommandService {
                                                                 .id(UUID.randomUUID().toString())
                                                                 .sizeId(variantItem.getSizeId())
                                                                 .stock(variantItem.getStock())
+                                                                .sold(0L)
                                                                 .isActive(true)
                                                                 .build())
                                                 .collect(Collectors.toList()))
@@ -186,6 +187,7 @@ public class ProductCommandService {
                                         .id(productVariantId)
                                         .sizeId(variantItem.getSizeId())
                                         .stock(variantItem.getStock())
+                                        .sold(variantItem.getSold())
                                         .isActive(true)
                                         .build();
                             }).collect(Collectors.toList());

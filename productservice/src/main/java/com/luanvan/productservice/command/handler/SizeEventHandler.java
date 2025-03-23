@@ -2,9 +2,9 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.event.SizeCreateEvent;
-import com.luanvan.productservice.command.event.SizeDeleteEvent;
-import com.luanvan.productservice.command.event.SizeUpdateEvent;
+import com.luanvan.commonservice.event.SizeChangeStatusEvent;
+import com.luanvan.commonservice.event.SizeUpdateEvent;
+import com.luanvan.productservice.command.event.*;
 import com.luanvan.productservice.entity.Size;
 import com.luanvan.productservice.repository.SizeRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +39,14 @@ public class SizeEventHandler {
         size.setCodeName(event.getCodeName());
         size.setIsActive(event.getIsActive());
         sizeRepository.save(size);
+    }
+
+    @EventHandler
+    public void on(SizeChangeStatusEvent event) {
+        log.info("Size changed status");
+        var category = sizeRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
+        category.setIsActive(event.getIsActive());
+        sizeRepository.save(category);
     }
 
     @EventHandler

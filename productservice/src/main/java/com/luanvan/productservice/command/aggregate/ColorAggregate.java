@@ -1,7 +1,8 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.commonservice.event.ColorChangeStatusEvent;
 import com.luanvan.productservice.command.command.*;
-import com.luanvan.productservice.command.event.ColorUpdateEvent;
+import com.luanvan.commonservice.event.ColorUpdateEvent;
 import com.luanvan.productservice.command.event.*;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,13 @@ public class ColorAggregate {
     }
 
     @CommandHandler
+    public void handle(ChangeStatusColorCommand command) {
+        ColorChangeStatusEvent event = new ColorChangeStatusEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
     public void handle(DeleteColorCommand command) {
         ColorDeleteEvent event = new ColorDeleteEvent();
         BeanUtils.copyProperties(command, event);
@@ -62,6 +70,12 @@ public class ColorAggregate {
         this.codeName = event.getCodeName();
         this.colorCode = event.getColorCode();
         this.description = event.getDescription();
+        this.isActive = event.getIsActive();
+    }
+
+    @EventSourcingHandler
+    public void on(ColorChangeStatusEvent event) {
+        this.id = event.getId();
         this.isActive = event.getIsActive();
     }
 

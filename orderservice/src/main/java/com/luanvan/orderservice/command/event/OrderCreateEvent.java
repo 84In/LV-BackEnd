@@ -55,7 +55,7 @@ public class OrderCreateEvent {
     @AllArgsConstructor
     public static class OrderDetail{
         private String id;
-        private Integer quantity;
+        private Long quantity;
         private BigDecimal originalPrice;
         private BigDecimal purchasePrice;
         private String productId;

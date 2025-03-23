@@ -1,15 +1,15 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.commonservice.event;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SizeUpdateEvent {
+public class CategoryChangeStatusEvent {
     private String id;
-    private String name;
-    private String codeName;
     private Boolean isActive;
 }

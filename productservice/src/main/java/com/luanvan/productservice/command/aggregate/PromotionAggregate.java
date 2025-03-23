@@ -1,5 +1,7 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.commonservice.event.PromotionChangeStatusEvent;
+import com.luanvan.commonservice.event.PromotionUpdateEvent;
 import com.luanvan.productservice.command.command.*;
 import com.luanvan.productservice.command.event.*;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,6 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j

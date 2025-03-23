@@ -17,7 +17,7 @@ public class OrderDetail {
     private String id;
 
     @Column(name = "quantity")
-    private Integer quantity;
+    private Long quantity;
 
     @Column(name = "original_price")
     private BigDecimal originalPrice;

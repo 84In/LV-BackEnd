@@ -1,8 +1,10 @@
 package com.luanvan.productservice.query.projection;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.queries.GetPromotionQuery;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
 import com.luanvan.commonservice.model.response.PromotionResponseModel;
-import com.luanvan.productservice.query.model.PageColorResponse;
 import com.luanvan.productservice.query.model.PagePromotionResponse;
 import com.luanvan.productservice.query.queries.GetAllPromotionQuery;
 import com.luanvan.productservice.repository.PromotionRepository;
@@ -16,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -48,6 +49,14 @@ public class PromotionProjection {
                 .totalElements(promotionPage.getTotalElements())
                 .totalPages(promotionPage.getTotalPages())
                 .build();
+    }
+
+    @QueryHandler
+    public PromotionResponseModel handle(GetPromotionQuery query) {
+        var colorDetail = promotionRepository.findById(query.getPromotionId()).orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_EXISTED));
+        PromotionResponseModel response = new PromotionResponseModel();
+        BeanUtils.copyProperties(colorDetail, response);
+        return response;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.luanvan.productservice.command.controller;
 
 import com.luanvan.commonservice.model.response.ApiResponse;
+import com.luanvan.productservice.command.model.SizeChangeStatusModel;
 import com.luanvan.productservice.command.model.SizeCreateModel;
 import com.luanvan.productservice.command.model.SizeUpdateModel;
 import com.luanvan.productservice.command.service.SizeCommandService;
@@ -28,6 +29,14 @@ public class SizeCommandController {
     @PutMapping("/{sizeId}")
     public ApiResponse<?> update(@PathVariable String sizeId, @RequestBody SizeUpdateModel model) {
         var response = sizeCommandService.update(sizeId, model);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
+    @PutMapping("/changeStatus/{sizeId}")
+    public ApiResponse<?> changeStatus(@PathVariable String sizeId, @RequestBody SizeChangeStatusModel model) {
+        var response = sizeCommandService.changeStatus(sizeId, model);
         return ApiResponse.builder()
                 .data(response)
                 .build();

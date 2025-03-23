@@ -15,7 +15,7 @@ public class CartCreateModel {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CartDetail {
-        private Integer quantity;
+        private Long quantity;
         private String productId;
         private String colorId;
         private String sizeId;

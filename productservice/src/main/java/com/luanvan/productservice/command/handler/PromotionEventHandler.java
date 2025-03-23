@@ -2,10 +2,10 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.event.PromotionChangeStatusEvent;
+import com.luanvan.commonservice.event.PromotionChangeStatusEvent;
 import com.luanvan.productservice.command.event.PromotionCreateEvent;
 import com.luanvan.productservice.command.event.PromotionDeleteEvent;
-import com.luanvan.productservice.command.event.PromotionUpdateEvent;
+import com.luanvan.commonservice.event.PromotionUpdateEvent;
 import com.luanvan.productservice.entity.Promotion;
 import com.luanvan.productservice.repository.PromotionRepository;
 import lombok.RequiredArgsConstructor;

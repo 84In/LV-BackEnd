@@ -21,8 +21,8 @@ public class CartDetail {
     private String id;
 
     @Builder.Default
-    @Column(name = "quantity", columnDefinition = "INTEGER DEFAULT 1", nullable = false)
-    private Integer quantity = 1;
+    @Column(name = "quantity", columnDefinition = "BIGINT DEFAULT 1", nullable = false)
+    private Long quantity = 1L;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "cart_id", referencedColumnName = "id", nullable = false)

@@ -2,9 +2,9 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.productservice.command.event.ColorUpdateEvent;
-import com.luanvan.productservice.command.event.ColorCreateEvent;
-import com.luanvan.productservice.command.event.ColorDeleteEvent;
+import com.luanvan.commonservice.event.ColorChangeStatusEvent;
+import com.luanvan.commonservice.event.ColorUpdateEvent;
+import com.luanvan.productservice.command.event.*;
 import com.luanvan.productservice.entity.Color;
 import com.luanvan.productservice.repository.ColorRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +43,14 @@ public class ColorEventHandler {
         color.setDescription(event.getDescription());
         color.setIsActive(event.getIsActive());
         colorRepository.save(color);
+    }
+
+    @EventHandler
+    public void on(ColorChangeStatusEvent event) {
+        log.info("Color changed status");
+        var category = colorRepository.findById(event.getId()).orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_EXISTED));
+        category.setIsActive(event.getIsActive());
+        colorRepository.save(category);
     }
 
     @EventHandler

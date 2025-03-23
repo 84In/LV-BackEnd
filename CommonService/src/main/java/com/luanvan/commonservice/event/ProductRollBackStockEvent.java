@@ -1,4 +1,4 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.commonservice.event;
 
 import lombok.*;
 
@@ -7,9 +7,9 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductUpdateStockEvent {
+public class ProductRollBackStockEvent {
     private String id;
-    private Integer quantity;
+    private Long quantity;
     private String colorId;
     private String sizeId;
 }

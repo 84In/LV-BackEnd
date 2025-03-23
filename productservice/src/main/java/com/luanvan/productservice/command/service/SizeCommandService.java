@@ -3,10 +3,7 @@ package com.luanvan.productservice.command.service;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.productservice.command.command.*;
-import com.luanvan.productservice.command.model.CategoryCreateModel;
-import com.luanvan.productservice.command.model.CategoryUpdateModel;
-import com.luanvan.productservice.command.model.SizeCreateModel;
-import com.luanvan.productservice.command.model.SizeUpdateModel;
+import com.luanvan.productservice.command.model.*;
 import com.luanvan.productservice.repository.CategoryRepository;
 import com.luanvan.productservice.repository.SizeRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +50,19 @@ public class SizeCommandService {
                 .id(id)
                 .name(model.getName())
                 .codeName(model.getCodeName())
+                .isActive(model.getIsActive())
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
+
+    public HashMap<?, ?> changeStatus(String sizeId, SizeChangeStatusModel model) throws AppException {
+        if (!sizeRepository.existsById(sizeId)) {
+            throw new AppException(ErrorCode.SIZE_NOT_EXISTED);
+        }
+        ChangeStatusSizeCommand command =  ChangeStatusSizeCommand.builder()
+                .id(sizeId)
                 .isActive(model.getIsActive())
                 .build();
         var result = new HashMap<>();

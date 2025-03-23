@@ -43,7 +43,6 @@ public class CategoryCommandController {
                 .build();
     }
 
-
     @DeleteMapping("/{categoryId}")
     public ApiResponse<?> delete(@PathVariable String categoryId) {
         var response = categoryCommandService.delete(categoryId);

@@ -2,14 +2,14 @@ package com.luanvan.productservice.command.aggregate;
 
 import com.luanvan.commonservice.command.RollBackStockProductCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
-import com.luanvan.productservice.command.event.ProductRollBackStockEvent;
+import com.luanvan.commonservice.event.ProductRollBackStockEvent;
 import com.luanvan.productservice.command.command.ChangeStatusProductCommand;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.command.UpdateProductCommand;
-import com.luanvan.productservice.command.event.ProductChangeStatusEvent;
-import com.luanvan.productservice.command.event.ProductCreateEvent;
-import com.luanvan.productservice.command.event.ProductUpdateEvent;
-import com.luanvan.productservice.command.event.ProductUpdateStockEvent;
+import com.luanvan.commonservice.event.ProductChangeStatusEvent;
+import com.luanvan.commonservice.event.ProductCreateEvent;
+import com.luanvan.commonservice.event.ProductUpdateEvent;
+import com.luanvan.commonservice.event.ProductUpdateStockEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -34,7 +34,7 @@ public class ProductAggregate {
     private Boolean isActive;
     private String colorId;
     private String sizeId;
-    private Integer quantity;
+    private Long quantity;
     private List<ProductCreateEvent.ProductColorCreateEvent> productColorsCreateEvent;
     private List<ProductUpdateEvent.ProductColorUpdateEvent> productColorsUpdateEvent;
 
@@ -58,6 +58,7 @@ public class ProductAggregate {
                                                                 .id(variantItem.getId())
                                                                 .sizeId(variantItem.getSizeId())
                                                                 .stock(variantItem.getStock())
+                                                                .sold(0L)
                                                                 .isActive(variantItem.getIsActive())
                                                                 .build())
                                                 .collect(Collectors.toList()))
@@ -88,6 +89,7 @@ public class ProductAggregate {
                                                                 .id(variantItem.getId())
                                                                 .sizeId(variantItem.getSizeId())
                                                                 .stock(variantItem.getStock())
+                                                                .sold(variantItem.getSold())
                                                                 .isActive(variantItem.getIsActive())
                                                                 .build())
                                                 .collect(Collectors.toList()))

@@ -83,7 +83,7 @@ public class CartProjection {
                             .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_EXISTED));
 
                     // Kiểm tra số lượng có trong giỏ hàng so với số lượng của stock productVariant
-                    int stock = productVariant.getStock();
+                    var stock = productVariant.getStock();
                     if (stock == 0) {
                         // Xóa cartDetail nếu stock = 0
                         commandGateway.send(new DeleteCartCommand(cart.getId(), cd.getId()));

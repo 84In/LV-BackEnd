@@ -1,5 +1,7 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.commonservice.event.SizeChangeStatusEvent;
+import com.luanvan.commonservice.event.SizeUpdateEvent;
 import com.luanvan.productservice.command.command.*;
 import com.luanvan.productservice.command.event.*;
 import lombok.NoArgsConstructor;
@@ -37,6 +39,13 @@ public class SizeAggregate {
     }
 
     @CommandHandler
+    public void handle(ChangeStatusSizeCommand command) {
+        SizeChangeStatusEvent event = new SizeChangeStatusEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
     public void handle(DeleteSizeCommand command) {
         SizeDeleteEvent event = new SizeDeleteEvent();
         BeanUtils.copyProperties(command, event);
@@ -56,6 +65,12 @@ public class SizeAggregate {
         this.id = event.getId();
         this.name = event.getName();
         this.codeName = event.getCodeName();
+        this.isActive = event.getIsActive();
+    }
+
+    @EventSourcingHandler
+    public void on(SizeChangeStatusEvent event) {
+        this.id = event.getId();
         this.isActive = event.getIsActive();
     }
 

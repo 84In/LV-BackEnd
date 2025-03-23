@@ -99,8 +99,8 @@ public class AllProductResponseModel {
     public static class ProductVariant {
         private String id;
         private Size size;
-        private Integer stock;
-        private Integer sold;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 

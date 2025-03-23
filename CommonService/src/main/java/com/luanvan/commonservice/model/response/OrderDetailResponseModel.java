@@ -18,7 +18,7 @@ import java.util.Collection;
 @AllArgsConstructor
 public class OrderDetailResponseModel {
     private String id;
-    private Integer quantity;
+    private Long quantity;
     private BigDecimal originalPrice;
     private BigDecimal purchasePrice;
     private Product product;
@@ -116,8 +116,8 @@ public class OrderDetailResponseModel {
     public static class ProductVariant {
         private String id;
         private Size size;
-        private Integer stock;
-        private Integer sold;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 

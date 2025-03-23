@@ -1,4 +1,4 @@
-package com.luanvan.productservice.command.event;
+package com.luanvan.commonservice.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,7 +41,8 @@ public class ProductCreateEvent {
     public static class ProductVariantCreateEvent {
         private String id;
         private String sizeId;
-        private Integer stock;
+        private Long stock;
+        private Long sold;
         private Boolean isActive;
     }
 }

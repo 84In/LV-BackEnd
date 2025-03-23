@@ -3,10 +3,7 @@ package com.luanvan.productservice.command.service;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.productservice.command.command.*;
-import com.luanvan.productservice.command.model.ColorCreateModel;
-import com.luanvan.productservice.command.model.ColorUpdateModel;
-import com.luanvan.productservice.command.model.PromotionCreateModel;
-import com.luanvan.productservice.command.model.PromotionUpdateModel;
+import com.luanvan.productservice.command.model.*;
 import com.luanvan.productservice.repository.ColorRepository;
 import com.luanvan.productservice.repository.PromotionRepository;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -53,6 +50,19 @@ public class ColorCommandService {
                 .description(model.getDescription())
                 .colorCode(model.getColorCode())
                 .description(model.getDescription())
+                .isActive(model.getIsActive())
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(command));
+        return result;
+    }
+
+    public HashMap<?, ?> changeStatus(String colorId, ColorChangeStatusModel model) throws AppException {
+        if (!colorRepository.existsById(colorId)) {
+            throw new AppException(ErrorCode.COLOR_NOT_EXISTED);
+        }
+        ChangeStatusColorCommand command =  ChangeStatusColorCommand.builder()
+                .id(colorId)
                 .isActive(model.getIsActive())
                 .build();
         var result = new HashMap<>();

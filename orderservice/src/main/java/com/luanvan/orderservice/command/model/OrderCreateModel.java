@@ -35,7 +35,7 @@ public class OrderCreateModel {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OrderDetail{
-        private Integer quantity;
+        private Long quantity;
         private BigDecimal originalPrice;
         private BigDecimal purchasePrice;
         private String productId;

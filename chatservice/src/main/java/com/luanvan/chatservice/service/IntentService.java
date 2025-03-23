@@ -148,7 +148,7 @@ public class IntentService {
 
 
     private String catUrl(String id) {
-        return baseUrl+"product/" + id;
+        return baseUrl + "product/" + id;
     }
 
 }

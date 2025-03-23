@@ -1,7 +1,10 @@
 package com.luanvan.productservice.query.projection;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.queries.GetCategoryQuery;
 import com.luanvan.commonservice.utils.SearchParamsUtils;
-import com.luanvan.productservice.query.model.CategoryResponseModel;
+import com.luanvan.commonservice.model.response.CategoryResponseModel;
 import com.luanvan.productservice.query.model.PageCategoryResponse;
 import com.luanvan.productservice.query.queries.GetAllCategoryQuery;
 import com.luanvan.productservice.repository.CategoryRepository;
@@ -15,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -49,4 +51,12 @@ public class CategoryProjection {
                 .build();
     }
 
+    @QueryHandler
+    public CategoryResponseModel handle(GetCategoryQuery query) {
+        var colorDetail = categoryRepository.findById(query.getCategoryId())
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        CategoryResponseModel response = new CategoryResponseModel();
+        BeanUtils.copyProperties(colorDetail, response);
+        return response;
+    }
 }

@@ -32,6 +32,6 @@ public class ProductCreateModel {
     @NoArgsConstructor
     public static class ProductVariantModel {
         private String sizeId;
-        private Integer stock;
+        private Long stock;
     }
 }
