@@ -4,19 +4,19 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discoveryservice:8761/eureka
 
 #Dataconfig
 spring:
   config:
     import: optional:file:../commonservice/src/main/resources/application.yml
   datasource:
-    url: jdbc:mysql://localhost:3307/productservicedb
+    url: jdbc:mysql://productservicedb:3307/productservicedb
     username: productservice
     password: productservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: broker:9092
     consumer:
       group-id: product-group
   jpa:
@@ -27,7 +27,7 @@ spring:
       hibernate:
         format_sql: true
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://elasticsearch:9200
   data:
     web:
       pageable:

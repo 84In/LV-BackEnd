@@ -4,16 +4,16 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discoveryserver:8761/eureka
 
 #Dataconfig
 spring:
   config:
     import: optional:file:../commonservice/src/main/resources/application.yml
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: broker:9092
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://elasticsearch:9200
   data:
     web:
       pageable:

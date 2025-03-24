@@ -1,6 +1,6 @@
 spring:
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:broker:9092}
     consumer:
       group-id: ${KAFKA_GROUP_ID:default-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -23,7 +23,7 @@ jwt:
   expiration: 3600000  # 1 giờ (Access Token)
   #expiration: 60000  # 1 phút (Access Token)
   refresh-expiration: 604800000  # 7 ngày (Refresh Token)
-  issuer: http://localhost:8080/api/v1/auth
+  issuer: http://apigateway:8080/api/v1/auth
   permitted-urls:
     - "/**"
     - "/api/v1/auth/login"

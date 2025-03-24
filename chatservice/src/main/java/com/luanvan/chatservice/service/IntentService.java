@@ -1,19 +1,19 @@
 package com.luanvan.chatservice.service;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.luanvan.commonservice.model.response.PageProductResponse;
-import com.luanvan.commonservice.model.response.ProductResponseModel;
-import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
+import java.util.List;
+
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.luanvan.commonservice.model.response.PageProductResponse;
+import com.luanvan.commonservice.model.response.ProductResponseModel;
+import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
 
 @Service
 public class IntentService {
@@ -37,55 +37,6 @@ public class IntentService {
         }
     }
 
-    //    private JsonObject handleTuVanGiay(JsonObject parameters) {
-//        String category = parameters.has("ECategory") ? parameters.get("ECategory").getAsString() : "";
-//        String size = parameters.has("ESize") ? parameters.get("ESize").getAsString() : "";
-//        String color = parameters.has("EColor") ? parameters.get("EColor").getAsString() : "";
-//        GetAllProductWithFilterQuery query = new GetAllProductWithFilterQuery();
-//        query.setPageNumber(0);
-//        query.setPageSize(10);
-//        if (!category.isBlank()) {
-//            query.setCategory(category);
-//        }
-//        if (!size.isBlank()) {
-//            query.setSize(size);
-//        }
-//        if (!color.isBlank()) {
-//            query.setColor(color);
-//        }
-//
-//        PageProductResponse result = queryGateway.query(query, ResponseTypes.instanceOf(PageProductResponse.class)).join();
-//
-//        List<ProductResponseModel> data = result.getContent().stream().toList();
-//
-//        JsonObject response = new JsonObject();
-//        JsonArray fulfillmentMessages = new JsonArray();
-//
-//        JsonArray cards = new JsonArray();
-//        data.stream().limit(3).forEach(product -> {
-//            List<String> imageUrls = Arrays.asList(product.getImages().split(","));
-//            String firstImageUrl = imageUrls.isEmpty() ? "" : imageUrls.get(0);
-//
-//            cards.add(createProductCard(
-//                    product.getName(),
-//                    firstImageUrl,
-//                    "Xem chi tiết",
-//                    catUrl(product.getId())
-//            ));
-//        });
-//        JsonObject payload = new JsonObject();
-//        payload.add("richContent", cards);
-//
-//        JsonObject payloadWrapper = new JsonObject();
-//        payloadWrapper.add("payload", payload);
-//
-//        fulfillmentMessages.add(payloadWrapper);
-//
-//        response.add("fulfillmentMessages", fulfillmentMessages);
-//
-//        return response;
-//
-//    }
     private JsonObject handleTuVanGiay(JsonObject parameters) {
         String category = parameters.has("ECategory") ? parameters.get("ECategory").getAsString() : "";
         String size = parameters.has("ESize") ? parameters.get("ESize").getAsString() : "";
@@ -94,11 +45,15 @@ public class IntentService {
         GetAllProductWithFilterQuery query = new GetAllProductWithFilterQuery();
         query.setPageNumber(0);
         query.setPageSize(10);
-        if (!category.isBlank()) query.setCategory(category);
-        if (!size.isBlank()) query.setSize(size);
-        if (!color.isBlank()) query.setColor(color);
+        if (!category.isBlank())
+            query.setCategory(category);
+        if (!size.isBlank())
+            query.setSize(size);
+        if (!color.isBlank())
+            query.setColor(color);
 
-        PageProductResponse result = queryGateway.query(query, ResponseTypes.instanceOf(PageProductResponse.class)).join();
+        PageProductResponse result = queryGateway.query(query, ResponseTypes.instanceOf(PageProductResponse.class))
+                .join();
         List<ProductResponseModel> data = result.getContent();
 
         JsonObject response = new JsonObject();
@@ -143,9 +98,6 @@ public class IntentService {
         response.add("fulfillmentMessages", fulfillmentMessages);
         return response;
     }
-
-
-
 
     private String catUrl(String id) {
         return baseUrl + "product/" + id;

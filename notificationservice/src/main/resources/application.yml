@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://discoveryservice:8761/eureka
 
 spring:
   mail:
@@ -21,7 +21,7 @@ spring:
   config:
     import: optional:file:../commonservice/src/main/resources/application.yml
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: broker:9092
     #consumer:
      # group-id: mail-group
 logging:
