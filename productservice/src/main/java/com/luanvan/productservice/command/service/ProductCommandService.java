@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -176,8 +173,9 @@ public class ProductCommandService {
                     List<UpdateProductCommand.UpdateProductVariantCommand> updateVariantCommands =
                             colorItem.getProductVariants().stream().map(variantItem -> {
                                 String productVariantId;
+                                Optional<ProductVariant> existingVariantOpt = Optional.empty();
                                 if (existingColorOpt.isPresent()) {
-                                    var existingVariantOpt = productVariantRepository.findByProductColorIdAndSizeId(existingColorOpt.get().getId(), variantItem.getSizeId());
+                                    existingVariantOpt = productVariantRepository.findByProductColorIdAndSizeId(existingColorOpt.get().getId(), variantItem.getSizeId());
                                     productVariantId = existingVariantOpt.map(ProductVariant::getId)
                                             .orElse(UUID.randomUUID().toString());
                                 } else {
@@ -187,7 +185,7 @@ public class ProductCommandService {
                                         .id(productVariantId)
                                         .sizeId(variantItem.getSizeId())
                                         .stock(variantItem.getStock())
-                                        .sold(variantItem.getSold())
+                                        .sold(existingVariantOpt.get().getSold())
                                         .isActive(true)
                                         .build();
                             }).collect(Collectors.toList());

@@ -88,17 +88,14 @@ public class ProductDocument {
         @Field(type = FieldType.Double)
         private BigDecimal price;
 
-        @Field(type = FieldType.Double)
-        private BigDecimal finalPrice;
-
         @Field(type = FieldType.Boolean)
         private Boolean isActive;
 
         @Field(type = FieldType.Object)
         private ColorDocument color;
 
-        @Field(type = FieldType.Object)
-        private PromotionDocument promotion;
+        @Field(type = FieldType.Nested)
+        private List<PromotionDocument> promotions;
 
         @Field(type = FieldType.Nested)
         private List<ProductVariantDocument> productVariants;

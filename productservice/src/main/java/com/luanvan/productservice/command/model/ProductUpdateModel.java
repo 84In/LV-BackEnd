@@ -35,6 +35,5 @@ public class ProductUpdateModel {
     public static class ProductVariantModel {
         private String sizeId;
         private Long stock;
-        private Long sold;
     }
 }

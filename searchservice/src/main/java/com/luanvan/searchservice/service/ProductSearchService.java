@@ -3,19 +3,28 @@ package com.luanvan.searchservice.service;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.SortOptions;
 import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.json.JsonData;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
+import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
+import com.luanvan.commonservice.utils.PromotionUtils;
 import com.luanvan.searchservice.entity.ProductDocument;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
-import org.springframework.data.elasticsearch.core.*;
-import org.springframework.data.elasticsearch.client.elc.*;
-import  co. elastic. clients. elasticsearch._types.query_dsl.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -25,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +43,7 @@ public class ProductSearchService {
     private final ElasticsearchOperations elasticsearchOperations;
     private final ProductSearchRepository productSearchRepository;
 
-    public Page<ProductDocument> searchProductsWithFilter(GetAllProductWithFilterQuery queryParams) {
+    public Page<ProductResponseModel> searchProductsWithFilter(GetAllProductWithFilterQuery queryParams) {
         log.info("Search products with filter elasticsearch");
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
 
@@ -190,12 +200,15 @@ public class ProductSearchService {
 
         // 10. Thực thi truy vấn
         SearchHits<ProductDocument> searchHits = elasticsearchOperations.search(nativeSearchQuery, ProductDocument.class);
-        List<ProductDocument> products = searchHits.map(SearchHit::getContent).toList();
+        List<ProductResponseModel> products = searchHits
+                .map(SearchHit::getContent)
+                .map(this::toProductResponseModel)
+                .toList();
 
         return new PageImpl<>(products, pageable, searchHits.getTotalHits());
     }
 
-    @KafkaListener(topics = "product-images-uploaded-topic", groupId = "product-group")
+    @KafkaListener(topics = "product-images-uploaded-topic", groupId = "product-search-group")
     public void uploadedProductImages(ProductImagesUploadModel message) {
 
         log.info("Received product images upload event for productId: {} with URLs: {}", message.getProductId(), String.join(",", message.getImageUrls()));
@@ -210,5 +223,83 @@ public class ProductSearchService {
             log.error(e.getMessage());
         }
 
+    }
+
+    public ProductResponseModel toProductResponseModel(ProductDocument product) {
+        return ProductResponseModel.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .images(product.getImages())
+                .isActive(product.getIsActive())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .category(ProductResponseModel.Category.builder()
+                        .id(product.getCategory().getId())
+                        .name(product.getCategory().getName())
+                        .codeName(product.getCategory().getCodeName())
+                        .images(product.getCategory().getImages())
+                        .description(product.getCategory().getDescription())
+                        .isActive(product.getCategory().getIsActive())
+                        .build())
+                .productColors(product.getProductColors().stream()
+                        .filter(pc -> Boolean.TRUE.equals(pc.getIsActive()))
+                        .sorted(Comparator.comparing(pc -> pc.getColor().getName()))
+                        .map(productColor -> {
+                            // Chuyển đổi danh sách promotion của productColor sang DTO promotion
+                            var finalPromotion = productColor.getPromotions().stream()
+                                    .map(promotion ->
+                                            ProductResponseModel.Promotion.builder()
+                                                    .id(promotion.getId())
+                                                    .name(promotion.getName())
+                                                    .codeName(promotion.getCodeName())
+                                                    .discountPercentage(promotion.getDiscountPercentage())
+                                                    .startDate(promotion.getStartDate())
+                                                    .endDate(promotion.getEndDate())
+                                                    .isActive(promotion.getIsActive())
+                                                    .build()).collect(Collectors.toList());
+
+                            // Lấy promotion tốt nhất
+                            var bestPromotionOpt = PromotionUtils.getBestPromotion(finalPromotion);
+                            BigDecimal finalPrice;
+                            if (bestPromotionOpt.isPresent()) {
+                                finalPrice = PromotionUtils.calculateFinalPrice(productColor.getPrice(),
+                                        BigDecimal.valueOf(bestPromotionOpt.get().getDiscountPercentage()));
+                            } else {
+                                finalPrice = productColor.getPrice();
+                            }
+
+                            return ProductResponseModel.ProductColor.builder()
+                                    .id(productColor.getId())
+                                    .price(productColor.getPrice())
+                                    .finalPrice(finalPrice)
+                                    .isActive(productColor.getIsActive())
+                                    .color(ProductResponseModel.Color.builder()
+                                            .id(productColor.getColor().getId())
+                                            .name(productColor.getColor().getName())
+                                            .codeName(productColor.getColor().getCodeName())
+                                            .colorCode(productColor.getColor().getColorCode())
+                                            .description(productColor.getColor().getDescription())
+                                            .isActive(productColor.getColor().getIsActive())
+                                            .build())
+                                    .promotion(bestPromotionOpt.orElse(null))
+                                    .productVariants(productColor.getProductVariants().stream()
+                                            .sorted(Comparator.comparing(pv -> pv.getSize().getName()))
+                                            .map(productVariant ->
+                                                    ProductResponseModel.ProductVariant.builder()
+                                                            .id(productVariant.getId())
+                                                            .stock(productVariant.getStock())
+                                                            .sold(productVariant.getSold())
+                                                            .isActive(productVariant.getIsActive())
+                                                            .size(ProductResponseModel.Size.builder()
+                                                                    .id(productVariant.getSize().getId())
+                                                                    .name(productVariant.getSize().getName())
+                                                                    .codeName(productVariant.getSize().getCodeName())
+                                                                    .isActive(productVariant.getSize().getIsActive())
+                                                                    .build())
+                                                            .build()).collect(Collectors.toList()))
+                                    .build();
+                        }).collect(Collectors.toList()))
+                .build();
     }
 }

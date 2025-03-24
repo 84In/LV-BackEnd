@@ -14,5 +14,5 @@ public interface ProductSearchRepository extends ElasticsearchRepository<Product
 
     List<ProductDocument> findByProductColorsProductVariantsSizeId(String sizeId);
 
-    List<ProductDocument> findByProductColorsPromotionId(String promotionId);
+    List<ProductDocument> findByProductColorsPromotionsId(String promotionId);
 }
