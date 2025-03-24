@@ -55,6 +55,7 @@ public class KafkaConfig {
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*"); // Cho phép tất cả các package
         // Tăng kích thước fetch
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, 20971520);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new JsonDeserializer<>());
     }
 

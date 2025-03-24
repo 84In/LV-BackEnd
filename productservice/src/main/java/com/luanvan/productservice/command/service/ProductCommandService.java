@@ -132,6 +132,70 @@ public class ProductCommandService {
         return result;
     }
 
+    public HashMap<?, ?> save(ProductCreateModel model) throws AppException {
+        //Kiểm tra tính đúng đắn của dữ liệu nhập
+        if (productRepository.existsByName(model.getName())) {
+            throw new AppException(ErrorCode.PRODUCT_EXISTED);
+        }
+        if (categoryRepository.findById(model.getCategoryId()).isEmpty()) {
+            throw new AppException(ErrorCode.CATEGORY_NOT_EXISTED);
+        }
+        if (model.getProductColors().isEmpty()) {
+            throw new AppException(ErrorCode.COLOR_NOT_EXISTED);
+        } else {
+            model.getProductColors().forEach(colorItem -> {
+                colorRepository.findById(colorItem.getColorId())
+                        .orElseThrow(() -> new AppException(ErrorCode.COLOR_NOT_EXISTED));
+
+                if (colorItem.getPromotions() != null) {
+                    colorItem.getPromotions().forEach(promotionItem -> {
+                        promotionRepository.findById(promotionItem)
+                                .orElseThrow(() -> new AppException(ErrorCode.PROMOTION_NOT_EXISTED));
+                    });
+                }
+
+                if (colorItem.getProductVariants().isEmpty()) {
+                    throw new AppException(ErrorCode.SIZE_NOT_EXISTED);
+                } else {
+                    colorItem.getProductVariants().forEach(variantItem -> {
+                        sizeRepository.findById(variantItem.getSizeId())
+                                .orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
+                    });
+                }
+            });
+        }
+        // Gửi Command lưu thông tin sản phẩm
+        var productCommand = CreateProductCommand.builder()
+                .id(UUID.randomUUID().toString())
+                .name(model.getName())
+                .description(model.getDescription())
+                .images(model.getImages())
+                .categoryId(model.getCategoryId())
+                .isActive(true)
+                .productColors(model.getProductColors().stream().map(colorItem ->
+                                CreateProductCommand.CreateProductColorCommand.builder()
+                                        .id(UUID.randomUUID().toString())
+                                        .colorId(colorItem.getColorId())
+                                        .price(colorItem.getPrice())
+                                        .isActive(true)
+                                        .productVariants(colorItem.getProductVariants().stream().map(variantItem ->
+                                                        CreateProductCommand.CreateProductVariantCommand.builder()
+                                                                .id(UUID.randomUUID().toString())
+                                                                .sizeId(variantItem.getSizeId())
+                                                                .stock(variantItem.getStock())
+                                                                .sold(0L)
+                                                                .isActive(true)
+                                                                .build())
+                                                .collect(Collectors.toList()))
+                                        .promotions(colorItem.getPromotions() != null ? colorItem.getPromotions() : new ArrayList<>())
+                                        .build())
+                        .collect(Collectors.toList()))
+                .build();
+        var result = new HashMap<>();
+        result.put("id", commandGateway.sendAndWait(productCommand));
+        return result;
+    }
+
     public HashMap<?, ?> update(String productId, ProductUpdateModel model) throws AppException {
         // Kiểm tra tính đúng đắn của dữ liệu nhập
         Product product = productRepository.findById(productId)

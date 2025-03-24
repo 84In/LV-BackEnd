@@ -28,6 +28,15 @@ public class ProductCommandController {
                 .build();
     }
 
+    @PostMapping("/create")
+    public ApiResponse<?> create(@RequestBody ProductCreateModel model) throws JsonProcessingException {
+
+        var response = productCommandService.save(model);
+        return ApiResponse.builder()
+                .data(response)
+                .build();
+    }
+
     @PutMapping("/{productId}")
     public ApiResponse<?> update(@PathVariable String productId, @RequestBody ProductUpdateModel model) {
 
