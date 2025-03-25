@@ -9,7 +9,7 @@ import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
 import co.elastic.clients.json.JsonData;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
 import com.luanvan.commonservice.utils.PromotionUtils;
@@ -17,6 +17,7 @@ import com.luanvan.searchservice.entity.ProductDocument;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +44,7 @@ public class ProductSearchService {
     private final ElasticsearchOperations elasticsearchOperations;
     private final ProductSearchRepository productSearchRepository;
 
+    @Cacheable(value = "products", key = "'productSearch:' + #queryParams.pageNumber + ':' + #queryParams.pageSize + ':' + #queryParams.query + ':' + #queryParams.category + ':' + #queryParams.price + ':' + #queryParams.color + ':' + #queryParams.size + ':' + #queryParams.sortOrder")
     public Page<ProductResponseModel> searchProductsWithFilter(GetAllProductWithFilterQuery queryParams) {
         log.info("Search products with filter elasticsearch");
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
@@ -209,7 +211,7 @@ public class ProductSearchService {
     }
 
     @KafkaListener(topics = "product-images-uploaded-topic", groupId = "product-search-group")
-    public void uploadedProductImages(ProductImagesUploadModel message) {
+    public void uploadedProductImages(CallBackUploadProductImagesCommand message) {
 
         log.info("Received product images upload event for productId: {} with URLs: {}", message.getProductId(), String.join(",", message.getImageUrls()));
 

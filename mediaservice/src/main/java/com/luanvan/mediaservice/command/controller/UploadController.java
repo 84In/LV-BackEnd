@@ -5,13 +5,11 @@ import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.request.AvatarUpdateModel;
 import com.luanvan.commonservice.model.request.CategoryImageUpdateModel;
-import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
 import com.luanvan.commonservice.services.KafkaService;
 import com.luanvan.mediaservice.services.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +24,7 @@ import java.util.List;
 public class UploadController {
     private final CloudinaryService cloudinaryService;
     private final KafkaService kafkaService;
-    private final KafkaTemplate<String, ProductImagesUploadModel> kafkaTemplate;
+    private final KafkaTemplate<String, CallBackUploadProductImagesCommand> kafkaTemplate;
 
     @PostMapping("avatar/{userId}")
     public ApiResponse<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) throws AppException {

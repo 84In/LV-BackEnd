@@ -2,6 +2,7 @@ package com.luanvan.searchservice.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
 import com.luanvan.commonservice.event.*;
 import com.luanvan.commonservice.model.response.CategoryResponseModel;
 import com.luanvan.commonservice.model.response.ColorResponseModel;
@@ -154,6 +155,23 @@ public class ProductSearchEventHandler {
         }
         product.updateTimestamps();
         productSearchRepository.save(product);
+    }
+
+    @EventHandler
+    public void uploadedProductImages(ProductCallBackUploadImagesEvent event) {
+
+        log.info("Received product images upload event for productId: {} with URLs: {}", event.getProductId(), String.join(",", event.getImageUrls()));
+
+        try {
+            ProductDocument product = productSearchRepository.findById(event.getProductId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            product.setImages(String.join(",", event.getImageUrls()));
+            productSearchRepository.save(product);
+            log.info("Product images URL updated for productId: {}", event.getProductId());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
     }
 
     /**

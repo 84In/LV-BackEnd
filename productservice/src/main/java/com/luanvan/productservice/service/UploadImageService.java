@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.model.request.CategoryImageUpdateModel;
-import com.luanvan.commonservice.model.request.ProductImagesUploadModel;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
 import com.luanvan.productservice.entity.Category;
 import com.luanvan.productservice.entity.Product;
 import com.luanvan.productservice.repository.CategoryRepository;
@@ -59,7 +59,7 @@ public class UploadImageService {
     }
 
     @KafkaListener(topics = "product-images-uploaded-topic", groupId = "product-group")
-    public void uploadedProductImages(ProductImagesUploadModel message) {
+    public void uploadedProductImages(CallBackUploadProductImagesCommand message) {
 
         log.info("Received product images upload event for productId: {} with URLs: {}", message.getProductId(), String.join(",", message.getImageUrls()));
 

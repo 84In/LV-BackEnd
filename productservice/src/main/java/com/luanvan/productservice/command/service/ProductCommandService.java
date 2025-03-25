@@ -127,7 +127,8 @@ public class ProductCommandService {
         // Gửi command upload ảnh
         log.info("Upload product images for productId: {}", productCommand.getId());
         var imagesCommand = new UploadProductImagesCommand(productCommand.getId(), imageBytesArrayList);
-        kafkaTemplate.send("upload-product-images", imagesCommand);
+        commandGateway.send(imagesCommand);
+//        kafkaTemplate.send("upload-product-images", imagesCommand);
 
         return result;
     }
