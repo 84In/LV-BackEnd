@@ -1,5 +1,9 @@
 version: '3.9'
 
+networks:
+  app_network:
+    driver: bridge
+
 services:
   userservicedb:
     image: mysql:8.0
@@ -14,6 +18,9 @@ services:
     volumes:
       - userservicedb_data:/var/lib/mysql
       - ./init-scripts/userservice:/docker-entrypoint-initdb.d
+    networks:
+      - app_network
+
   productservicedb:
     image: mysql:8.0
     container_name: productservicedb
@@ -27,6 +34,9 @@ services:
     volumes:
       - productservicedb_data:/var/lib/mysql
       - ./init-scripts/productservice:/docker-entrypoint-initdb.d
+    networks:
+      - app_network
+
   orderservicedb:
     image: mysql:8.0
     container_name: orderservicedb
@@ -40,18 +50,34 @@ services:
     volumes:
       - orderservicedb_data:/var/lib/mysql
       - ./init-scripts/orderservice:/docker-entrypoint-initdb.d
+    networks:
+      - app_network
+      
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false  # Tắt bảo mật để dễ sử dụng trong môi trường dev
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Giới hạn bộ nhớ heap
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+    networks:
+      - app_network
+
   logstash:
     image: docker.elastic.co/logstash/logstash:8.17.2
     container_name: logstash
@@ -60,10 +86,23 @@ services:
       - ./mysql-connector-java-8.0.30.jar:/usr/share/logstash/mysql-connector-java.jar
     ports:
       - '5000:5000'
-    depends_on:
-      - elasticsearch
     environment:
       LS_JAVA_OPTS: '-Xmx256m -Xms256m'
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      XPACK_MONITORING_ENABLED: "false"
+    networks:
+      - app_network
+    # Thêm health check cho logstash
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      productservicedb:
+        condition: service_started
   axonserver:
     image: axoniq/axonserver:latest
     hostname: axonserver
@@ -74,12 +113,18 @@ services:
       - '8024:8024'
       - '8124:8124'
       - '8224:8224'
+    networks:
+      - app_network
+
   redis:
     image: redis:latest
     restart: always
     hostname: redis
     ports:
       - "6379:6379"
+    networks:
+      - app_network
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.7.0
     hostname: zookeeper
@@ -89,6 +134,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - app_network
 
   broker:
     image: confluentinc/cp-server:7.7.0
@@ -117,10 +164,11 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-      # Các cấu hình tăng kích thước message (ví dụ: 100MB)
       KAFKA_MESSAGE_MAX_BYTES: 104857600
       KAFKA_REPLICA_FETCH_MAX_BYTES: 104857600
       KAFKA_SOCKET_REQUEST_MAX_BYTES: 104857600
+    networks:
+      - app_network
 
   control-center:
     image: confluentinc/cp-enterprise-control-center:7.7.0
@@ -137,6 +185,8 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
+    networks:
+      - app_network
 
 volumes:
   userservicedb_data:
