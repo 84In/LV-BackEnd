@@ -44,7 +44,6 @@ public class ProductSearchService {
     private final ElasticsearchOperations elasticsearchOperations;
     private final ProductSearchRepository productSearchRepository;
 
-    @Cacheable(value = "products", key = "'productSearch:' + #queryParams.pageNumber + ':' + #queryParams.pageSize + ':' + #queryParams.query + ':' + #queryParams.category + ':' + #queryParams.price + ':' + #queryParams.color + ':' + #queryParams.size + ':' + #queryParams.sortOrder")
     public Page<ProductResponseModel> searchProductsWithFilter(GetAllProductWithFilterQuery queryParams) {
         log.info("Search products with filter elasticsearch");
         Pageable pageable = PageRequest.of(queryParams.getPageNumber(), queryParams.getPageSize());
@@ -155,7 +154,7 @@ public class ProductSearchService {
             switch (sortOrder) {
                 case "price-asc" -> sortOptions.add(
                         SortOptions.of(s -> s.field(f -> f
-                                .field("productColors.finalPrice")
+                                .field("productColors.price")
                                 .order(SortOrder.Asc)
                                 .nested(n -> n
                                         .path("productColors")
@@ -166,7 +165,7 @@ public class ProductSearchService {
                 );
                 case "price-desc" -> sortOptions.add(
                         SortOptions.of(s -> s.field(f -> f
-                                .field("productColors.finalPrice")
+                                .field("productColors.price")
                                 .order(SortOrder.Desc)
                                 .nested(n -> n
                                         .path("productColors")
