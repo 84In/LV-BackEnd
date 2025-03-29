@@ -22,13 +22,13 @@ public class ProductDocument {
     @Id
     private String id;
 
-    @Field(type = FieldType.Text, analyzer = "standard")
+    @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
     private String name;
 
-    @Field(type = FieldType.Text, analyzer = "standard")
+    @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
     private String description;
 
-    @Field(type = FieldType.Text, analyzer = "standard")
+    @Field(type = FieldType.Text)
     private String images;
 
     @Field(type = FieldType.Boolean)
@@ -61,7 +61,7 @@ public class ProductDocument {
     public static class CategoryDocument implements Serializable {
         private String id;
 
-        @Field(type = FieldType.Text)
+        @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
         private String name;
 
         @Field(type = FieldType.Keyword)

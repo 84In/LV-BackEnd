@@ -1,11 +1,7 @@
 package com.luanvan.searchservice.service;
 
-import co.elastic.clients.elasticsearch._types.FieldValue;
-import co.elastic.clients.elasticsearch._types.SortOptions;
-import co.elastic.clients.elasticsearch._types.SortOrder;
-import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
-import co.elastic.clients.elasticsearch._types.query_dsl.Query;
-import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.elasticsearch._types.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.*;
 import co.elastic.clients.json.JsonData;
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
@@ -17,7 +13,6 @@ import com.luanvan.searchservice.entity.ProductDocument;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -58,14 +53,30 @@ public class ProductSearchService {
         boolQuery.must(m -> m.term(t -> t.field("category.isActive").value(true)));
 
         // 3. Lọc theo từ khóa (query)
+//        if (StringUtils.hasText(queryParams.getQuery())) {
+//            boolQuery.must(m -> m.bool(b -> b
+//                    .should(s -> s.matchPhrasePrefix(mp -> mp.field("name").query(queryParams.getQuery())))
+//                    .should(s -> s.matchPhrasePrefix(mp -> mp.field("category.name").query(queryParams.getQuery())))
+//                    .should(s -> s.fuzzy(f -> f.field("name").value(queryParams.getQuery()).fuzziness("AUTO")))
+//                    .should(s -> s.fuzzy(f -> f.field("category.name").value(queryParams.getQuery()).fuzziness("AUTO")))
+//            ));
+//        }
+
         if (StringUtils.hasText(queryParams.getQuery())) {
+            String queryLower = queryParams.getQuery().toLowerCase();
             boolQuery.must(m -> m.bool(b -> b
-                    .should(s -> s.matchPhrasePrefix(mp -> mp.field("name").query(queryParams.getQuery())))
-                    .should(s -> s.matchPhrasePrefix(mp -> mp.field("category.name").query(queryParams.getQuery())))
-                    .should(s -> s.match(mq -> mq.field("name").query(queryParams.getQuery()).fuzziness("AUTO")))
-                    .should(s -> s.match(mq -> mq.field("category.name").query(queryParams.getQuery()).fuzziness("AUTO")))
+                    // Prefix matching
+                    .should(s -> s.prefix(p -> p.field("name").value(queryLower).boost(1.5f)))
+                    .should(s -> s.prefix(p -> p.field("category.name").value(queryLower)))
+                    // Wildcard cho substring matching
+                    .should(s -> s.wildcard(w -> w.field("name").value("*" + queryLower + "*")))
+                    .should(s -> s.wildcard(w -> w.field("category.name").value("*" + queryLower + "*")))
+                    // Match query với fuzzy
+                    .should(s -> s.match(f -> f.field("name").query(queryParams.getQuery()).fuzziness("AUTO:3,6").boost(2.0f)))
+                    .should(s -> s.match(f -> f.field("category.name").query(queryParams.getQuery()).fuzziness("AUTO:3,6")))
             ));
         }
+
 
 
         // 4. Lọc theo category
@@ -156,6 +167,7 @@ public class ProductSearchService {
                         SortOptions.of(s -> s.field(f -> f
                                 .field("productColors.price")
                                 .order(SortOrder.Asc)
+                                .mode(SortMode.Avg)
                                 .nested(n -> n
                                         .path("productColors")
                                         // Chỉ định mode là min để lấy giá thấp nhất khi sắp xếp
@@ -167,6 +179,7 @@ public class ProductSearchService {
                         SortOptions.of(s -> s.field(f -> f
                                 .field("productColors.price")
                                 .order(SortOrder.Desc)
+                                .mode(SortMode.Avg)
                                 .nested(n -> n
                                         .path("productColors")
                                         // Chỉ định mode là max để lấy giá cao nhất khi sắp xếp
@@ -178,6 +191,7 @@ public class ProductSearchService {
                         SortOptions.of(s -> s.field(f -> f
                                 .field("productColors.productVariants.sold")
                                 .order(SortOrder.Desc)
+                                .mode(SortMode.Sum)
                                 .nested(n -> n
                                         .path("productColors.productVariants")
                                         .filter(fq -> fq.term(t -> t.field("productColors.productVariants.isActive").value(true)))
