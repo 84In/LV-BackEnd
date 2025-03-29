@@ -2,11 +2,8 @@ package com.luanvan.productservice.command.handler;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.event.ProductRollBackStockEvent;
-import com.luanvan.commonservice.event.ProductChangeStatusEvent;
-import com.luanvan.commonservice.event.ProductCreateEvent;
-import com.luanvan.commonservice.event.ProductUpdateEvent;
-import com.luanvan.commonservice.event.ProductUpdateStockEvent;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
+import com.luanvan.commonservice.event.*;
 import com.luanvan.productservice.entity.*;
 import com.luanvan.productservice.repository.*;
 import jakarta.transaction.Transactional;
@@ -270,6 +267,24 @@ public class ProductEventHandler {
         productVariant.setSold(updatedSold);
 
         productRepository.save(product);
+    }
+
+    @EventHandler
+    @Transactional
+    @CacheEvict(value = "products", allEntries = true)
+    public void uploadedProductImages(ProductCallBackUploadImagesEvent event) {
+
+        log.info("Received product images upload event for productId: {} with URLs: {}", event.getProductId(), String.join(",", event.getImageUrls()));
+
+        try {
+            Product product = productRepository.findById(event.getProductId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            product.setImages(String.join(",", event.getImageUrls()));
+            productRepository.save(product);
+            log.info("Product images URL updated for productId: {}", event.getProductId());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
     }
 
 }

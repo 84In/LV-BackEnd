@@ -1,15 +1,13 @@
 package com.luanvan.productservice.command.aggregate;
 
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
 import com.luanvan.commonservice.command.RollBackStockProductCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
-import com.luanvan.commonservice.event.ProductRollBackStockEvent;
+import com.luanvan.commonservice.command.UploadProductImagesCommand;
+import com.luanvan.commonservice.event.*;
 import com.luanvan.productservice.command.command.ChangeStatusProductCommand;
 import com.luanvan.productservice.command.command.CreateProductCommand;
 import com.luanvan.productservice.command.command.UpdateProductCommand;
-import com.luanvan.commonservice.event.ProductChangeStatusEvent;
-import com.luanvan.commonservice.event.ProductCreateEvent;
-import com.luanvan.commonservice.event.ProductUpdateEvent;
-import com.luanvan.commonservice.event.ProductUpdateStockEvent;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
@@ -19,6 +17,7 @@ import org.axonframework.modelling.command.AggregateLifecycle;
 import org.axonframework.spring.stereotype.Aggregate;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +30,7 @@ public class ProductAggregate {
     private String name;
     private String description;
     private String images;
+    private ArrayList<String> imageUrls;
     private Boolean isActive;
     private String colorId;
     private String sizeId;
@@ -121,6 +121,20 @@ public class ProductAggregate {
         AggregateLifecycle.apply(event);
     }
 
+    @CommandHandler
+    public void handle(UploadProductImagesCommand command){
+        ProductUploadImagesEvent event = new ProductUploadImagesEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
+    @CommandHandler
+    public void handle(CallBackUploadProductImagesCommand command){
+        ProductCallBackUploadImagesEvent event = new ProductCallBackUploadImagesEvent();
+        BeanUtils.copyProperties(command, event);
+        AggregateLifecycle.apply(event);
+    }
+
     @EventSourcingHandler
     public void on(ProductCreateEvent event) {
         this.id = event.getId();
@@ -161,5 +175,17 @@ public class ProductAggregate {
         this.quantity = event.getQuantity();
         this.colorId = event.getColorId();
         this.sizeId = event.getSizeId();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductUploadImagesEvent event) {
+        this.id = event.getProductId();
+        this.imageUrls = event.getImages();
+    }
+
+    @EventSourcingHandler
+    public void on(ProductCallBackUploadImagesEvent event) {
+        this.id = event.getProductId();
+        this.imageUrls = event.getImageUrls();
     }
 }
