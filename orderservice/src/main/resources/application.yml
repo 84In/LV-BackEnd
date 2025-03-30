@@ -12,16 +12,19 @@ eureka:
 #Dataconfig
 spring:
   datasource:
-    url: jdbc:mysql://orderservicedb:3308/orderservicedb
+    url: jdbc:mysql://orderservicedb:3306/orderservicedb
     username: orderservice
     password: orderservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
   kafka:
+    enable: true
     bootstrap-servers: broker:9092
     consumer:
       group-id: order-group
   config:
-    import: file:../commonservice/src/main/resources/application.yml
+    import: classpath:application-common.yml
+  # config:
+  #   import: file:../commonservice/src/main/resources/application.yml
   jpa:
     hibernate:
       ddl-auto: update

@@ -22,4 +22,6 @@ spring:
     consumer:
       group-id: upload-group
   config:
-    import: file:../commonservice/src/main/resources/application.yml
+    import: classpath:application-common.yml
+  # config:
+  #   import: file:../commonservice/src/main/resources/application.yml

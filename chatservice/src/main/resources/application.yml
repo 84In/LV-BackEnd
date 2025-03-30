@@ -8,7 +8,14 @@ eureka:
 
 app:
   base-url: ${CLIENT_URL:http://localhost:4000/}
-#Dataconfig
+
 spring:
+  kafka:
+    enabled: false
   config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
+    import: classpath:application-common.yml
+
+#Dataconfig
+# spring:
+#   config:
+#     import: optional:file:../commonservice/src/main/resources/application.yml

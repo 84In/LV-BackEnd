@@ -8,9 +8,12 @@ eureka:
 
 #Dataconfig
 spring:
+  # config:
+  #   import: optional:file:../commonservice/src/main/resources/application.yml
   config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
+    import: classpath:application-common.yml
   kafka:
+    enable: true
     bootstrap-servers: broker:9092
   elasticsearch:
     uris: http://elasticsearch:9200

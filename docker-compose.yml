@@ -53,15 +53,55 @@ services:
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=false # Tắt bảo mật để dễ sử dụng trong môi trường dev
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # Giới hạn bộ nhớ heap
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl -s http://localhost:9200/_cluster/health | grep -qE ''"status":"(green|yellow)"''',
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
     networks:
       - microservice-networks
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.17.2
+    container_name: logstash
+    volumes:
+      - ./data/logstash/pipeline:/usr/share/logstash/pipeline
+      - ./data/mysql-connector-java-8.0.30.jar:/usr/share/logstash/mysql-connector-java.jar
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      XPACK_MONITORING_ENABLED: "false"
+    networks:
+      - microservice-networks
+    # Thêm health check cho logstash
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      productservicedb:
+        condition: service_started
   axonserver:
     image: axoniq/axonserver:latest
     hostname: axonserver
@@ -234,6 +274,7 @@ services:
       - discoveryserver
       - productservicedb
       - elasticsearch
+      - logstash
       - axonserver
       - broker
   chatservice:

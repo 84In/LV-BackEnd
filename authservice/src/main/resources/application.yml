@@ -8,8 +8,6 @@ eureka:
       defaultZone: http://discoveryserver:8761/eureka
 
 spring:
-  config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
   security:
     oauth2:
       authorizationserver:
@@ -17,12 +15,10 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: http://authservice:9009/api/v1/auth
-
-#jwt:
-#  secret: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
-#  expiration: 3600000  # 1 giờ (Access Token)
-#  refresh-expiration: 604800000  # 7 ngày (Refresh Token)
-#  issuer: http://localhost:8081/api/v1/auth
+  kafka:
+    enabled: false
+  config:
+    import: classpath:application-common.yml
 
 logging:
   level:

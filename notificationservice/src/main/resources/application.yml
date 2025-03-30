@@ -18,10 +18,13 @@ spring:
           auth: true
           starttls:
             enable: true
-  config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
+  # config:
+  #   import: optional:file:../commonservice/src/main/resources/application.yml
   kafka:
+    enabled: true
     bootstrap-servers: broker:9092
+  config:
+    import: classpath:application-common.yml
     #consumer:
      # group-id: mail-group
 logging:

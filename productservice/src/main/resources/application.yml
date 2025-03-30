@@ -8,14 +8,15 @@ eureka:
 
 #Dataconfig
 spring:
-  config:
-    import: optional:file:../commonservice/src/main/resources/application.yml
+  # config:
+  #   import: optional:file:../commonservice/src/main/resources/application.yml
   datasource:
-    url: jdbc:mysql://productservicedb:3307/productservicedb
+    url: jdbc:mysql://productservicedb:3306/productservicedb
     username: productservice
     password: productservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
   kafka:
+    enable: true
     bootstrap-servers: broker:9092
     consumer:
       group-id: product-group
@@ -35,6 +36,8 @@ spring:
     redis:
       port: 6379
       host: localhost
+  config:
+    import: classpath:application-common.yml
 logging:
   level:
     org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL

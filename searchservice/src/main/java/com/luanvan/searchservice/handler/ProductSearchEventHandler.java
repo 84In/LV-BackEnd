@@ -49,8 +49,8 @@ public class ProductSearchEventHandler {
         var product = productSearchRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         CategoryResponseModel categoryResponse = queryGateway.query(
-                new GetCategoryQuery(event.getCategoryId()), ResponseTypes.instanceOf(CategoryResponseModel.class)
-        ).join();
+                new GetCategoryQuery(event.getCategoryId()), ResponseTypes.instanceOf(CategoryResponseModel.class))
+                .join();
 
         product.setName(event.getName());
         product.setDescription(event.getDescription());
@@ -68,7 +68,8 @@ public class ProductSearchEventHandler {
                 .map(productColor -> {
                     var finalPromotion = productColor.getPromotions().stream()
                             .map(promoId -> {
-                                var promotionResponse = queryGateway.query(new GetPromotionQuery(promoId), ResponseTypes.instanceOf(PromotionResponseModel.class)).join();
+                                var promotionResponse = queryGateway.query(new GetPromotionQuery(promoId),
+                                        ResponseTypes.instanceOf(PromotionResponseModel.class)).join();
                                 return ProductDocument.ProductColorDocument.PromotionDocument.builder()
                                         .id(promotionResponse.getId())
                                         .name(promotionResponse.getName())
@@ -80,7 +81,8 @@ public class ProductSearchEventHandler {
                                         .build();
                             }).collect(Collectors.toList());
 
-                    var colorResponse = queryGateway.query(new GetColorQuery(productColor.getColorId()), ResponseTypes.instanceOf(ColorResponseModel.class)).join();
+                    var colorResponse = queryGateway.query(new GetColorQuery(productColor.getColorId()),
+                            ResponseTypes.instanceOf(ColorResponseModel.class)).join();
 
                     return ProductDocument.ProductColorDocument.builder()
                             .id(productColor.getId())
@@ -97,14 +99,18 @@ public class ProductSearchEventHandler {
                             .promotions(finalPromotion)
                             .productVariants(productColor.getProductVariants().stream()
                                     .map(productVariant -> {
-                                        var sizeResponse = queryGateway.query(new GetSizeQuery(productVariant.getSizeId()), ResponseTypes.instanceOf(SizeResponseModel.class)).join();
+                                        var sizeResponse = queryGateway
+                                                .query(new GetSizeQuery(productVariant.getSizeId()),
+                                                        ResponseTypes.instanceOf(SizeResponseModel.class))
+                                                .join();
 
                                         return ProductDocument.ProductColorDocument.ProductVariantDocument.builder()
                                                 .id(productVariant.getId())
                                                 .stock(productVariant.getStock())
                                                 .sold(productVariant.getSold())
                                                 .isActive(productVariant.getIsActive())
-                                                .size(ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument.builder()
+                                                .size(ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument
+                                                        .builder()
                                                         .id(sizeResponse.getId())
                                                         .name(sizeResponse.getName())
                                                         .codeName(sizeResponse.getCodeName())
@@ -136,7 +142,6 @@ public class ProductSearchEventHandler {
     public void on(ProductUpdateStockEvent event) {
         log.info("Handling ProductUpdateStockEvent for productId: {}", event.getId());
 
-
         var product = productSearchRepository.findById(event.getId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         for (var color : product.getProductColors()) {
@@ -160,7 +165,8 @@ public class ProductSearchEventHandler {
     @EventHandler
     public void uploadedProductImages(ProductCallBackUploadImagesEvent event) {
 
-        log.info("Received product images upload event for productId: {} with URLs: {}", event.getProductId(), String.join(",", event.getImageUrls()));
+        log.info("Received product images upload event for productId: {} with URLs: {}", event.getProductId(),
+                String.join(",", event.getImageUrls()));
 
         try {
             ProductDocument product = productSearchRepository.findById(event.getProductId())
@@ -175,7 +181,8 @@ public class ProductSearchEventHandler {
     }
 
     /**
-     *  Su kien update category
+     * Su kien update category
+     * 
      * @param event
      */
     @EventHandler
@@ -227,31 +234,34 @@ public class ProductSearchEventHandler {
     }
 
     /**
-     *  Su kien update color
+     * Su kien update color
+     * 
      * @param event
      */
     @EventHandler
     public void on(ColorUpdateEvent event) {
         log.info("Handling ColorUpdateEvent for colorId: {}", event.getId());
 
-        // Tìm tất cả các ProductDocument có productColors chứa Color có id = event.getId()
+        // Tìm tất cả các ProductDocument có productColors chứa Color có id =
+        // event.getId()
         List<ProductDocument> products = productSearchRepository.findByProductColorsColorId(event.getId());
 
-        // Với mỗi ProductDocument, duyệt qua danh sách productColors và cập nhật thông tin của Color nếu cần
+        // Với mỗi ProductDocument, duyệt qua danh sách productColors và cập nhật thông
+        // tin của Color nếu cần
         for (ProductDocument productDoc : products) {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
                         if (pc.getColor() != null && event.getId().equals(pc.getColor().getId())) {
                             // Tạo đối tượng Color mới với thông tin cập nhật
-                            ProductDocument.ProductColorDocument.ColorDocument updatedColor =
-                                    ProductDocument.ProductColorDocument.ColorDocument.builder()
-                                            .id(event.getId())
-                                            .name(event.getName())
-                                            .codeName(event.getCodeName())
-                                            .colorCode(event.getColorCode())
-                                            .description(event.getDescription())
-                                            .isActive(event.getIsActive())
-                                            .build();
+                            ProductDocument.ProductColorDocument.ColorDocument updatedColor = ProductDocument.ProductColorDocument.ColorDocument
+                                    .builder()
+                                    .id(event.getId())
+                                    .name(event.getName())
+                                    .codeName(event.getCodeName())
+                                    .colorCode(event.getColorCode())
+                                    .description(event.getDescription())
+                                    .isActive(event.getIsActive())
+                                    .build();
                             pc.setColor(updatedColor);
                         }
                         return pc;
@@ -270,20 +280,22 @@ public class ProductSearchEventHandler {
     public void on(ColorChangeStatusEvent event) {
         log.info("Handling ColorChangeStatusEvent for colorId: {}", event.getId());
 
-        // Tìm tất cả các ProductDocument có productColors chứa Color có id = event.getId()
+        // Tìm tất cả các ProductDocument có productColors chứa Color có id =
+        // event.getId()
         List<ProductDocument> products = productSearchRepository.findByProductColorsColorId(event.getId());
 
-        // Với mỗi ProductDocument, duyệt qua danh sách productColors và cập nhật thông tin của Color nếu cần
+        // Với mỗi ProductDocument, duyệt qua danh sách productColors và cập nhật thông
+        // tin của Color nếu cần
         for (ProductDocument productDoc : products) {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
                         if (pc.getColor() != null && event.getId().equals(pc.getColor().getId())) {
                             // Tạo đối tượng Color mới với thông tin cập nhật
-                            ProductDocument.ProductColorDocument.ColorDocument updatedColor =
-                                    ProductDocument.ProductColorDocument.ColorDocument.builder()
-                                            .id(event.getId())
-                                            .isActive(event.getIsActive())
-                                            .build();
+                            ProductDocument.ProductColorDocument.ColorDocument updatedColor = ProductDocument.ProductColorDocument.ColorDocument
+                                    .builder()
+                                    .id(event.getId())
+                                    .isActive(event.getIsActive())
+                                    .build();
                             pc.setColor(updatedColor);
                         }
                         return pc;
@@ -299,37 +311,41 @@ public class ProductSearchEventHandler {
     }
 
     /**
-     *  Su kien update color
+     * Su kien update color
+     * 
      * @param event
      */
     @EventHandler
     public void on(SizeUpdateEvent event) {
         log.info("Handling SizeUpdateEvent for sizeId: {}", event.getId());
 
-        // Tìm tất cả các ProductDocument có productColors.productVariants chứa size có id = event.getId()
-        List<ProductDocument> products = productSearchRepository.findByProductColorsProductVariantsSizeId(event.getId());
+        // Tìm tất cả các ProductDocument có productColors.productVariants chứa size có
+        // id = event.getId()
+        List<ProductDocument> products = productSearchRepository
+                .findByProductColorsProductVariantsSizeId(event.getId());
 
         for (ProductDocument productDoc : products) {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
                         if (pc.getProductVariants() != null) {
-                            List<ProductDocument.ProductColorDocument.ProductVariantDocument> updatedVariants =
-                                    pc.getProductVariants().stream()
-                                            .map(variant -> {
-                                                if (variant.getSize() != null && event.getId().equals(variant.getSize().getId())) {
-                                                    // Tạo đối tượng Size mới với thông tin cập nhật
-                                                    ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument updatedSize =
-                                                            ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument.builder()
-                                                                    .id(event.getId())
-                                                                    .name(event.getName())
-                                                                    .codeName(event.getCodeName())
-                                                                    .isActive(event.getIsActive())
-                                                                    .build();
-                                                    variant.setSize(updatedSize);
-                                                }
-                                                return variant;
-                                            })
-                                            .collect(Collectors.toList());
+                            List<ProductDocument.ProductColorDocument.ProductVariantDocument> updatedVariants = pc
+                                    .getProductVariants().stream()
+                                    .map(variant -> {
+                                        if (variant.getSize() != null
+                                                && event.getId().equals(variant.getSize().getId())) {
+                                            // Tạo đối tượng Size mới với thông tin cập nhật
+                                            ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument updatedSize = ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument
+                                                    .builder()
+                                                    .id(event.getId())
+                                                    .name(event.getName())
+                                                    .codeName(event.getCodeName())
+                                                    .isActive(event.getIsActive())
+                                                    .build();
+                                            variant.setSize(updatedSize);
+                                        }
+                                        return variant;
+                                    })
+                                    .collect(Collectors.toList());
                             pc.setProductVariants(updatedVariants);
                         }
                         return pc;
@@ -347,28 +363,31 @@ public class ProductSearchEventHandler {
     public void on(SizeChangeStatusEvent event) {
         log.info("Handling SizeChangeStatusEvent for sizeId: {}", event.getId());
 
-        // Tìm tất cả các ProductDocument có productColors.productVariants chứa size có id = event.getId()
-        List<ProductDocument> products = productSearchRepository.findByProductColorsProductVariantsSizeId(event.getId());
+        // Tìm tất cả các ProductDocument có productColors.productVariants chứa size có
+        // id = event.getId()
+        List<ProductDocument> products = productSearchRepository
+                .findByProductColorsProductVariantsSizeId(event.getId());
 
         for (ProductDocument productDoc : products) {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
                         if (pc.getProductVariants() != null) {
-                            List<ProductDocument.ProductColorDocument.ProductVariantDocument> updatedVariants =
-                                    pc.getProductVariants().stream()
-                                            .map(variant -> {
-                                                if (variant.getSize() != null && event.getId().equals(variant.getSize().getId())) {
-                                                    // Tạo đối tượng Size mới với thông tin cập nhật
-                                                    ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument updatedSize =
-                                                            ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument.builder()
-                                                                    .id(event.getId())
-                                                                    .isActive(event.getIsActive())
-                                                                    .build();
-                                                    variant.setSize(updatedSize);
-                                                }
-                                                return variant;
-                                            })
-                                            .collect(Collectors.toList());
+                            List<ProductDocument.ProductColorDocument.ProductVariantDocument> updatedVariants = pc
+                                    .getProductVariants().stream()
+                                    .map(variant -> {
+                                        if (variant.getSize() != null
+                                                && event.getId().equals(variant.getSize().getId())) {
+                                            // Tạo đối tượng Size mới với thông tin cập nhật
+                                            ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument updatedSize = ProductDocument.ProductColorDocument.ProductVariantDocument.SizeDocument
+                                                    .builder()
+                                                    .id(event.getId())
+                                                    .isActive(event.getIsActive())
+                                                    .build();
+                                            variant.setSize(updatedSize);
+                                        }
+                                        return variant;
+                                    })
+                                    .collect(Collectors.toList());
                             pc.setProductVariants(updatedVariants);
                         }
                         return pc;
@@ -383,7 +402,8 @@ public class ProductSearchEventHandler {
     }
 
     /**
-     *  Su kien update promotion
+     * Su kien update promotion
+     * 
      * @param event
      */
     @EventHandler
@@ -397,24 +417,24 @@ public class ProductSearchEventHandler {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
                         // Duyệt qua từng promotion trong danh sách và cập nhật
-                        List<ProductDocument.ProductColorDocument.PromotionDocument> updatedPromotions =
-                                pc.getPromotions().stream()
-                                        .map(promo -> {
-                                            if (event.getId().equals(promo.getId())) {
-                                                // Cập nhật thông tin promotion
-                                                return ProductDocument.ProductColorDocument.PromotionDocument.builder()
-                                                        .id(event.getId())
-                                                        .name(event.getName())
-                                                        .codeName(event.getCodeName())
-                                                        .discountPercentage(event.getDiscountPercentage())
-                                                        .startDate(event.getStartDate())
-                                                        .endDate(event.getEndDate())
-                                                        .isActive(event.getIsActive())
-                                                        .build();
-                                            }
-                                            return promo; // Giữ nguyên nếu không trùng ID
-                                        })
-                                        .collect(Collectors.toList());
+                        List<ProductDocument.ProductColorDocument.PromotionDocument> updatedPromotions = pc
+                                .getPromotions().stream()
+                                .map(promo -> {
+                                    if (event.getId().equals(promo.getId())) {
+                                        // Cập nhật thông tin promotion
+                                        return ProductDocument.ProductColorDocument.PromotionDocument.builder()
+                                                .id(event.getId())
+                                                .name(event.getName())
+                                                .codeName(event.getCodeName())
+                                                .discountPercentage(event.getDiscountPercentage())
+                                                .startDate(event.getStartDate())
+                                                .endDate(event.getEndDate())
+                                                .isActive(event.getIsActive())
+                                                .build();
+                                    }
+                                    return promo; // Giữ nguyên nếu không trùng ID
+                                })
+                                .collect(Collectors.toList());
 
                         pc.setPromotions(updatedPromotions);
                         return pc;
@@ -438,18 +458,18 @@ public class ProductSearchEventHandler {
         for (ProductDocument productDoc : products) {
             List<ProductDocument.ProductColorDocument> updatedColors = productDoc.getProductColors().stream()
                     .map(pc -> {
-                        List<ProductDocument.ProductColorDocument.PromotionDocument> updatedPromotions =
-                                pc.getPromotions().stream()
-                                        .map(promo -> {
-                                            if (event.getId().equals(promo.getId())) {
-                                                // Chỉ cập nhật trạng thái isActive
-                                                return promo.builder()
-                                                        .isActive(event.getIsActive())
-                                                        .build();
-                                            }
-                                            return promo;
-                                        })
-                                        .collect(Collectors.toList());
+                        List<ProductDocument.ProductColorDocument.PromotionDocument> updatedPromotions = pc
+                                .getPromotions().stream()
+                                .map(promo -> {
+                                    if (event.getId().equals(promo.getId())) {
+                                        // Chỉ cập nhật trạng thái isActive
+                                        return promo.builder()
+                                                .isActive(event.getIsActive())
+                                                .build();
+                                    }
+                                    return promo;
+                                })
+                                .collect(Collectors.toList());
 
                         // Cập nhật danh sách và tính lại finalPrice
                         pc.setPromotions(updatedPromotions);
@@ -465,4 +485,3 @@ public class ProductSearchEventHandler {
         log.info("Updated {} products with promotion status changes", products.size());
     }
 }
-

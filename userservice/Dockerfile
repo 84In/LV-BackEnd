@@ -5,11 +5,13 @@ WORKDIR /app
 
 COPY ./userservice ./userservice
 COPY ./commonservice ./commonservice
+COPY ./data ./data
 
 WORKDIR /app/commonservice
 RUN mvn clean install -DskipTests
 
 WORKDIR /app/userservice
+RUN mvn dependency:resolve
 RUN mvn clean package -DskipTests
 
 # Run: Use OpenJDK for running

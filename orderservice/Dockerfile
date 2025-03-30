@@ -5,11 +5,13 @@ WORKDIR /app
 
 COPY ./orderservice ./orderservice
 COPY ./commonservice ./commonservice
+COPY ./data ./data
 
 WORKDIR /app/commonservice
 RUN mvn clean install -DskipTests
 
 WORKDIR /app/orderservice
+RUN mvn dependency:resolve
 RUN mvn clean package -DskipTests
 
 # Run: Use OpenJDK for running

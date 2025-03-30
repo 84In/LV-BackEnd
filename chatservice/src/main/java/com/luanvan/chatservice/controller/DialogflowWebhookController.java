@@ -16,21 +16,6 @@ public class DialogflowWebhookController {
     @Autowired
     private IntentService intentService;
 
-    //    @PostMapping
-//    public ResponseEntity<JsonObject> handleWebhook(@RequestBody JsonObject request) {
-//        log.info("handleWebhook request: {}", request);
-//        log.info("handleWebhook");
-//        JsonObject queryResult = request.getAsJsonObject("queryResult");
-//        log.info("queryResult: {}", queryResult);
-//        String intentName = queryResult.getAsJsonObject("intent").get("displayName").getAsString();
-//        log.info("intentName: {}", intentName);
-//        JsonObject parameters = queryResult.getAsJsonObject("parameters");
-//        log.info("handleWebhook parameters: {}", parameters);
-//        // Xử lý intent thông qua IntentService
-//        JsonObject response = intentService.handleIntent(intentName, parameters);
-//        log.info("handleWebhook response: {}", response);
-//        return ResponseEntity.ok(response);
-//    }
     @PostMapping
     @CrossOrigin(origins = "*", allowedHeaders = "*")
     public ResponseEntity<String> handleWebhook(@RequestBody String requestBody) {
