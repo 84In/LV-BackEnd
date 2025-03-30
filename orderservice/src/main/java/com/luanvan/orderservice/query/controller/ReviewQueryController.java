@@ -28,9 +28,9 @@ public class ReviewQueryController {
             @RequestParam(required = false) Integer rating,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts
+            @RequestParam(defaultValue = "") String sortOrder
     ) {
-        GetAllReviewQuery query = new GetAllReviewQuery(rating, pageNumber, pageSize, sorts);
+        GetAllReviewQuery query = new GetAllReviewQuery(rating, pageNumber, pageSize, sortOrder);
         PageReviewResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageReviewResponse.class)).join();
         Page<ReviewResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
         return ApiResponse.<Page<ReviewResponseModel>>builder()
@@ -44,9 +44,9 @@ public class ReviewQueryController {
             @RequestParam(required = false) Integer rating,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts
+            @RequestParam(defaultValue = "") String sortOrder
     ) {
-        GetProductReviewQuery query = new GetProductReviewQuery(productId, rating, pageNumber, pageSize, sorts);
+        GetProductReviewQuery query = new GetProductReviewQuery(productId, rating, pageNumber, pageSize, sortOrder);
         PageReviewResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageReviewResponse.class))
                 .exceptionally((ex) -> {
                     throw new AppException(ErrorCode.REVIEW_NOT_EXISTED);

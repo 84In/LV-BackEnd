@@ -31,10 +31,10 @@ public class ProductQueryController {
             @RequestParam(defaultValue = "", required = false) String color,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
         ;
 
-        GetAllProductQuery queryGetAll = new GetAllProductQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
+        GetAllProductQuery queryGetAll = new GetAllProductQuery(query, category, price, size, color, pageNumber, pageSize, sortOrder);
 
         PageAllProductResponse response = queryGateway.query(queryGetAll, ResponseTypes.instanceOf(PageAllProductResponse.class)).join();
         Page<AllProductResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
@@ -53,10 +53,10 @@ public class ProductQueryController {
             @RequestParam(defaultValue = "", required = false) String color,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
         ;
 
-        GetAllProductWithFilterQuery queryGetAll = new GetAllProductWithFilterQuery(query, category, price, size, color, pageNumber, pageSize, sorts);
+        GetAllProductWithFilterQuery queryGetAll = new GetAllProductWithFilterQuery(query, category, price, size, color, pageNumber, pageSize, sortOrder);
 
         PageProductResponse response = queryGateway.query(queryGetAll, ResponseTypes.instanceOf(PageProductResponse.class)).join();
         Page<ProductResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());

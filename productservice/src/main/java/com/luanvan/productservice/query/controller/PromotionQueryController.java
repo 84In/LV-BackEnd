@@ -30,9 +30,9 @@ public class PromotionQueryController {
     public ApiResponse<Page<PromotionResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
 
-        GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sorts);
+        GetAllPromotionQuery query = new GetAllPromotionQuery(pageNumber, pageSize, sortOrder);
 
         PagePromotionResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PagePromotionResponse.class)).join();
         Page<PromotionResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
