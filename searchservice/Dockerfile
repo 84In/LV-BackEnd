@@ -10,7 +10,6 @@ WORKDIR /app/commonservice
 RUN mvn clean install -DskipTests
 
 WORKDIR /app/searchservice
-RUN mvn dependency:resolve
 RUN mvn clean package -DskipTests
 
 # Run: Use OpenJDK for running
