@@ -3,6 +3,7 @@ package com.luanvan.orderservice.command.service;
 
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.command.SendCancelledOrderMailCommand;
 import com.luanvan.commonservice.command.SendConfirmedOrderMailCommand;
 import com.luanvan.commonservice.entity.PaymentStatus;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
@@ -53,7 +54,9 @@ public class OrderCommandService {
     @Autowired
     private VNPayService vnPayService;
     @Autowired
-    private KafkaTemplate<String, SendConfirmedOrderMailCommand> kafkaTemplate;
+    private KafkaTemplate<String, SendConfirmedOrderMailCommand> kafkaTemplateSendConfirmedOrderMail;
+    @Autowired
+    private KafkaTemplate<String, SendCancelledOrderMailCommand> kafkaTemplateSendCancelledOrderMail;
 
     public HashMap<?, ?> createOrderWithCash(OrderCreateModel model) {
         log.info("Create order command service with cash for username: {}", model.getUsername());
@@ -86,6 +89,12 @@ public class OrderCommandService {
         log.info("Retry payment order command service with VNPay for orderId: {}", orderId);
         var order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
+        if (order.getOrderStatus().getCodeName().equals("cancelled") ||
+                order.getOrderStatus().getCodeName().equals("completed") ||
+                !order.getPayment().getStatus().equals(PaymentStatus.PENDING)
+        ) {
+            throw new AppException(ErrorCode.COMMAND_ERROR);
+        }
 
         long amount = Long.parseLong(String.valueOf(order.getPayment().getTotalAmount().longValue())) * 100L;
         Map<String, String> vnpParamsMap = vnPayService.getVNPayConfig();
@@ -140,7 +149,7 @@ public class OrderCommandService {
 
     public HashMap<?, ?> changeOrderStatus(OrderChangeStatusModel model) {
 
-        if(orderRepository.findOrderById(model.getId()).getOrderStatus().getCodeName().equals(model.getOrderStatus())){
+        if (orderRepository.findOrderById(model.getId()).getOrderStatus().getCodeName().equals(model.getOrderStatus())) {
             throw new AppException(ErrorCode.ORDER_STATUS_CANNOT_CHANGE);
         }
 
@@ -176,6 +185,15 @@ public class OrderCommandService {
         CancelOrderCommand command = new CancelOrderCommand(orderId);
         var result = new HashMap<>();
         result.put("id", commandGateway.sendAndWait(command));
+
+        String cancelledReason = "Đơn hàng đã được huỷ đặt hàng";
+
+        SendCancelledOrderMailCommand cancelledOrderMailCommand = SendCancelledOrderMailCommand.builder()
+                .userId(order.getUserId())
+                .orderId(order.getId())
+                .reason(cancelledReason)
+                .build();
+        kafkaTemplateSendCancelledOrderMail.send("send-cancelled-order-mail-topic", cancelledOrderMailCommand);
         return result;
     }
 
@@ -253,7 +271,7 @@ public class OrderCommandService {
                     .username(model.getUsername())
                     .orderId(String.valueOf(result.get("id")))
                     .build();
-            kafkaTemplate.send("send-confirmed-order-mail-topic", sendMailCommand);
+            kafkaTemplateSendConfirmedOrderMail.send("send-confirmed-order-mail-topic", sendMailCommand);
         }
         return result;
     }

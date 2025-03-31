@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SendCancelledOrderMailCommand {
-    private String username;
+    private String userId;
     private String orderId;
     private String reason;
 }

@@ -7,6 +7,7 @@ import com.luanvan.commonservice.command.SendConfirmedOrderMailCommand;
 import com.luanvan.commonservice.model.response.OrderResponseModel;
 import com.luanvan.commonservice.model.response.UserResponseModel;
 import com.luanvan.commonservice.queries.GetOrderQuery;
+import com.luanvan.commonservice.queries.GetUserDetailQuery;
 import com.luanvan.commonservice.queries.GetUserQuery;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -82,8 +83,8 @@ public class MailService {
 
     @KafkaListener(topics = "send-cancelled-order-mail-topic", groupId = "mail-group")
     public void handle(SendCancelledOrderMailCommand command) {
-        log.info("Send mail for username: {}", command.getUsername());
-        GetUserQuery userQuery = new GetUserQuery(command.getUsername());
+        log.info("Send mail for userId: {}", command.getUserId());
+        GetUserDetailQuery userQuery = new GetUserDetailQuery(command.getUserId());
         UserResponseModel user = queryGateway.query(userQuery, ResponseTypes.instanceOf(UserResponseModel.class))
                 .exceptionally(ex -> {
                     throw new AppException(ErrorCode.USER_NOT_EXISTED);
@@ -113,7 +114,7 @@ public class MailService {
         context.setVariable("totalPrice", order.getTotalPrice());
 
         // Process Thymeleaf template into a String
-        String htmlContent = templateEngine.process("order-confirmation", context);
+        String htmlContent = templateEngine.process("order-cancelled", context);
 
         // Build the email
         MimeMessage message = mailSender.createMimeMessage();
@@ -121,7 +122,7 @@ public class MailService {
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             helper.setTo(user.getEmail());
-            helper.setSubject("Xác nhận đơn hàng #" + order.getId());
+            helper.setSubject("Xác nhận hủy đơn hàng #" + order.getId());
             helper.setText(htmlContent, true);
             mailSender.send(message);
         } catch (MessagingException e) {

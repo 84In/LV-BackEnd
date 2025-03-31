@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(indexName = "products_index")
@@ -38,7 +39,7 @@ public class ProductDocument {
     private CategoryDocument category;
 
     @Field(type = FieldType.Nested)
-    private List<ProductColorDocument> productColors;
+    private List<ProductColorDocument> productColors = new ArrayList<>();
 
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     private LocalDateTime createdAt;
@@ -95,10 +96,10 @@ public class ProductDocument {
         private ColorDocument color;
 
         @Field(type = FieldType.Nested)
-        private List<PromotionDocument> promotions;
+        private List<PromotionDocument> promotions = new ArrayList<>();
 
         @Field(type = FieldType.Nested)
-        private List<ProductVariantDocument> productVariants;
+        private List<ProductVariantDocument> productVariants = new ArrayList<>();
 
         @Getter
         @Setter
