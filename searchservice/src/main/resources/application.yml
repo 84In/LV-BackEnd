@@ -23,7 +23,7 @@ spring:
         default-page-size: 15
     redis:
       port: 6379
-      host: localhost
+      host: redis
 logging:
   level:
     org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL

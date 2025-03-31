@@ -102,6 +102,12 @@ services:
         condition: service_healthy
       productservicedb:
         condition: service_started
+      discoveryserver:
+        condition: service_started
+      userservice:
+        condition: service_started
+      productservice:
+        condition: service_started
   axonserver:
     image: axoniq/axonserver:latest
     hostname: axonserver
@@ -112,11 +118,17 @@ services:
       - "8024:8024"
       - "8124:8124"
       - "8224:8224"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8024/actuator/health"]
+      interval: 100s
+      timeout: 60s
+      retries: 5
     networks:
       - microservice-networks
   redis:
     image: redis:latest
     restart: always
+    container_name: redis
     hostname: redis
     ports:
       - "6379:6379"
@@ -190,6 +202,7 @@ services:
     build:
       context: .
       dockerfile: discoveryserver/Dockerfile
+    container_name: discoveryserver
     ports:
       - "8761:8761"
     networks:
@@ -203,10 +216,14 @@ services:
     networks:
       - microservice-networks
     depends_on:
-      - discoveryserver
-      - userservicedb
-      - axonserver
-      - broker
+      discoveryserver:
+        condition: service_started
+      userservicedb:
+        condition: service_started
+      axonserver:
+        condition: service_healthy
+      broker:
+        condition: service_started
   mediaservice:
     build:
       context: .
@@ -218,6 +235,7 @@ services:
     depends_on:
       - discoveryserver
       - broker
+      - axonserver
       - userservicedb
       - productservicedb
   productservice:
@@ -271,12 +289,16 @@ services:
     networks:
       - microservice-networks
     depends_on:
-      - discoveryserver
-      - productservicedb
-      - elasticsearch
-      - logstash
-      - axonserver
-      - broker
+     elasticsearch:
+      condition: service_healthy
+     logstash:
+      condition: service_started
+     discoveryserver:
+      condition: service_started
+     axonserver:
+      condition: service_started
+     broker:
+      condition: service_started
   chatservice:
     build:
       context: .
@@ -312,6 +334,10 @@ services:
       - microservice-networks
     depends_on:
       - discoveryserver
+      - userservice
+      - orderservice
+      - productservice
+      - searchservice
 volumes:
   userservicedb_data:
   productservicedb_data:
