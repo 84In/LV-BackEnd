@@ -13,7 +13,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
   elasticsearch:
-    uris: http://localhost:9200
+    uris: localhost:9200
   data:
     web:
       pageable:

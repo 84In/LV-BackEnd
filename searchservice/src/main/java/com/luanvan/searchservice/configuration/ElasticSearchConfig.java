@@ -1,21 +1,26 @@
 package com.luanvan.searchservice.configuration;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.json.jackson.JacksonJsonpMapper;
-import co.elastic.clients.transport.rest_client.RestClientTransport;
-import org.elasticsearch.client.RestClient;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.elasticsearch.client.ClientConfiguration;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.config.EnableElasticsearchAuditing;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-public class ElasticSearchConfig {
+@EnableElasticsearchRepositories(basePackages = "com.luanvan.searchservice.repository")
+@EnableElasticsearchAuditing
+public class ElasticSearchConfig extends ElasticsearchConfiguration {
 
-    @Bean
-    public ElasticsearchClient elasticsearchClient(RestClient restClient) {
-        return new ElasticsearchClient(new RestClientTransport(
-                restClient,
-                new JacksonJsonpMapper()
-        ));
+    @Value("${spring.elasticsearch.uris}")
+    String elasticsearchUrl;
+
+    @Override
+    public ClientConfiguration clientConfiguration() {
+        return ClientConfiguration.builder()
+                .connectedTo(elasticsearchUrl)
+                .build();
     }
 }
+
 

@@ -13,6 +13,8 @@ import com.luanvan.searchservice.entity.ProductDocument;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -34,10 +36,11 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class ProductSearchService {
-    private final ElasticsearchOperations elasticsearchOperations;
-    private final ProductSearchRepository productSearchRepository;
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
+    @Autowired
+    private ProductSearchRepository productSearchRepository;
 
     public Page<ProductResponseModel> searchProductsWithFilter(GetAllProductWithFilterQuery queryParams) {
         log.info("Search products with filter elasticsearch");

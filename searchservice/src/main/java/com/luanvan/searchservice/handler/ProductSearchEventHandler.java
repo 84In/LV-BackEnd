@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,11 +28,13 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ProductSearchEventHandler {
-    private final ProductSearchRepository productSearchRepository;
-    private final QueryGateway queryGateway;
-    private final ProductDocumentMapper productDocumentMapper;
+    @Autowired
+    private ProductSearchRepository productSearchRepository;
+    @Autowired
+    private QueryGateway queryGateway;
+    @Autowired
+    private ProductDocumentMapper productDocumentMapper;
 
     @EventHandler
     public void on(ProductCreateEvent event) {
