@@ -27,9 +27,9 @@ public class CategoryQueryController {
     public ApiResponse<Page<CategoryResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
 
-        GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sorts);
+        GetAllCategoryQuery query = new GetAllCategoryQuery(pageNumber, pageSize, sortOrder);
 
         PageCategoryResponse response= queryGateway.query(query, ResponseTypes.instanceOf(PageCategoryResponse.class)).join();
         Page<CategoryResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());

@@ -32,9 +32,9 @@ public class ColorQueryController {
     public ApiResponse<Page<ColorResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
 
-        GetAllColorWithPageQuery query = new GetAllColorWithPageQuery(pageNumber, pageSize, sorts);
+        GetAllColorWithPageQuery query = new GetAllColorWithPageQuery(pageNumber, pageSize, sortOrder);
 
         PageColorResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageColorResponse.class)).join();
         Page<ColorResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());

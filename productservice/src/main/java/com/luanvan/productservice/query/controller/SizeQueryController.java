@@ -30,9 +30,9 @@ public class SizeQueryController {
     public ApiResponse<Page<SizeResponseModel>> getAll(
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts) {
+            @RequestParam(defaultValue = "") String sortOrder) {
 
-        GetAllSizeQuery query = new GetAllSizeQuery(pageNumber, pageSize, sorts);
+        GetAllSizeQuery query = new GetAllSizeQuery(pageNumber, pageSize, sortOrder);
 
         PageSizeResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageSizeResponse.class)).join();
         Page<SizeResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());

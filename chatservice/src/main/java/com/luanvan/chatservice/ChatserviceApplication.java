@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @ComponentScan(basePackages = {"com.luanvan.chatservice", "com.luanvan.commonservice"})
 public class ChatserviceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ChatserviceApplication.class, args);
     }

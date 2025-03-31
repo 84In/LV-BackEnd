@@ -8,8 +8,8 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@ComponentScan(basePackages = {"com.luanvan.searchservice", "com.luanvan.commonservice"})
 @EnableElasticsearchRepositories(basePackages = "com.luanvan.searchservice.repository")
-@ComponentScan(basePackages = { "com.luanvan.searchservice", "com.luanvan.commonservice" })
 public class SearchserviceApplication {
 
 	public static void main(String[] args) {

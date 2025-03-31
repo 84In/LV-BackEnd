@@ -33,9 +33,9 @@ public class OrderQueryController {
             @RequestParam(defaultValue = "all", required = false) String status,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts
+            @RequestParam(defaultValue = "") String sortOrder
     ) {
-        GetAllOrderQuery query = new GetAllOrderQuery(status, pageNumber, pageSize, sorts);
+        GetAllOrderQuery query = new GetAllOrderQuery(status, pageNumber, pageSize, sortOrder);
         PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class)).join();
         Page<OrderResponseModel> pageResponse = new PageImpl<>(response.getContent(), PageRequest.of(response.getPageNumber(), response.getPageSize()), response.getTotalElements());
         return ApiResponse.<Page<OrderResponseModel>>builder()
@@ -49,9 +49,9 @@ public class OrderQueryController {
             @RequestParam(defaultValue = "all", required = false) String status,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "10") int pageSize,
-            @RequestParam(defaultValue = "") String sorts
+            @RequestParam(defaultValue = "") String sortOrder
     ) {
-        GetUserOrderQuery query = new GetUserOrderQuery(userId, status, pageNumber, pageSize, sorts);
+        GetUserOrderQuery query = new GetUserOrderQuery(userId, status, pageNumber, pageSize, sortOrder);
         PageOrderResponse response = queryGateway.query(query, ResponseTypes.instanceOf(PageOrderResponse.class))
                 .exceptionally((ex) -> {
                     throw new AppException(ErrorCode.ORDER_NOT_EXISTED);
