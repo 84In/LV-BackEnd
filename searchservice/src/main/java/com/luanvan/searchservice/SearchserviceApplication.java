@@ -15,12 +15,6 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackages = "com.luanvan.searchservice.repository")
 public class SearchserviceApplication {
 
-    @Bean
-    public RestClient restClient() {
-        // Thay "elasticsearch" với tên dịch vụ Elasticsearch trong Docker Compose
-        return RestClient.builder(new HttpHost("elasticsearch", 9200, "http")).build();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(SearchserviceApplication.class, args);
     }

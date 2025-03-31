@@ -32,6 +32,7 @@ import com.luanvan.commonservice.queries.GetColorQuery;
 import com.luanvan.commonservice.queries.GetPromotionQuery;
 import com.luanvan.commonservice.queries.GetSizeQuery;
 import com.luanvan.searchservice.entity.ProductDocument;
+import com.luanvan.searchservice.entity.ProductDocument.ProductColorDocument.PromotionDocument;
 import com.luanvan.searchservice.mapper.ProductDocumentMapper;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 
@@ -476,7 +477,7 @@ public class ProductSearchEventHandler {
                                 .map(promo -> {
                                     if (event.getId().equals(promo.getId())) {
                                         // Chỉ cập nhật trạng thái isActive
-                                        return promo.builder()
+                                        return PromotionDocument.builder()
                                                 .isActive(event.getIsActive())
                                                 .build();
                                     }

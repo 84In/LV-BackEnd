@@ -492,8 +492,9 @@ services:
       - "9200:9200"
       - "9300:9300"
     healthcheck:
-      test: ["CMD-SHELL", 'curl -s http://localhost:9200/_cluster/health | grep -qE ''"status":"(green|yellow)"''']
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
       interval: 10s
+      timeout: 10s
       retries: 30
     networks:
       - microservice-networks
@@ -505,16 +506,17 @@ services:
       - ./data/logstash/pipeline:/usr/share/logstash/pipeline
       - ./data/mysql-connector-java-8.0.30.jar:/usr/share/logstash/mysql-connector-java.jar
     ports:
-      - "5000:5000"
+      - '5000:5000'
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: '-Xmx256m -Xms256m'
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
       XPACK_MONITORING_ENABLED: "false"
     networks:
       - microservice-networks
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9600" ]
       interval: 30s
+      timeout: 10s
       retries: 5
     depends_on:
       elasticsearch:

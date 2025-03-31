@@ -1,18 +1,11 @@
 package com.luanvan.searchservice.service;
 
-import co.elastic.clients.elasticsearch._types.*;
-import co.elastic.clients.elasticsearch._types.query_dsl.*;
-import co.elastic.clients.json.JsonData;
-import com.luanvan.commonservice.advice.AppException;
-import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
-import com.luanvan.commonservice.model.response.ProductResponseModel;
-import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
-import com.luanvan.commonservice.utils.PromotionUtils;
-import com.luanvan.searchservice.entity.ProductDocument;
-import com.luanvan.searchservice.repository.ProductSearchRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,12 +20,24 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
+import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
+import com.luanvan.commonservice.model.response.ProductResponseModel;
+import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
+import com.luanvan.commonservice.utils.PromotionUtils;
+import com.luanvan.searchservice.entity.ProductDocument;
+import com.luanvan.searchservice.repository.ProductSearchRepository;
+
+import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.SortMode;
+import co.elastic.clients.elasticsearch._types.SortOptions;
+import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
+import co.elastic.clients.json.JsonData;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
