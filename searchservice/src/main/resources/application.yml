@@ -17,6 +17,9 @@ spring:
     bootstrap-servers: broker:9092
   elasticsearch:
     uris: http://elasticsearch:9200
+    client:
+     reactive:
+      enabled: false
   data:
     web:
       pageable:

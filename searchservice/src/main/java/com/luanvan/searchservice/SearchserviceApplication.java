@@ -1,8 +1,11 @@
 package com.luanvan.searchservice;
 
+import org.apache.http.HttpHost;
+import org.elasticsearch.client.RestClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
@@ -12,8 +15,13 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 @EnableElasticsearchRepositories(basePackages = "com.luanvan.searchservice.repository")
 public class SearchserviceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SearchserviceApplication.class, args);
-	}
+    @Bean
+    public RestClient restClient() {
+        // Thay "elasticsearch" với tên dịch vụ Elasticsearch trong Docker Compose
+        return RestClient.builder(new HttpHost("elasticsearch", 9200, "http")).build();
+    }
 
+    public static void main(String[] args) {
+        SpringApplication.run(SearchserviceApplication.class, args);
+    }
 }

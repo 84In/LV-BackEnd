@@ -5,6 +5,11 @@ spring:
       group-id: ${KAFKA_GROUP_ID:default-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  data:
+    redis:
+      port: 6379
+      host: redis
+  
 axon:
   eventhandling:
     processors:
@@ -36,6 +41,8 @@ jwt:
     - "/v3/api-docs/**"
     - "/swagger-resources/**"
     - "/webjars/**"
+
+
 
 mysql:
   backup-root-dir: ${BACKUP_ROOT_DIR:./data/backup-scripts/}

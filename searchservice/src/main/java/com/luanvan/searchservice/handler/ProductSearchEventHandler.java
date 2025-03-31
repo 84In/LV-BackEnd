@@ -1,9 +1,28 @@
 package com.luanvan.searchservice.handler;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.axonframework.eventhandling.EventHandler;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
+import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.stereotype.Component;
+
 import com.luanvan.commonservice.advice.AppException;
 import com.luanvan.commonservice.advice.ErrorCode;
-import com.luanvan.commonservice.command.CallBackUploadProductImagesCommand;
-import com.luanvan.commonservice.event.*;
+import com.luanvan.commonservice.event.CategoryChangeStatusEvent;
+import com.luanvan.commonservice.event.CategoryUpdateEvent;
+import com.luanvan.commonservice.event.ColorChangeStatusEvent;
+import com.luanvan.commonservice.event.ColorUpdateEvent;
+import com.luanvan.commonservice.event.ProductCallBackUploadImagesEvent;
+import com.luanvan.commonservice.event.ProductChangeStatusEvent;
+import com.luanvan.commonservice.event.ProductCreateEvent;
+import com.luanvan.commonservice.event.ProductUpdateEvent;
+import com.luanvan.commonservice.event.ProductUpdateStockEvent;
+import com.luanvan.commonservice.event.PromotionChangeStatusEvent;
+import com.luanvan.commonservice.event.PromotionUpdateEvent;
+import com.luanvan.commonservice.event.SizeChangeStatusEvent;
+import com.luanvan.commonservice.event.SizeUpdateEvent;
 import com.luanvan.commonservice.model.response.CategoryResponseModel;
 import com.luanvan.commonservice.model.response.ColorResponseModel;
 import com.luanvan.commonservice.model.response.PromotionResponseModel;
@@ -15,15 +34,9 @@ import com.luanvan.commonservice.queries.GetSizeQuery;
 import com.luanvan.searchservice.entity.ProductDocument;
 import com.luanvan.searchservice.mapper.ProductDocumentMapper;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.axonframework.eventhandling.EventHandler;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
-import org.axonframework.queryhandling.QueryGateway;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
