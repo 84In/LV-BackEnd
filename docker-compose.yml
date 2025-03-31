@@ -215,6 +215,10 @@ services:
       - "9000:9000"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
     depends_on:
       discoveryserver:
         condition: service_started
@@ -232,6 +236,9 @@ services:
       - "9001:9001"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
     depends_on:
       - discoveryserver
       - broker
@@ -246,6 +253,10 @@ services:
       - "9002:9002"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
     depends_on:
       - discoveryserver
       - productservicedb
@@ -267,6 +278,10 @@ services:
       - orderservicedb
       - axonserver
       - broker
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
     env_file:
       - .env
   notificationservice:
@@ -288,12 +303,24 @@ services:
       - "9005:9005"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+    env_file:
+      - .env
     depends_on:
      elasticsearch:
       condition: service_healthy
      logstash:
       condition: service_started
      discoveryserver:
+      condition: service_started
+     userservice:
+      condition: service_started
+     productservice:
+      condition: service_started
+     orderservice:
       condition: service_started
      axonserver:
       condition: service_started
@@ -307,6 +334,10 @@ services:
       - "9006:9006"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
     depends_on:
       - discoveryserver
       - productservice
@@ -319,6 +350,10 @@ services:
       - "9009:9009"
     networks:
       - microservice-networks
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+      - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
     depends_on:
       - discoveryserver
       - userservice

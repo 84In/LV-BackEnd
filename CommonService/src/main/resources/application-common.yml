@@ -38,7 +38,7 @@ jwt:
     - "/webjars/**"
 
 mysql:
-  backup-root-dir: "./data/backup-scripts/"
+  backup-root-dir: ${BACKUP_ROOT_DIR:./data/backup-scripts/}
   userservice:
     user: userservice
     password: userservice2425
