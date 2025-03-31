@@ -1,102 +1,137 @@
-  server:
-    port: 8080
+server:
+  port: 8080
 
-  eureka:
-    instance:
-      hostname: discoveryserver
-    client:
-      register-with-eureka: true
-      fetch-registry: true
-      service-url:
-        defaultZone: http://localhost:8761/eureka
+eureka:
+  instance:
+    hostname: discoveryserver
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
 
-  spring:
-    cloud:
-      gateway:
-        globalcors:
-          cors-configurations:
-            '[/**]':
-              allowedOriginPatterns: "*"
-              allowedMethods: "*"
-              allowedHeaders: "*"
-              allowCredentials: true
-          add-to-simple-url-handler-mapping:
-        discovery:
-          locator:
-            enabled: true
-        routes:
-          - id: userservice
-            uri: lb://userservice
-            predicates:
-              - Path=/api/v1/users/**,/api/v1/addresses/**,/api/v1/carts/**,/api/v1/provinces/**,/api/v1/districts/**,/api/v1/wards/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 10
-                  redis-rate-limiter.burstCapacity: 20
-                  redis-rate-limiter.requestedTokens: 1
-          - id: mediaservice
-            uri: lb://mediaservice
-            predicates:
-              - Path=/api/v1/upload/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 10
-                  redis-rate-limiter.burstCapacity: 20
-                  redis-rate-limiter.requestedTokens: 1
-          - id: chatservice
-            uri: lb://chatservice
-            predicates:
-              - Path=/api/v1/webhook/**
-            filters:
-              - RemoveRequestHeader=Authorization
-          - id: productservice
-            uri: lb://productservice
-            predicates:
-              - Path=/api/v1/products/**,/api/v1/categories/**,/api/v1/colors/**,/api/v1/promotions/**,/api/v1/sizes/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 10
-                  redis-rate-limiter.burstCapacity: 20
-                  redis-rate-limiter.requestedTokens: 1
-          - id: searchservice
-            uri: lb://searchservice
-            predicates:
-              - Path=/api/v1/search/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 10
-                  redis-rate-limiter.burstCapacity: 20
-                  redis-rate-limiter.requestedTokens: 1
-          - id: authservice
-            uri: lb://authservice
-            predicates:
-              - Path=/api/v1/auth/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 10
-                  redis-rate-limiter.burstCapacity: 20
-                  redis-rate-limiter.requestedTokens: 1
-          - id: orderservice
-            uri: lb://orderservice
-            predicates:
-              - Path=/api/v1/orders/**,/api/v1/reviews/**
-            filters:
-              - name: RequestRateLimiter
-                args:
-                  redis-rate-limiter.replenishRate: 50 # tăng từ 10 -> 50
-                  redis-rate-limiter.burstCapacity: 100 # tăng từ 20 -> 100
-                  redis-rate-limiter.requestedTokens: 1 # giữ nguyên cost
-                                                        # làm tăng khả năng xử lý
-          - id: notificationservice
-            uri: lb:ws://notificationservice  # Sử dụng ws:// thay vì http://
-            predicates:
-              - Path=/ws/orders/**
-    data:
-      redis:
-        port: 6379
-        host: localhost
+resilience4j.circuitbreaker:
+  instances:
+    myCircuitBreaker:
+      failureRateThreshold: 50  # Nếu 50% request bị lỗi, CircuitBreaker sẽ mở
+      waitDurationInOpenState: 10s  # Chờ 10s trước khi thử lại
+      permittedNumberOfCallsInHalfOpenState: 5  # Chỉ thử lại với 5 request
+      slidingWindowSize: 10  # Xem xét lỗi trên 10 request gần nhất
+
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+        add-to-simple-url-handler-mapping:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: userservice
+          uri: lb://userservice
+          predicates:
+            - Path=/api/v1/users/**,/api/v1/addresses/**,/api/v1/carts/**,/api/v1/provinces/**,/api/v1/districts/**,/api/v1/wards/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/userservice
+        - id: mediaservice
+          uri: lb://mediaservice
+          predicates:
+            - Path=/api/v1/upload/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/mediaservice
+        - id: chatservice
+          uri: lb://chatservice
+          predicates:
+            - Path=/api/v1/webhook/**
+          filters:
+            - RemoveRequestHeader=Authorization
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/chatservice
+        - id: productservice
+          uri: lb://productservice
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/categories/**,/api/v1/colors/**,/api/v1/promotions/**,/api/v1/sizes/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/productservice
+        - id: searchservice
+          uri: lb://searchservice
+          predicates:
+            - Path=/api/v1/search/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/searchservice
+        - id: authservice
+          uri: lb://authservice
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/authservice
+        - id: orderservice
+          uri: lb://orderservice
+          predicates:
+            - Path=/api/v1/orders/**,/api/v1/reviews/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 100
+                redis-rate-limiter.requestedTokens: 1
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/fallback/orderservice
+        - id: notificationservice
+          uri: lb:ws://notificationservice
+          predicates:
+            - Path=/ws/orders/**
+  data:
+    redis:
+      port: 6379
+      host: localhost
