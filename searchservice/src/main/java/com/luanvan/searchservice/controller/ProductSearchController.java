@@ -4,7 +4,6 @@ import com.luanvan.commonservice.model.response.ApiResponse;
 import com.luanvan.commonservice.model.response.ProductResponseModel;
 import com.luanvan.commonservice.queries.GetAllProductWithFilterQuery;
 import com.luanvan.searchservice.service.ProductSearchService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
