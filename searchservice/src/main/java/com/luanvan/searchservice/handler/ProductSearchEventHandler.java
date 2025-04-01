@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.queryhandling.QueryGateway;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.luanvan.commonservice.advice.AppException;
@@ -36,16 +37,17 @@ import com.luanvan.searchservice.entity.ProductDocument.ProductColorDocument.Pro
 import com.luanvan.searchservice.mapper.ProductDocumentMapper;
 import com.luanvan.searchservice.repository.ProductSearchRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class ProductSearchEventHandler {
-    private final ProductSearchRepository productSearchRepository;
-    private final QueryGateway queryGateway;
-    private final ProductDocumentMapper productDocumentMapper;
+    @Autowired
+    private ProductSearchRepository productSearchRepository;
+    @Autowired
+    private QueryGateway queryGateway;
+    @Autowired
+    private ProductDocumentMapper productDocumentMapper;
 
     @EventHandler
     public void on(ProductCreateEvent event) {

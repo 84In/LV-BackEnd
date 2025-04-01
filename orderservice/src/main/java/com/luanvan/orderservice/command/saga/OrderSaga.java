@@ -1,16 +1,22 @@
 package com.luanvan.orderservice.command.saga;
 
+import com.luanvan.commonservice.advice.AppException;
+import com.luanvan.commonservice.advice.ErrorCode;
 import com.luanvan.commonservice.command.RollBackStockProductCommand;
 import com.luanvan.commonservice.command.SendCancelledOrderMailCommand;
 import com.luanvan.commonservice.command.UpdateStockProductCommand;
+import com.luanvan.commonservice.model.response.UserResponseModel;
+import com.luanvan.commonservice.queries.GetUserQuery;
 import com.luanvan.orderservice.command.command.ChangeStatusOrderCommand;
 import com.luanvan.orderservice.command.event.OrderCreateEvent;
 import com.luanvan.orderservice.services.OrderKafkaService;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.gateway.CommandGateway;
+import org.axonframework.messaging.responsetypes.ResponseTypes;
 import org.axonframework.modelling.saga.SagaEventHandler;
 import org.axonframework.modelling.saga.SagaLifecycle;
 import org.axonframework.modelling.saga.StartSaga;
+import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.spring.stereotype.Saga;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,7 +34,8 @@ public class OrderSaga {
     private OrderKafkaService orderKafkaService;
     @Autowired
     private KafkaTemplate<String, SendCancelledOrderMailCommand> kafkaTemplate;
-
+    @Autowired
+    private QueryGateway queryGateway;
 
     //Danh sách các product update stock sold thành công
     private List<UpdateStockProductCommand> successfulUpdates = new ArrayList<>();
@@ -80,8 +87,14 @@ public class OrderSaga {
         ChangeStatusOrderCommand command = new ChangeStatusOrderCommand(event.getId(), cancelledStatus);
         commandGateway.sendAndWait(command);
 
+        GetUserQuery userQuery = new GetUserQuery(event.getUsername());
+        UserResponseModel user = queryGateway.query(userQuery, ResponseTypes.instanceOf(UserResponseModel.class))
+                .exceptionally(ex -> {
+                    throw new AppException(ErrorCode.USER_NOT_EXISTED);
+                })
+                .join();
         SendCancelledOrderMailCommand cancelledOrderMailCommand = SendCancelledOrderMailCommand.builder()
-                .username(event.getUsername())
+                .userId(user.getId())
                 .orderId(event.getId())
                 .reason(cancelledReason)
                 .build();

@@ -16,10 +16,7 @@ spring:
     enable: true
     bootstrap-servers: broker:9092
   elasticsearch:
-    uris: http://elasticsearch:9200
-    client:
-     reactive:
-      enabled: false
+    uris: elasticsearch:9200
   data:
     web:
       pageable:
@@ -29,8 +26,8 @@ spring:
       host: redis
 logging:
   level:
-    org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL
-    org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
+    org.hibernate.SQL: OFF # Tắt log câu truy vấn SQL
+    org.hibernate.type.descriptor.sql: OFF # Tắt log thông tin ràng buộc tham số
     org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
     org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: INFO                    # Kiểm soát log của Spring
+    org.springframework: INFO # Kiểm soát log của Spring

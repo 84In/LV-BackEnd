@@ -2,6 +2,8 @@ package com.luanvan.searchservice.entity;
 
 import jakarta.persistence.Id;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -10,6 +12,7 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(indexName = "products_index")
@@ -22,10 +25,10 @@ public class ProductDocument {
     @Id
     private String id;
 
-    @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
+    @Field(type = FieldType.Text, analyzer = "standard")
     private String name;
 
-    @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
+    @Field(type = FieldType.Text, analyzer = "standard")
     private String description;
 
     @Field(type = FieldType.Text)
@@ -38,11 +41,13 @@ public class ProductDocument {
     private CategoryDocument category;
 
     @Field(type = FieldType.Nested)
-    private List<ProductColorDocument> productColors;
+    private List<ProductColorDocument> productColors = new ArrayList<>();
 
+    @CreatedDate
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Field(type = FieldType.Date, format = DateFormat.date_hour_minute_second)
     private LocalDateTime updatedAt;
 
@@ -61,7 +66,7 @@ public class ProductDocument {
     public static class CategoryDocument implements Serializable {
         private String id;
 
-        @Field(type = FieldType.Text, analyzer = "no_diacritics_analyzer")
+        @Field(type = FieldType.Text, analyzer = "standard")
         private String name;
 
         @Field(type = FieldType.Keyword)
@@ -95,10 +100,10 @@ public class ProductDocument {
         private ColorDocument color;
 
         @Field(type = FieldType.Nested)
-        private List<PromotionDocument> promotions;
+        private List<PromotionDocument> promotions = new ArrayList<>();
 
         @Field(type = FieldType.Nested)
-        private List<ProductVariantDocument> productVariants;
+        private List<ProductVariantDocument> productVariants = new ArrayList<>();
 
         @Getter
         @Setter

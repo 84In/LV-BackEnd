@@ -178,6 +178,7 @@ public class OrderEventHandler {
                     .build();
             commandGateway.sendAndWait(rollBackCmd);
         }
+        orderRepository.save(order);
         orderKafkaService.sendOrder(event.getId());
     }
 

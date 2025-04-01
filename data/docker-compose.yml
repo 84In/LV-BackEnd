@@ -216,9 +216,8 @@ services:
       XPACK_MONITORING_ENABLED: "false"
     networks:
       - app_network
-    # Thêm health check cho logstash
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      test: [ "CMD", "curl", "-f", "http://localhost:9600" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -227,6 +226,7 @@ services:
         condition: service_healthy
       productservicedb:
         condition: service_started
+
   axonserver:
     image: axoniq/axonserver:latest
     hostname: axonserver
