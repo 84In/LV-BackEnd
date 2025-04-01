@@ -1,15 +1,15 @@
 package com.luanvan.commonservice.configuration;
 
-import com.luanvan.commonservice.services.RedisService;
+import java.util.Collection;
+
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
+import com.luanvan.commonservice.services.RedisService;
 
 public class RedisJwtAuthenticationConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
