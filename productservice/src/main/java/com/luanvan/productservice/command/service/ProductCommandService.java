@@ -125,10 +125,12 @@ public class ProductCommandService {
         ArrayList<String> imageBytesArrayList = new ArrayList<>(imageBytes);
 
         // Gửi command upload ảnh
-        log.info("Upload product images for productId: {}", productCommand.getName());
-        var imagesCommand = new UploadProductImagesCommand(productCommand.getName(), imageBytesArrayList);
-        commandGateway.send(imagesCommand);
+        if(result.get("id") != null){
+            log.info("Upload product images for productId: {}", productCommand.getName());
+            var imagesCommand = new UploadProductImagesCommand(productCommand.getId(), productCommand.getName(), imageBytesArrayList);
+            commandGateway.send(imagesCommand);
 //        kafkaTemplate.send("upload-product-images", imagesCommand);
+        }
 
         return result;
     }

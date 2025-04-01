@@ -16,5 +16,6 @@ import java.util.List;
 public class UploadProductImagesCommand {
     @TargetAggregateIdentifier
     private String productId;
+    private String productName;
     private ArrayList<String> images;
 }
