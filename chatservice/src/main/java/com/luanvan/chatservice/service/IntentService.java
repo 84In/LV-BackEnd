@@ -56,12 +56,19 @@ public class IntentService {
                 .join();
         List<ProductResponseModel> data = result.getContent();
 
+        if (data.isEmpty()) {
+            JsonObject response = new JsonObject();
+            response.addProperty("fulfillmentText", "Xin lỗi, chúng tôi chưa hiểu câu hỏi của bạn.");
+            return response;
+        }
+
         JsonObject response = new JsonObject();
         JsonArray fulfillmentMessages = new JsonArray();
 
         JsonObject payload = new JsonObject();
         JsonArray richContent = new JsonArray();
         JsonArray contentArray = new JsonArray();
+
 
         data.stream().limit(3).forEach(product -> {
             JsonObject infoCard = new JsonObject();
