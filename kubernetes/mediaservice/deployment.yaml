@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediaservice
+spec:
+  replicas: 2  # Tăng số lượng replicas lên 2
+  selector:
+    matchLabels:
+      app: mediaservice
+  template:
+    metadata:
+      labels:
+        app: mediaservice
+    spec:
+      containers:
+        - name: mediaservice
+          image: ${{secrets.DOCKER_USERNAME}}/mediaservice:latest
+          ports:
+            - containerPort: 9001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediaservice
+spec:
+  ports:
+    - port: 9001
+      targetPort: 9001
+  selector:
+    app: mediaservice
+  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
