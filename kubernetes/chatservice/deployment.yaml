@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chatservice
+spec:
+  replicas: 2  # Tăng số lượng replicas lên 2
+  selector:
+    matchLabels:
+      app: chatservice
+  template:
+    metadata:
+      labels:
+        app: chatservice
+    spec:
+      containers:
+        - name: chatservice
+          image: ${{secrets.DOCKER_USERNAME}}/chatservice:latest
+          ports:
+            - containerPort: 9006
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chatservice
+spec:
+  ports:
+    - port: 9006
+      targetPort: 9006
+  selector:
+    app: chatservice
+  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ

@@ -14,7 +14,13 @@ spec:
     spec:
       containers:
         - name: authservice
-          image: ${{secrets.DOCKER_USERNAME}}/authservice:latest
+          image: "$(DOCKER_USERNAME)/authservice:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config
+                  key: DOCKER_USERNAME
           ports:
             - containerPort: 9009
 ---

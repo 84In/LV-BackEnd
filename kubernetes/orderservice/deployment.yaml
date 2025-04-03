@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderservice
+spec:
+  replicas: 2  # Tăng số lượng replicas lên 2
+  selector:
+    matchLabels:
+      app: orderservice
+  template:
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      containers:
+        - name: orderservice
+          image: ${{secrets.DOCKER_USERNAME}}/orderservice:latest
+          ports:
+            - containerPort: 9003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderservice
+spec:
+  ports:
+    - port: 9003
+      targetPort: 9003
+  selector:
+    app: orderservice
+  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ

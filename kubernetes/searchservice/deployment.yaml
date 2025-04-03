@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: searchservice
+spec:
+  replicas: 3  # Tăng số lượng replicas lên 2
+  selector:
+    matchLabels:
+      app: searchservice
+  template:
+    metadata:
+      labels:
+        app: searchservice
+    spec:
+      containers:
+        - name: searchservice
+          image: ${{secrets.DOCKER_USERNAME}}/searchservice:latest
+          ports:
+            - containerPort: 9005
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: searchservice
+spec:
+  ports:
+    - port: 9005
+      targetPort: 9005
+  selector:
+    app: searchservice
+  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
