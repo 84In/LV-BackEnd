@@ -14,7 +14,13 @@ spec:
     spec:
       containers:
         - name: mediaservice
-          image: ${{secrets.DOCKER_USERNAME}}/mediaservice:latest
+          image: "$(DOCKER_USERNAME)/mediaservice:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config
+                  key: DOCKER_USERNAME
           ports:
             - containerPort: 9001
 ---
@@ -28,4 +34,4 @@ spec:
       targetPort: 9001
   selector:
     app: mediaservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+  type: ClusterIP # Đảm bảo service có thể được truy cập nội bộ

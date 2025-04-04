@@ -14,7 +14,13 @@ spec:
     spec:
       containers:
         - name: searchservice
-          image: ${{secrets.DOCKER_USERNAME}}/searchservice:latest
+          image: "$(DOCKER_USERNAME)/searchservice:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config
+                  key: DOCKER_USERNAME
           ports:
             - containerPort: 9005
 ---

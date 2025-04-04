@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authservice
+spec:
+  replicas: 2  # Tăng số lượng replicas lên 2
+  selector:
+    matchLabels:
+      app: authservice
+  template:
+    metadata:
+      labels:
+        app: authservice
+    spec:
+      containers:
+        - name: authservice
+          image: "$(DOCKER_USERNAME)/authservice:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config  # ConfigMap chứa thông tin Docker username
+                  key: DOCKER_USERNAME
+          ports:
+            - containerPort: 9009
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authservice
+spec:
+  ports:
+    - port: 9009
+      targetPort: 9009
+  selector:
+    app: authservice
+  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ

@@ -14,9 +14,15 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: ${{secrets.DOCKER_USERNAME}}/userservice:latest
+          image: "$(DOCKER_USERNAME)/userservice:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config
+                  key: DOCKER_USERNAME
           ports:
-            - containerPort: 9000
+            - containerPort: 9005
 ---
 apiVersion: v1
 kind: Service
@@ -28,4 +34,4 @@ spec:
       targetPort: 9000
   selector:
     app: userservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+  type: ClusterIP # Đảm bảo service có thể được truy cập nội bộ

@@ -1,36 +1,75 @@
-  # This is a basic workflow that is manually triggered
-
 name: CI/CD Pipeline
 
-# Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
 on:
-  # push:
-  #   branches:
-  #     - deployment
-  # pull_request:
-  #   branches:
-  #     - deployment
+  push:
+    branches:
+      - deployment
+  pull_request:
+    branches:
+      - deployment
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    #pull repository
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-    #install docker
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-    #config login
-      - name: Login to Docker Hub
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{secrets.DOCKER_USERNAME}}
-          password: ${{secrets.DOCKER_PASSWORD}}
-     #Build adn push Docker image for services
-      - name: Build and push userservice Docker image
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and Push all services
         run: |
-          docker build -t ${{secrets.DOCKER_USERNAME}}/userservice:$GITHUB_SHA ./userservice
-          docker push ${{secrets.DOCKER_USERNAME}}/userservice:$GITHUB_SHA
+          # Liệt kê tất cả các dịch vụ của bạn
+          services="apigateway chatservice discoveryserver mediaservice notificationservice orderservice productservice searchservice userservice"
+          
+          for service in $services; do
+            echo "🔨 Building $service..."
+            # Tạo Docker image cho mỗi dịch vụ và đẩy lên Docker Hub
+            if docker build -t ${{ secrets.DOCKER_USERNAME }}/$service:${{ github.sha }} -f $service/Dockerfile $service; then
+              docker tag ${{ secrets.DOCKER_USERNAME }}/$service:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/$service:latest
+              docker push ${{ secrets.DOCKER_USERNAME }}/$service:${{ github.sha }}
+              docker push ${{ secrets.DOCKER_USERNAME }}/$service:latest
+              echo "✅ Successfully built & pushed $service"
+            else
+              echo "❌ Failed to build $service. Skipping..."
+            fi
+          done
+
+      - name: Set up Kubernetes context
+        uses: azure/setup-kubectl@v1
+        with:
+          kubectl-version: 'v1.21.0'
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Kết nối tới Kubernetes cluster của bạn
+
+      - name: Apply ConfigMap (Docker Hub credentials)
+        run: |
+          kubectl apply -f ./k8s/config/dockerhub-config.yaml  # Áp dụng ConfigMap cho DockerHub credentials
+
+      - name: Deploy all services to Kubernetes
+        run: |
+          services="apigateway chatservice discoveryserver mediaservice notificationservice orderservice productservice searchservice userservice"
+          
+          for service in $services; do
+            # Triển khai mỗi service lên Kubernetes
+            echo "🚀 Deploying $service..."
+            kubectl apply -f ./$service/deployment.yaml
+            kubectl apply -f ./$service/hpa.yaml
+          done
+
+      - name: Verify Deployment
+        run: |
+          services="apigateway chatservice discoveryserver mediaservice notificationservice orderservice productservice searchservice userservice"
+          
+          for service in $services; do
+            # Kiểm tra trạng thái của mỗi deployment
+            kubectl rollout status deployment/$service
+          done

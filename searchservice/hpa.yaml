@@ -1,18 +1,18 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: apigateway-hpa
+  name: searchservice-hpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: apigateway
-  minReplicas: 2
-  maxReplicas: 5
+    name: searchservice
+  minReplicas: 3
+  maxReplicas: 6  # Tự động scale tối đa 5 replicas
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75
+          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%

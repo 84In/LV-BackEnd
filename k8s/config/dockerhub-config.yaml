@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dockerhub-config
+  namespace: default  # Nếu bạn muốn đặt trong một namespace cụ thể
+data:
+  DOCKER_USERNAME: ntt23042003  # Thay thế bằng Docker Hub username của bạn

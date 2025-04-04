@@ -14,7 +14,13 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: ${{secrets.DOCKER_USERNAME}}/discoveryserver:latest
+          image: "$(DOCKER_USERNAME)/discoveryserver:latest"  # Dùng biến từ ConfigMap
+          env:
+            - name: DOCKER_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: dockerhub-config
+                  key: DOCKER_USERNAME
           ports:
             - containerPort: 8761
 ---
@@ -28,3 +34,4 @@ spec:
       targetPort: 8761
   selector:
     app: discoveryserver
+  type: ClusterIP
