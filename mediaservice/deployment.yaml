@@ -21,6 +21,12 @@ spec:
                 configMapKeyRef:
                   name: dockerhub-config
                   key: DOCKER_USERNAME
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: "broker:9092"
+            - name: KAFKA_GROUP_ID
+              value: "default-group"
+            - name: BACKUP_ROOT_DIR
+              value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9001
 ---

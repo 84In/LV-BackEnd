@@ -1,23 +1,25 @@
 package com.luanvan.commonservice.advice;
 
 
-import com.luanvan.commonservice.model.response.ApiResponse;
-import lombok.extern.slf4j.Slf4j;
+import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
-import java.util.Map;
+import com.luanvan.commonservice.model.response.ApiResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
 public class ExceptionAdvice {
 
-    private static final String MIN_ATTRIBUTE = "min";
-    private static final String MAX_ATTRIBUTE = "max";
+    // private static final String MIN_ATTRIBUTE = "min";
+    // private static final String MAX_ATTRIBUTE = "max";
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse<?>> handlingRuntimeException(RuntimeException ex) {

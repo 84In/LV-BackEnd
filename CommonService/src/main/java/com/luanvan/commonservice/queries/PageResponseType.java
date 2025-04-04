@@ -1,15 +1,16 @@
 package com.luanvan.commonservice.queries;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.beans.ConstructorProperties;
+import java.lang.reflect.Type;
+import java.util.concurrent.Future;
+
 import org.axonframework.common.ReflectionUtils;
 import org.axonframework.messaging.responsetypes.AbstractResponseType;
 import org.axonframework.messaging.responsetypes.ResponseType;
 import org.springframework.data.domain.Page;
 
-import java.beans.ConstructorProperties;
-import java.lang.reflect.Type;
-import java.util.concurrent.Future;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PageResponseType<R> extends AbstractResponseType<Page<R>> {
 
