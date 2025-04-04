@@ -180,6 +180,7 @@ public class ProductAggregate {
     @EventSourcingHandler
     public void on(ProductUploadImagesEvent event) {
         this.id = event.getProductId();
+        this.name = event.getProductName();
         this.imageUrls = event.getImages();
     }
 

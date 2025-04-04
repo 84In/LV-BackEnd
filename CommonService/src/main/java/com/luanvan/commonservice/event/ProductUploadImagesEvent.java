@@ -12,5 +12,6 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public class ProductUploadImagesEvent {
     private String productId;
+    private String productName;
     private ArrayList<String> images;
 }

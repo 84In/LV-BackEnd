@@ -26,12 +26,12 @@ public class UploadImageHandler{
 
     @EventHandler
     public void handle(ProductUploadImagesEvent message) {
-        log.info("Received upload product images command for productId: {}", message.getProductId());
+        log.info("Received upload product images command for productId: {}, name: {}", message.getProductId(), message.getProductName());
         try {
             List<String> imageUrls = message.getImages().stream()
                     .map(image -> cloudinaryService.uploadFile(
                             ImageUtils.decodeImageFromBase64(image),
-                            "products/" + message.getProductId()))
+                            "products/" + message.getProductName()))
                     .toList();
 
             log.info("Upload products images successful for productId: {}", message.getProductId());
