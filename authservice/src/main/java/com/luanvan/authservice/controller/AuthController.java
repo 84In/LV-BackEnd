@@ -81,6 +81,7 @@ public class AuthController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false); //setFalse để debug
         refreshTokenCookie.setPath("/api/v1/auth");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7day
         response.addCookie(refreshTokenCookie);
 
         Map<String, String> result = new HashMap<>();
