@@ -25,11 +25,14 @@ public class SecurityConfig {
     @Autowired
     private RedisService redisService;
 
+    @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable())
+                .headers().httpStrictTransportSecurity().disable()
+                .and()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(jwtProperties.getPermittedUrls().toArray(new String[0])).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()
