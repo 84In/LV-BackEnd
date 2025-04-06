@@ -44,8 +44,8 @@ public class AuthController {
     @PostMapping("/login")
     public ApiResponse<?> login(@RequestBody LoginModel loginModel, HttpServletResponse response) {
         UserResponseModel userResponse = queryGateway.query(
-                        new GetUserQuery(loginModel.getUsername()),
-                        ResponseTypes.instanceOf(UserResponseModel.class))
+                new GetUserQuery(loginModel.getUsername()),
+                ResponseTypes.instanceOf(UserResponseModel.class))
                 .exceptionally(ex -> {
                     throw new AppException(ErrorCode.USER_NOT_EXISTED);
                 })
@@ -65,8 +65,8 @@ public class AuthController {
         log.info(userResponse.toString());
 
         log.info("Login success");
-//        "accestoken";
-//        "cookie";
+        // "accestoken";
+        // "cookie";
         Map<String, Object> claims = new HashMap<>();
         if (userResponse.getRole() != null) {
             claims.put("role", userResponse.getRole().getName());
@@ -80,9 +80,9 @@ public class AuthController {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(false);
-        refreshTokenCookie.setAttribute("SameSite","None");//setFalse để debug
+        refreshTokenCookie.setAttribute("SameSite", "None");// setFalse để debug
         refreshTokenCookie.setPath("/api/v1/auth");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7day
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); // 7day
         response.addCookie(refreshTokenCookie);
 
         Map<String, String> result = new HashMap<>();
@@ -123,35 +123,40 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<?>> logout(HttpServletRequest request) {
-        String accessToken = request.getHeader("Authorization");
-        String refreshToken = getRefreshTokenFromCookie(request);
+        try {
+            String accessToken = request.getHeader("Authorization");
+            String refreshToken = getRefreshTokenFromCookie(request);
 
-        log.info("Logout success, access_token:{}, refresh_token:{}", accessToken, refreshToken);
+            log.info("Logout success, access_token:{}, refresh_token:{}", accessToken, refreshToken);
 
-        if (accessToken != null && accessToken.startsWith("Bearer ")) {
-            accessToken = accessToken.substring(7); // Loại bỏ "Bearer " để lấy token thực
+            if (accessToken != null && accessToken.startsWith("Bearer ")) {
+                accessToken = accessToken.substring(7); // Loại bỏ "Bearer " để lấy token thực
 
-            // Lấy thời gian hết hạn của token
-            Instant accessTokenExpiry = jwtUtil.getTokenExpiration(accessToken);
-            // Instant refreshTokenExpiry = jwtUtil.getTokenExpiration(refreshToken);
+                // Lấy thời gian hết hạn của token
+                Instant accessTokenExpiry = jwtUtil.getTokenExpiration(accessToken);
+                // Instant refreshTokenExpiry = jwtUtil.getTokenExpiration(refreshToken);
 
-            long accessTokenTtl = Math.max(0, accessTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
-            // long refreshTokenTtl = Math.max(0, refreshTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
+                long accessTokenTtl = Math.max(0, accessTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
+                // long refreshTokenTtl = Math.max(0, refreshTokenExpiry.getEpochSecond() -
+                // Instant.now().getEpochSecond());
 
-            // Lưu vào Redis với TTL
-            redisService.storeToken(accessToken, accessTokenTtl);
-            // redisService.storeToken(refreshToken, refreshTokenTtl);
+                // Lưu vào Redis với TTL
+                redisService.storeToken(accessToken, accessTokenTtl);
+                // redisService.storeToken(refreshToken, refreshTokenTtl);
 
-            // Xóa thông tin đăng nhập khỏi SecurityContext
-            SecurityContextHolder.clearContext();
+                // Xóa thông tin đăng nhập khỏi SecurityContext
+                SecurityContextHolder.clearContext();
 
-            // Xóa refresh token trên trình duyệt bằng Set-Cookie
-            return ResponseEntity.ok()
-                    .header("Set-Cookie", "refreshToken=; HttpOnly; SameSite=None; Max-Age=0; Path=/")
-                    .body(ApiResponse.builder()
-                            .message("Logout success!")
-                            .code(0)
-                            .build());
+                // Xóa refresh token trên trình duyệt bằng Set-Cookie
+                return ResponseEntity.ok()
+                        .header("Set-Cookie", "refreshToken=; HttpOnly; SameSite=None; Max-Age=0; Path=/")
+                        .body(ApiResponse.builder()
+                                .message("Logout success!")
+                                .code(0)
+                                .build());
+            }
+        } catch (Exception e) {
+            log.info("Error", e.getMessage());
         }
 
         return ResponseEntity.badRequest()
@@ -160,7 +165,6 @@ public class AuthController {
                         .code(1)
                         .build());
     }
-
 
     private String getRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() != null) {
@@ -172,6 +176,5 @@ public class AuthController {
         }
         return null;
     }
-
 
 }

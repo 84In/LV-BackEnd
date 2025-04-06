@@ -1,0 +1,283 @@
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.4.0)
+2025-04-06T09:07:21.026Z  INFO 1 --- [AuthService] [           main] c.l.authservice.AuthserviceApplication   : Starting AuthserviceApplication v0.0.1-SNAPSHOT using Java 21 with PID 1 (/app/authservice.jar started by root in /app)
+2025-04-06T09:07:21.061Z  INFO 1 --- [AuthService] [           main] c.l.authservice.AuthserviceApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-04-06T09:07:34.693Z  INFO 1 --- [AuthService] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-04-06T09:07:34.723Z  INFO 1 --- [AuthService] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-04-06T09:07:35.042Z  INFO 1 --- [AuthService] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 203 ms. Found 0 Redis repository interfaces.
+2025-04-06T09:07:38.138Z  INFO 1 --- [AuthService] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=49000a37-d088-3bd2-a833-a8ccafdaab0f
+2025-04-06T09:07:47.541Z  INFO 1 --- [AuthService] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 9009 (http)
+2025-04-06T09:07:47.659Z  INFO 1 --- [AuthService] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-04-06T09:07:47.662Z  INFO 1 --- [AuthService] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2025-04-06T09:07:47.874Z  INFO 1 --- [AuthService] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-04-06T09:07:47.917Z  INFO 1 --- [AuthService] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 26210 ms
+2025-04-06T09:07:54.133Z  INFO 1 --- [AuthService] [           main] o.a.s.a.XStreamAutoConfiguration         : Initializing an XStream instance since none was found. The auto configuration base packages will be used as wildcards for the XStream security settings.
+2025-04-06T09:07:55.536Z  INFO 1 --- [AuthService] [           main] o.a.s.util.XStreamSecurityTypeUtility    : Constructing wildcard type for base package [com.luanvan.commonservice].
+2025-04-06T09:07:55.546Z  INFO 1 --- [AuthService] [           main] o.a.s.util.XStreamSecurityTypeUtility    : Constructing wildcard type for base package [com.luanvan.authservice].
+2025-04-06T09:07:55.650Z  INFO 1 --- [AuthService] [           main] o.a.serialization.ChainingConverter      : ContentTypeConverter of type [class org.axonframework.serialization.xml.Dom4JToByteArrayConverter] is ignored. It seems to rely on a class that is not available in the class loader: org/dom4j/Document
+2025-04-06T09:07:55.654Z  INFO 1 --- [AuthService] [           main] o.a.serialization.ChainingConverter      : ContentTypeConverter of type [class org.axonframework.serialization.xml.InputStreamToDom4jConverter] is ignored. It seems to rely on a class that is not available in the class loader: org/dom4j/Document
+2025-04-06T09:07:55.661Z  INFO 1 --- [AuthService] [           main] o.a.serialization.ChainingConverter      : ContentTypeConverter of type [class org.axonframework.serialization.xml.XomToStringConverter] is ignored. It seems to rely on a class that is not available in the class loader: nu/xom/Document
+2025-04-06T09:07:55.663Z  INFO 1 --- [AuthService] [           main] o.a.serialization.ChainingConverter      : ContentTypeConverter of type [class org.axonframework.serialization.xml.InputStreamToXomConverter] is ignored. It seems to rely on a class that is not available in the class loader: nu/xom/ParsingException
+2025-04-06T09:07:56.072Z  INFO 1 --- [AuthService] [           main] o.a.config.AxonIQConsoleModule           : 
+################################################################################################
+## You have not configured AxonIQ Console. AxonIQ Console provides out-of-the box monitoring  ##
+## and management capabilities for your Axon Application, starting with it is free.           ##
+## Visit https://console.axoniq.io for more information!                                      ##
+## Suppress this message by setting system property disable-axoniq-console-message to true.   ##
+################################################################################################
+2025-04-06T09:07:59.110Z TRACE 1 --- [AuthService] [           main] eGlobalAuthenticationAutowiredConfigurer : Eagerly initializing {org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$WebSecurityEnablerConfiguration=org.springframework.boot.autoconfigure.security.servlet.SpringBootWebSecurityConfiguration$WebSecurityEnablerConfiguration@4b5ceb5d}
+2025-04-06T09:07:59.113Z DEBUG 1 --- [AuthService] [           main] swordEncoderAuthenticationManagerBuilder : No authenticationProviders and no parentAuthenticationManager defined. Returning null.
+2025-04-06T09:08:02.225Z  INFO 1 --- [AuthService] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2025-04-06T09:08:03.032Z DEBUG 1 --- [AuthService] [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, LogoutFilter, BearerTokenAuthenticationFilter, RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2025-04-06T09:08:09.695Z  WARN 1 --- [AuthService] [           main] o.s.b.a.f.FreeMarkerAutoConfiguration    : Cannot find template location: [classpath:/templates/] (please add some templates, check your FreeMarker configuration, or set spring.freemarker.check-template-location=false)
+2025-04-06T09:08:10.547Z  INFO 1 --- [AuthService] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2025-04-06T09:08:10.994Z  WARN 1 --- [AuthService] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-04-06T09:08:11.345Z  INFO 1 --- [AuthService] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2025-04-06T09:08:11.580Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2025-04-06T09:08:11.622Z  INFO 1 --- [AuthService] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-04-06T09:08:11.712Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2025-04-06T09:08:11.713Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2025-04-06T09:08:11.713Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2025-04-06T09:08:11.713Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2025-04-06T09:08:11.713Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2025-04-06T09:08:11.713Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2025-04-06T09:08:11.719Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2025-04-06T09:08:14.670Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2025-04-06T09:08:14.680Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2025-04-06T09:08:14.688Z  INFO 1 --- [AuthService] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-04-06T09:08:14.699Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1743930494694 with initial instances count: 4
+2025-04-06T09:08:14.745Z  INFO 1 --- [AuthService] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application AUTHSERVICE with eureka with status UP
+2025-04-06T09:08:14.750Z  INFO 1 --- [AuthService] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1743930494749, current=UP, previous=STARTING]
+2025-04-06T09:08:14.756Z  INFO 1 --- [AuthService] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_AUTHSERVICE/a763b06b4d2e:AuthService:9009: registering service...
+2025-04-06T09:08:15.093Z  INFO 1 --- [AuthService] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_AUTHSERVICE/a763b06b4d2e:AuthService:9009 - registration status: 204
+2025-04-06T09:08:16.965Z  INFO 1 --- [AuthService] [           main] i.a.a.c.impl.AxonServerManagedChannel    : Requesting connection details from axonserver:8124
+2025-04-06T09:08:18.885Z  INFO 1 --- [AuthService] [           main] i.a.a.c.impl.AxonServerManagedChannel    : Successfully connected to axonserver:8124
+2025-04-06T09:08:18.988Z  INFO 1 --- [AuthService] [           main] i.a.a.connector.impl.ControlChannelImpl  : Connected instruction stream for context 'default'. Sending client identification
+2025-04-06T09:08:19.134Z  INFO 1 --- [AuthService] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9009 (http) with context path '/'
+2025-04-06T09:08:19.136Z  INFO 1 --- [AuthService] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 9009
+2025-04-06T09:08:19.352Z  INFO 1 --- [AuthService] [           main] c.l.authservice.AuthserviceApplication   : Started AuthserviceApplication in 63.191 seconds (process running for 68.198)
+2025-04-06T09:09:37.617Z  INFO 1 --- [AuthService] [nio-9009-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-04-06T09:09:37.627Z  INFO 1 --- [AuthService] [nio-9009-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-04-06T09:09:37.710Z  INFO 1 --- [AuthService] [nio-9009-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 82 ms
+2025-04-06T09:09:37.972Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Trying to match request against DefaultSecurityFilterChain defined as 'securityFilterChain' in [class path resource [com/luanvan/commonservice/configuration/SecurityConfig.class]] matching [any request] and having filters [DisableEncodeUrl, WebAsyncManagerIntegration, SecurityContextHolder, HeaderWriter, Logout, BearerTokenAuthentication, RequestCacheAware, SecurityContextHolderAwareRequest, AnonymousAuthentication, SessionManagement, ExceptionTranslation, Authorization] (1/1)
+2025-04-06T09:09:37.974Z DEBUG 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/auth/login
+2025-04-06T09:09:37.985Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking DisableEncodeUrlFilter (1/12)
+2025-04-06T09:09:38.012Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking WebAsyncManagerIntegrationFilter (2/12)
+2025-04-06T09:09:38.024Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderFilter (3/12)
+2025-04-06T09:09:38.029Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking HeaderWriterFilter (4/12)
+2025-04-06T09:09:38.037Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking LogoutFilter (5/12)
+2025-04-06T09:09:38.040Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.s.w.a.logout.LogoutFilter            : Did not match request to Or [Ant [pattern='/logout', GET], Ant [pattern='/logout', POST], Ant [pattern='/logout', PUT], Ant [pattern='/logout', DELETE]]
+2025-04-06T09:09:38.041Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking BearerTokenAuthenticationFilter (6/12)
+2025-04-06T09:09:38.042Z TRACE 1 --- [AuthService] [nio-9009-exec-1] .s.r.w.a.BearerTokenAuthenticationFilter : Did not process request since did not find bearer token
+2025-04-06T09:09:38.043Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking RequestCacheAwareFilter (7/12)
+2025-04-06T09:09:38.043Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderAwareRequestFilter (8/12)
+2025-04-06T09:09:38.047Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking AnonymousAuthenticationFilter (9/12)
+2025-04-06T09:09:38.049Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking SessionManagementFilter (10/12)
+2025-04-06T09:09:38.049Z TRACE 1 --- [AuthService] [nio-9009-exec-1] .s.s.w.c.SupplierDeferredSecurityContext : Created SecurityContextImpl [Null authentication]
+2025-04-06T09:09:38.053Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to AnonymousAuthenticationToken [Principal=anonymousUser, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=172.18.0.21, SessionId=null], Granted Authorities=[ROLE_ANONYMOUS]]
+2025-04-06T09:09:38.054Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking ExceptionTranslationFilter (11/12)
+2025-04-06T09:09:38.054Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Invoking AuthorizationFilter (12/12)
+2025-04-06T09:09:38.079Z TRACE 1 --- [AuthService] [nio-9009-exec-1] estMatcherDelegatingAuthorizationManager : Authorizing POST /api/v1/auth/login
+2025-04-06T09:09:38.087Z TRACE 1 --- [AuthService] [nio-9009-exec-1] estMatcherDelegatingAuthorizationManager : Checking authorization on POST /api/v1/auth/login using org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer$$Lambda/0x00007f3af074a930@2c8fd5ba
+2025-04-06T09:09:38.117Z DEBUG 1 --- [AuthService] [nio-9009-exec-1] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/auth/login
+2025-04-06T09:09:38.965Z  INFO 1 --- [AuthService] [nio-9009-exec-1] c.l.a.controller.AuthController          : UserResponseModel(id=294af859-ef8d-4c1d-a717-818c683b321e, username=admin, password=$2a$10$hJtQWSMve8.LSKtomzQKQe6XDihVtMMv7uAgU7fFGQKI9dQ2r6Nnu, active=true, email=Vanoushop@gmail.com, phone=null, lastName=admin, firstName=admin, avatar=null, role=RoleResponseModel(name=admin, description=Quản lý toàn bộ hệ thống), addresses=[], createdAt=2025-04-06T09:08:43.602827, updatedAt=2025-04-06T09:08:43.602879)
+2025-04-06T09:09:38.966Z  INFO 1 --- [AuthService] [nio-9009-exec-1] c.l.a.controller.AuthController          : Login success
+2025-04-06T09:09:38.967Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : key: YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg=
+2025-04-06T09:09:38.967Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : issuer: http://apigateway:8080/api/v1/auth
+2025-04-06T09:09:38.967Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : subject: admin
+2025-04-06T09:09:38.967Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : claims: {role=admin, iss=http://apigateway:8080/api/v1/auth}
+2025-04-06T09:09:39.316Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1NzksImV4cCI6MTc0MzkzNDE3OX0.5gfOMtJth4326mMdj88g4NpCLtyvpNJDWbv5B4M9fAc
+2025-04-06T09:09:39.317Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : key: YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg=
+2025-04-06T09:09:39.317Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : issuer: http://apigateway:8080/api/v1/auth
+2025-04-06T09:09:39.318Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : subject: admin
+2025-04-06T09:09:39.319Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : claims: {role=admin, iss=http://apigateway:8080/api/v1/auth}
+2025-04-06T09:09:39.322Z  INFO 1 --- [AuthService] [nio-9009-exec-1] com.luanvan.authservice.utils.JwtUtil    : eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1NzksImV4cCI6MTc0NDUzNTM3OX0.hIzUrbGXQUtQQm8IjY3zAkU7E8LT5f4Ko7icM5X7W_s
+2025-04-06T09:09:39.323Z  INFO 1 --- [AuthService] [nio-9009-exec-1] c.l.a.controller.AuthController          : Login success, access_token:eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1NzksImV4cCI6MTc0MzkzNDE3OX0.5gfOMtJth4326mMdj88g4NpCLtyvpNJDWbv5B4M9fAc, refresh_token:eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1NzksImV4cCI6MTc0NDUzNTM3OX0.hIzUrbGXQUtQQm8IjY3zAkU7E8LT5f4Ko7icM5X7W_s
+2025-04-06T09:09:39.400Z TRACE 1 --- [AuthService] [nio-9009-exec-1] o.s.s.w.header.writers.HstsHeaderWriter  : Not injecting HSTS header since it did not match request to [Is Secure]
+2025-04-06T09:09:48.845Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Trying to match request against DefaultSecurityFilterChain defined as 'securityFilterChain' in [class path resource [com/luanvan/commonservice/configuration/SecurityConfig.class]] matching [any request] and having filters [DisableEncodeUrl, WebAsyncManagerIntegration, SecurityContextHolder, HeaderWriter, Logout, BearerTokenAuthentication, RequestCacheAware, SecurityContextHolderAwareRequest, AnonymousAuthentication, SessionManagement, ExceptionTranslation, Authorization] (1/1)
+2025-04-06T09:09:48.846Z DEBUG 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/auth/login
+2025-04-06T09:09:48.846Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking DisableEncodeUrlFilter (1/12)
+2025-04-06T09:09:48.847Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking WebAsyncManagerIntegrationFilter (2/12)
+2025-04-06T09:09:48.848Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderFilter (3/12)
+2025-04-06T09:09:48.848Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking HeaderWriterFilter (4/12)
+2025-04-06T09:09:48.849Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking LogoutFilter (5/12)
+2025-04-06T09:09:48.849Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.s.w.a.logout.LogoutFilter            : Did not match request to Or [Ant [pattern='/logout', GET], Ant [pattern='/logout', POST], Ant [pattern='/logout', PUT], Ant [pattern='/logout', DELETE]]
+2025-04-06T09:09:48.850Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking BearerTokenAuthenticationFilter (6/12)
+2025-04-06T09:09:48.850Z TRACE 1 --- [AuthService] [nio-9009-exec-2] .s.r.w.a.BearerTokenAuthenticationFilter : Did not process request since did not find bearer token
+2025-04-06T09:09:48.851Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking RequestCacheAwareFilter (7/12)
+2025-04-06T09:09:48.851Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderAwareRequestFilter (8/12)
+2025-04-06T09:09:48.851Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking AnonymousAuthenticationFilter (9/12)
+2025-04-06T09:09:48.852Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking SessionManagementFilter (10/12)
+2025-04-06T09:09:48.852Z TRACE 1 --- [AuthService] [nio-9009-exec-2] .s.s.w.c.SupplierDeferredSecurityContext : Created SecurityContextImpl [Null authentication]
+2025-04-06T09:09:48.853Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to AnonymousAuthenticationToken [Principal=anonymousUser, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=172.18.0.21, SessionId=null], Granted Authorities=[ROLE_ANONYMOUS]]
+2025-04-06T09:09:48.854Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking ExceptionTranslationFilter (11/12)
+2025-04-06T09:09:48.854Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Invoking AuthorizationFilter (12/12)
+2025-04-06T09:09:48.854Z TRACE 1 --- [AuthService] [nio-9009-exec-2] estMatcherDelegatingAuthorizationManager : Authorizing POST /api/v1/auth/login
+2025-04-06T09:09:48.855Z TRACE 1 --- [AuthService] [nio-9009-exec-2] estMatcherDelegatingAuthorizationManager : Checking authorization on POST /api/v1/auth/login using org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer$$Lambda/0x00007f3af074a930@2c8fd5ba
+2025-04-06T09:09:48.856Z DEBUG 1 --- [AuthService] [nio-9009-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/auth/login
+2025-04-06T09:09:49.018Z  INFO 1 --- [AuthService] [nio-9009-exec-2] c.l.a.controller.AuthController          : UserResponseModel(id=294af859-ef8d-4c1d-a717-818c683b321e, username=admin, password=$2a$10$hJtQWSMve8.LSKtomzQKQe6XDihVtMMv7uAgU7fFGQKI9dQ2r6Nnu, active=true, email=Vanoushop@gmail.com, phone=null, lastName=admin, firstName=admin, avatar=null, role=RoleResponseModel(name=admin, description=Quản lý toàn bộ hệ thống), addresses=[], createdAt=2025-04-06T09:08:43.602827, updatedAt=2025-04-06T09:08:43.602879)
+2025-04-06T09:09:49.019Z  INFO 1 --- [AuthService] [nio-9009-exec-2] c.l.a.controller.AuthController          : Login success
+2025-04-06T09:09:49.019Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : key: YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg=
+2025-04-06T09:09:49.019Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : issuer: http://apigateway:8080/api/v1/auth
+2025-04-06T09:09:49.019Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : subject: admin
+2025-04-06T09:09:49.020Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : claims: {role=admin, iss=http://apigateway:8080/api/v1/auth}
+2025-04-06T09:09:49.024Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1ODksImV4cCI6MTc0MzkzNDE4OX0.aRKnmhmbWYJiEoL8_idMXnJ5RJfL--jyiKPD2FnSUlk
+2025-04-06T09:09:49.024Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : key: YMRaDBMR5ogwC2qr5zadtmz+1Tx1QRp3mg/LPlUjCxg=
+2025-04-06T09:09:49.024Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : issuer: http://apigateway:8080/api/v1/auth
+2025-04-06T09:09:49.024Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : subject: admin
+2025-04-06T09:09:49.024Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : claims: {role=admin, iss=http://apigateway:8080/api/v1/auth}
+2025-04-06T09:09:49.026Z  INFO 1 --- [AuthService] [nio-9009-exec-2] com.luanvan.authservice.utils.JwtUtil    : eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1ODksImV4cCI6MTc0NDUzNTM4OX0.q-tGrHhk86GJi0KNXo52aDM-9Cz0h6meP5JFAlER-I8
+2025-04-06T09:09:49.026Z  INFO 1 --- [AuthService] [nio-9009-exec-2] c.l.a.controller.AuthController          : Login success, access_token:eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1ODksImV4cCI6MTc0MzkzNDE4OX0.aRKnmhmbWYJiEoL8_idMXnJ5RJfL--jyiKPD2FnSUlk, refresh_token:eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1ODksImV4cCI6MTc0NDUzNTM4OX0.q-tGrHhk86GJi0KNXo52aDM-9Cz0h6meP5JFAlER-I8
+2025-04-06T09:09:49.028Z TRACE 1 --- [AuthService] [nio-9009-exec-2] o.s.s.w.header.writers.HstsHeaderWriter  : Not injecting HSTS header since it did not match request to [Is Secure]
+2025-04-06T09:10:45.210Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Trying to match request against DefaultSecurityFilterChain defined as 'securityFilterChain' in [class path resource [com/luanvan/commonservice/configuration/SecurityConfig.class]] matching [any request] and having filters [DisableEncodeUrl, WebAsyncManagerIntegration, SecurityContextHolder, HeaderWriter, Logout, BearerTokenAuthentication, RequestCacheAware, SecurityContextHolderAwareRequest, AnonymousAuthentication, SessionManagement, ExceptionTranslation, Authorization] (1/1)
+2025-04-06T09:10:45.211Z DEBUG 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/auth/logout
+2025-04-06T09:10:45.211Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking DisableEncodeUrlFilter (1/12)
+2025-04-06T09:10:45.211Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking WebAsyncManagerIntegrationFilter (2/12)
+2025-04-06T09:10:45.211Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderFilter (3/12)
+2025-04-06T09:10:45.212Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking HeaderWriterFilter (4/12)
+2025-04-06T09:10:45.212Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking LogoutFilter (5/12)
+2025-04-06T09:10:45.212Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.s.w.a.logout.LogoutFilter            : Did not match request to Or [Ant [pattern='/logout', GET], Ant [pattern='/logout', POST], Ant [pattern='/logout', PUT], Ant [pattern='/logout', DELETE]]
+2025-04-06T09:10:45.220Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking BearerTokenAuthenticationFilter (6/12)
+2025-04-06T09:10:45.228Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.s.authentication.ProviderManager     : Authenticating request with JwtAuthenticationProvider (1/2)
+2025-04-06T09:10:46.795Z TRACE 1 --- [AuthService] [nio-9009-exec-4] s.o.s.r.a.JwtGrantedAuthoritiesConverter : Looking for scopes in claim role
+2025-04-06T09:10:46.796Z DEBUG 1 --- [AuthService] [nio-9009-exec-4] o.s.s.o.s.r.a.JwtAuthenticationProvider  : Authenticated token
+2025-04-06T09:10:46.803Z DEBUG 1 --- [AuthService] [nio-9009-exec-4] .s.r.w.a.BearerTokenAuthenticationFilter : Set SecurityContextHolder to JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@abb0233, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=172.18.0.21, SessionId=null], Granted Authorities=[ROLE_admin]]
+2025-04-06T09:10:46.804Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking RequestCacheAwareFilter (7/12)
+2025-04-06T09:10:46.804Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderAwareRequestFilter (8/12)
+2025-04-06T09:10:46.804Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking AnonymousAuthenticationFilter (9/12)
+2025-04-06T09:10:46.809Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking SessionManagementFilter (10/12)
+2025-04-06T09:10:46.809Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.s.w.a.AnonymousAuthenticationFilter  : Did not set SecurityContextHolder since already authenticated JwtAuthenticationToken [Principal=org.springframework.security.oauth2.jwt.Jwt@abb0233, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=172.18.0.21, SessionId=null], Granted Authorities=[ROLE_admin]]
+2025-04-06T09:10:46.810Z TRACE 1 --- [AuthService] [nio-9009-exec-4] s.CompositeSessionAuthenticationStrategy : Preparing session with ChangeSessionIdAuthenticationStrategy (1/1)
+2025-04-06T09:10:46.810Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking ExceptionTranslationFilter (11/12)
+2025-04-06T09:10:46.811Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Invoking AuthorizationFilter (12/12)
+2025-04-06T09:10:46.811Z TRACE 1 --- [AuthService] [nio-9009-exec-4] estMatcherDelegatingAuthorizationManager : Authorizing POST /api/v1/auth/logout
+2025-04-06T09:10:46.812Z TRACE 1 --- [AuthService] [nio-9009-exec-4] estMatcherDelegatingAuthorizationManager : Checking authorization on POST /api/v1/auth/logout using org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer$$Lambda/0x00007f3af074a930@2c8fd5ba
+2025-04-06T09:10:46.812Z DEBUG 1 --- [AuthService] [nio-9009-exec-4] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/auth/logout
+2025-04-06T09:10:46.816Z  INFO 1 --- [AuthService] [nio-9009-exec-4] c.l.a.controller.AuthController          : Logout success, access_token:Bearer eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwOi8vYXBpZ2F0ZXdheTo4MDgwL2FwaS92MS9hdXRoIiwic3ViIjoiYWRtaW4iLCJpYXQiOjE3NDM5MzA1ODksImV4cCI6MTc0MzkzNDE4OX0.aRKnmhmbWYJiEoL8_idMXnJ5RJfL--jyiKPD2FnSUlk, refresh_token:null
+2025-04-06T09:10:46.896Z TRACE 1 --- [AuthService] [nio-9009-exec-4] o.s.s.w.header.writers.HstsHeaderWriter  : Not injecting HSTS header since it did not match request to [Is Secure]
+2025-04-06T09:11:01.062Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Trying to match request against DefaultSecurityFilterChain defined as 'securityFilterChain' in [class path resource [com/luanvan/commonservice/configuration/SecurityConfig.class]] matching [any request] and having filters [DisableEncodeUrl, WebAsyncManagerIntegration, SecurityContextHolder, HeaderWriter, Logout, BearerTokenAuthentication, RequestCacheAware, SecurityContextHolderAwareRequest, AnonymousAuthentication, SessionManagement, ExceptionTranslation, Authorization] (1/1)
+2025-04-06T09:11:01.062Z DEBUG 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/auth/logout
+2025-04-06T09:11:01.063Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking DisableEncodeUrlFilter (1/12)
+2025-04-06T09:11:01.064Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking WebAsyncManagerIntegrationFilter (2/12)
+2025-04-06T09:11:01.064Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderFilter (3/12)
+2025-04-06T09:11:01.064Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking HeaderWriterFilter (4/12)
+2025-04-06T09:11:01.065Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking LogoutFilter (5/12)
+2025-04-06T09:11:01.065Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.s.w.a.logout.LogoutFilter            : Did not match request to Or [Ant [pattern='/logout', GET], Ant [pattern='/logout', POST], Ant [pattern='/logout', PUT], Ant [pattern='/logout', DELETE]]
+2025-04-06T09:11:01.066Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.security.web.FilterChainProxy        : Invoking BearerTokenAuthenticationFilter (6/12)
+2025-04-06T09:11:01.068Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.s.authentication.ProviderManager     : Authenticating request with JwtAuthenticationProvider (1/2)
+2025-04-06T09:11:01.073Z TRACE 1 --- [AuthService] [nio-9009-exec-5] .s.r.w.a.BearerTokenAuthenticationFilter : Failed to process authentication request
+org.springframework.security.authentication.BadCredentialsException: Token has been logged out
+	at com.luanvan.commonservice.configuration.RedisJwtAuthenticationConverter.convert(RedisJwtAuthenticationConverter.java:31) ~[commonservice-0.0.1-SNAPSHOT.jar!/:0.0.1-SNAPSHOT]
+	at com.luanvan.commonservice.configuration.RedisJwtAuthenticationConverter.convert(RedisJwtAuthenticationConverter.java:14) ~[commonservice-0.0.1-SNAPSHOT.jar!/:0.0.1-SNAPSHOT]
+	at org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter.convert(JwtAuthenticationConverter.java:43) ~[spring-security-oauth2-resource-server-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter.convert(JwtAuthenticationConverter.java:35) ~[spring-security-oauth2-resource-server-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider.authenticate(JwtAuthenticationProvider.java:89) ~[spring-security-oauth2-resource-server-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.authentication.ProviderManager.authenticate(ProviderManager.java:182) ~[spring-security-core-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.authentication.ObservationAuthenticationManager.lambda$authenticate$1(ObservationAuthenticationManager.java:54) ~[spring-security-core-6.4.1.jar!/:6.4.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:565) ~[micrometer-observation-1.14.1.jar!/:1.14.1]
+	at org.springframework.security.authentication.ObservationAuthenticationManager.authenticate(ObservationAuthenticationManager.java:53) ~[spring-security-core-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter.doFilterInternal(BearerTokenAuthenticationFilter.java:137) ~[spring-security-oauth2-resource-server-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:90) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:75) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:240) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:323) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:224) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:137) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:233) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:191) ~[spring-security-web-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.servlet.handler.HandlerMappingIntrospector.lambda$createCacheFilter$3(HandlerMappingIntrospector.java:243) ~[spring-webmvc-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.security.config.annotation.web.configuration.WebMvcSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebMvcSecurityConfiguration.java:238) ~[spring-security-config-6.4.1.jar!/:6.4.1]
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:362) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:278) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:114) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.2.0.jar!/:6.2.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:905) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1190) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.33.jar!/:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-04-06T09:11:01.085Z TRACE 1 --- [AuthService] [nio-9009-exec-5] o.s.s.w.header.writers.HstsHeaderWriter  : Not injecting HSTS header since it did not match request to [Is Secure]
+2025-04-06T09:11:01.172Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Trying to match request against DefaultSecurityFilterChain defined as 'securityFilterChain' in [class path resource [com/luanvan/commonservice/configuration/SecurityConfig.class]] matching [any request] and having filters [DisableEncodeUrl, WebAsyncManagerIntegration, SecurityContextHolder, HeaderWriter, Logout, BearerTokenAuthentication, RequestCacheAware, SecurityContextHolderAwareRequest, AnonymousAuthentication, SessionManagement, ExceptionTranslation, Authorization] (1/1)
+2025-04-06T09:11:01.173Z DEBUG 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Securing POST /api/v1/auth/refresh
+2025-04-06T09:11:01.173Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking DisableEncodeUrlFilter (1/12)
+2025-04-06T09:11:01.173Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking WebAsyncManagerIntegrationFilter (2/12)
+2025-04-06T09:11:01.173Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderFilter (3/12)
+2025-04-06T09:11:01.174Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking HeaderWriterFilter (4/12)
+2025-04-06T09:11:01.174Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking LogoutFilter (5/12)
+2025-04-06T09:11:01.174Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.s.w.a.logout.LogoutFilter            : Did not match request to Or [Ant [pattern='/logout', GET], Ant [pattern='/logout', POST], Ant [pattern='/logout', PUT], Ant [pattern='/logout', DELETE]]
+2025-04-06T09:11:01.174Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking BearerTokenAuthenticationFilter (6/12)
+2025-04-06T09:11:01.175Z TRACE 1 --- [AuthService] [nio-9009-exec-6] .s.r.w.a.BearerTokenAuthenticationFilter : Did not process request since did not find bearer token
+2025-04-06T09:11:01.175Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking RequestCacheAwareFilter (7/12)
+2025-04-06T09:11:01.175Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking SecurityContextHolderAwareRequestFilter (8/12)
+2025-04-06T09:11:01.175Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking AnonymousAuthenticationFilter (9/12)
+2025-04-06T09:11:01.175Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking SessionManagementFilter (10/12)
+2025-04-06T09:11:01.176Z TRACE 1 --- [AuthService] [nio-9009-exec-6] .s.s.w.c.SupplierDeferredSecurityContext : Created SecurityContextImpl [Null authentication]
+2025-04-06T09:11:01.176Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to AnonymousAuthenticationToken [Principal=anonymousUser, Credentials=[PROTECTED], Authenticated=true, Details=WebAuthenticationDetails [RemoteIpAddress=172.18.0.21, SessionId=null], Granted Authorities=[ROLE_ANONYMOUS]]
+2025-04-06T09:11:01.176Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking ExceptionTranslationFilter (11/12)
+2025-04-06T09:11:01.176Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Invoking AuthorizationFilter (12/12)
+2025-04-06T09:11:01.176Z TRACE 1 --- [AuthService] [nio-9009-exec-6] estMatcherDelegatingAuthorizationManager : Authorizing POST /api/v1/auth/refresh
+2025-04-06T09:11:01.177Z TRACE 1 --- [AuthService] [nio-9009-exec-6] estMatcherDelegatingAuthorizationManager : Checking authorization on POST /api/v1/auth/refresh using org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer$$Lambda/0x00007f3af074a930@2c8fd5ba
+2025-04-06T09:11:01.177Z DEBUG 1 --- [AuthService] [nio-9009-exec-6] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/auth/refresh
+2025-04-06T09:11:01.202Z TRACE 1 --- [AuthService] [nio-9009-exec-6] o.s.s.w.header.writers.HstsHeaderWriter  : Not injecting HSTS header since it did not match request to [Is Secure]
+2025-04-06T09:13:11.736Z  INFO 1 --- [AuthService] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-04-06T09:18:11.738Z  INFO 1 --- [AuthService] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

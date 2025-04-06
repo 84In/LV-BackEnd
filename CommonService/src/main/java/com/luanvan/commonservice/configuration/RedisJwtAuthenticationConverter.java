@@ -11,6 +11,9 @@ import org.springframework.util.StringUtils;
 
 import com.luanvan.commonservice.services.RedisService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class RedisJwtAuthenticationConverter implements Converter<Jwt, Collection<GrantedAuthority>> {
 
     private final RedisService redisService;
@@ -28,9 +31,9 @@ public class RedisJwtAuthenticationConverter implements Converter<Jwt, Collectio
 
         // 🔴 Kiểm tra nếu token đã bị logout trong Redis
         if (StringUtils.hasText(token) && redisService.isTokenLoggedOut(token)) {
+            log.info(token + "redis");
             throw new BadCredentialsException("Token has been logged out");
         }
-
         // 🔹 Chuyển đổi quyền từ JWT và trả về danh sách GrantedAuthority
         return grantedAuthoritiesConverter.convert(jwt);
     }
