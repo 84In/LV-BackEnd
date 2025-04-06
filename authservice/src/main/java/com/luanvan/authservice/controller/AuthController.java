@@ -144,7 +144,7 @@ public class AuthController {
 
             // Xóa refresh token trên trình duyệt bằng Set-Cookie
             return ResponseEntity.ok()
-                    .header("Set-Cookie", "refreshToken=; HttpOnly; Secure; SameSite=Strict; Max-Age=0; Path=/")
+                    .header("Set-Cookie", "refreshToken=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/")
                     .body(ApiResponse.builder()
                             .message("Logout success!")
                             .code(0)
