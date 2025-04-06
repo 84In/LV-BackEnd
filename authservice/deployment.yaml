@@ -17,10 +17,7 @@ spec:
           image: "$(DOCKER_USERNAME)/authservice:latest"  # Dùng biến từ ConfigMap
           env:
             - name: DOCKER_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: dockerhub-config  # ConfigMap chứa thông tin Docker username
-                  key: DOCKER_USERNAME
+              value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "broker:9092"
             - name: KAFKA_GROUP_ID

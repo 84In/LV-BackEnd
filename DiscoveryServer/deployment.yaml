@@ -14,13 +14,10 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: "$(DOCKER_USERNAME)/discoveryserver:latest"  # Dùng biến từ ConfigMap
+          image: "discoveryserver:latest"  # Dùng biến từ ConfigMap
           env:
-            - name: DOCKER_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: dockerhub-config
-                  key: DOCKER_USERNAME
+             - name: DOCKER_USERNAME
+               value: ntt23042003
           ports:
             - containerPort: 8761
 ---

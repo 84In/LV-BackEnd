@@ -19,10 +19,7 @@ spec:
           image: "$(DOCKER_USERNAME)/apigateway:latest"  # Dùng biến từ ConfigMap
           env:
             - name: DOCKER_USERNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: dockerhub-config
-                  key: DOCKER_USERNAME
+              value: ntt23042003
           ports:
             - containerPort: 8080
           resources:

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-center
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: control-center
+  template:
+    metadata:
+      labels:
+        app: control-center
+    spec:
+      containers:
+        - name: control-center
+          image: confluentinc/cp-enterprise-control-center:7.7.0
+          ports:
+            - containerPort: 9021
+          env:
+            - name: CONTROL_CENTER_BOOTSTRAP_SERVERS
+              value: "kafka:29092"
+            - name: CONTROL_CENTER_REPLICATION_FACTOR
+              value: "3"  # Set this value according to your needs
+            - name: PORT
+              value: "9021"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9021
+            initialDelaySeconds: 30
+            periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: control-center
+spec:
+  ports:
+    - port: 9021
+  selector:
+    app: control-center

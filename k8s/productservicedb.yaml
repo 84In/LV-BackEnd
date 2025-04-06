@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productservicedb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productservicedb
+  template:
+    metadata:
+      labels:
+        app: productservicedb
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "shop2425"
+            - name: MYSQL_USER
+              value: "productservice"
+            - name: MYSQL_PASSWORD
+              value: "productservice2425"
+            - name: MYSQL_DATABASE
+              value: "productservicedb"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-init-scripts-productservice
+              mountPath: /docker-entrypoint-initdb.d
+            - name: mysql-data-productservice
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - "--host=localhost"
+                - "--user=root"
+                - "--password=shop2425"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        - name: mysql-init-scripts-productservice
+          configMap:
+            name: mysql-init-scripts-productservice
+        - name: mysql-data-productservice
+          persistentVolumeClaim:
+            claimName: mysql-data-productservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productservicedb
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: productservicedb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-data-productservice
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-scripts-productservice
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS productservicedb;

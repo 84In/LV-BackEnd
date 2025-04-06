@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Xác định branch hiện tại của Git
-BRANCH=$(git rev-parse --abbrev-ref HEAD)
+# BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-echo "Deploying with branch: $BRANCH"
+# echo "Deploying with branch: $BRANCH"
 
-# Di chuyển đến thư mục chứa mã nguồn microservice eventsourcing
-cd app/LV-BackEnd/
+# # Di chuyển đến thư mục chứa mã nguồn microservice eventsourcing
+# cd app/LV-BackEnd/
 
-# Cập nhật mã nguồn từ Git
-git fetch -a
-git checkout $BRANCH
-git pull
+# # Cập nhật mã nguồn từ Git
+# git fetch -a
+# git checkout $BRANCH
+# git pull
 
 # Liệt kê các dịch vụ cần kéo image từ Docker Hub
 services="apigateway chatservice discoveryserver mediaservice notificationservice orderservice productservice searchservice userservice"

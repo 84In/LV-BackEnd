@@ -45,27 +45,26 @@ public class ApplicationInitConfig {
             UserRepository userRepository) {
         return args -> {
             try {
-                while (true) {
-                    log.info("đang thực hiện tạo người dùng quản trị");
-                    if (!roleRepository.existsById("admin")) {
-                        throw new RuntimeException("Role admin chưa được tạo thành");
-                    }
-                    if (userRepository.existsByUsername("admin")) {
-                        log.info("Tài khoản quản trị đã khởi tạo sẵn");
-                        break;
-                    }
-                    UserCreateModel userCreateModel = new UserCreateModel(
-                            "admin",
-                            "admin123",
-                            "Vanoushop@gmail.com",
-                            "admin",
-                            "admin",
-                            "admin");
 
-                    var result = userCommandService.save(userCreateModel);
-                    log.info(result.toString());
-                    log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}", userCreateModel.getPassword());
+                log.info("đang thực hiện tạo người dùng quản trị");
+                if (!roleRepository.existsById("admin")) {
+                    throw new RuntimeException("Role admin chưa được tạo thành");
                 }
+                if (userRepository.existsByUsername("admin")) {
+                    log.info("Tài khoản quản trị đã khởi tạo sẵn");
+                    throw new RuntimeException("Tài khoản đã khởi tạo");
+                }
+                UserCreateModel userCreateModel = new UserCreateModel(
+                        "admin",
+                        "admin123",
+                        "Vanoushop@gmail.com",
+                        "admin",
+                        "admin",
+                        "admin");
+
+                var result = userCommandService.save(userCreateModel);
+                log.info(result.toString());
+                log.info("Tài khoản admin đã được khởi tạo với mật khầu: {}", userCreateModel.getPassword());
 
             } catch (Exception e) {
                 log.error(e.getMessage());

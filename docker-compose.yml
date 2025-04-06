@@ -136,14 +136,14 @@ services:
         condition: service_healthy
       productservicedb:
         condition: service_started
-      discoveryserver:
-        condition: service_started
-      productservice:
-        condition: service_started
-      orderservice:
-        condition: service_started
-      userservice:
-        condition: service_started
+      # discoveryserver:
+      #   condition: service_started
+      # productservice:
+      #   condition: service_started
+      # orderservice:
+      #   condition: service_started
+      # userservice:
+      #   condition: service_started
 
 
   axonserver:

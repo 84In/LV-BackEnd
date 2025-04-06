@@ -1,0 +1,312 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+        - name: logstash
+          image: docker.elastic.co/logstash/logstash:8.17.2
+          ports:
+            - containerPort: 5000
+          volumeMounts:
+            - name: logstash-pipeline
+              mountPath: /usr/share/logstash/pipeline
+            - name: mysql-connector
+              mountPath: /usr/share/logstash/mysql-connector-java.jar
+              subPath: mysql-connector-java-8.0.30.jar
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+            - name: LS_JAVA_OPTS
+              value: "-Xmx256m -Xms256m"
+      volumes:
+        - name: logstash-pipeline
+          configMap:
+            name: logstash-pipeline
+        - name: mysql-connector
+          persistentVolumeClaim:
+            claimName: mysql-connector-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+spec:
+  ports:
+    - port: 5000
+  selector:
+    app: logstash
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-pipeline
+data:
+  product.conf: |
+    input {
+        jdbc {
+          jdbc_driver_library => "/usr/share/logstash/mysql-connector-java.jar"
+          jdbc_driver_class => "com.mysql.cj.jdbc.Driver"
+          jdbc_connection_string => "jdbc:mysql://productservicedb:3306/productservicedb?useSSL=false&allowPublicKeyRetrieval=true"
+          jdbc_user => "productservice"
+          jdbc_password => "productservice2425"
+
+          use_column_value => true
+          tracking_column => "updated_at"
+          tracking_column_type => "timestamp"
+
+          jdbc_pool_timeout => 600
+          jdbc_validation_timeout => 600
+          connection_retry_attempts => 5
+          connection_retry_attempts_wait_time => 10
+          schedule => "* * * * *"
+
+          statement => "
+            SELECT
+              p.id,
+              p.name,
+              p.description,
+              p.images,
+              p.is_active as is_active,
+              p.updated_at,
+              p.created_at,
+              c.id as category_id,
+              c.name as category_name,
+              c.code_name as category_code_name,
+              c.images as category_images,
+              c.description as category_description,
+              c.is_active as category_is_active
+            FROM
+              products p
+            JOIN
+              categories c ON p.category_id = c.id
+            WHERE
+              p.updated_at > :sql_last_value
+          "
+
+          jdbc_paging_enabled => true
+          jdbc_page_size => 1000
+        }
+      }
+
+      filter {
+        mutate {
+          rename => {
+            "id" => "[id]"
+            "name" => "[name]"
+            "description" => "[description]"
+            "images" => "[images]"
+            "is_active" => "[isActive]"
+            "category_id" => "[category][id]"
+            "category_name" => "[category][name]"
+            "category_code_name" => "[category][codeName]"
+            "category_images" => "[category][images]"
+            "category_description" => "[category][description]"
+            "category_is_active" => "[category][isActive]"
+          }
+          convert => {
+            "[isActive]" => "boolean"
+            "[category][isActive]" => "boolean"
+          }
+        }
+
+        date {
+          match => [ "created_at", "yyyy-MM-dd HH:mm:ss", "ISO8601" ]
+          target => "created_at"
+          timezone => "UTC"
+        }
+        date {
+          match => [ "updated_at", "yyyy-MM-dd HH:mm:ss", "ISO8601" ]
+          target => "updated_at"
+          timezone => "UTC"
+        }
+      }
+
+      output {
+        elasticsearch {
+          hosts => ["http://elasticsearch:9200"]
+          index => "products_index"
+          document_id => "%{[id]}"
+          action => "update"
+          doc_as_upsert => true
+        }
+        stdout {
+          codec => rubydebug
+        }
+      }
+  product_details.conf: |
+    # product_color.conf
+      input {
+        jdbc {
+          jdbc_driver_library => "/usr/share/logstash/mysql-connector-java.jar"
+          jdbc_driver_class => "com.mysql.cj.jdbc.Driver"
+          jdbc_connection_string => "jdbc:mysql://productservicedb:3306/productservicedb?useSSL=false&allowPublicKeyRetrieval=true"
+          jdbc_user => "productservice"
+          jdbc_password => "productservice2425"
+
+          use_column_value => true
+          tracking_column => "updated_at"
+          tracking_column_type => "timestamp"
+
+          jdbc_pool_timeout => 600
+          jdbc_validation_timeout => 600
+          connection_retry_attempts => 5
+          connection_retry_attempts_wait_time => 10
+          schedule => "* * * * *"
+
+          statement => "
+            SELECT 
+                pc.id AS product_color_id,
+                pc.product_id,
+                pc.price,
+                pc.is_active AS product_color_isActive,
+                c.id AS color_id,
+                c.name AS color_name,
+                c.code_name AS color_codeName,
+                c.color_code,
+                c.description AS color_description,
+                c.is_active AS color_isActive,
+                
+                -- Lấy danh sách promotions dạng JSON
+                COALESCE(
+                    (
+                        SELECT JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'id', pr.id,
+                                'name', pr.name,
+                                'codeName', pr.code_name,
+                                'discountPercentage', pr.discount_percentage,
+                                'startDate', pr.start_date,
+                                'endDate', pr.end_date,
+                                'isActive', pr.is_active
+                            )
+                        )
+                        FROM promotions pr
+                        JOIN product_color_promotion pcpr ON pr.id = pcpr.promotion_id
+                        WHERE pcpr.product_color_id = pc.id
+                    ), '[]'
+                ) AS promotions,
+                
+                -- Lấy danh sách product_variants cùng với thông tin size
+                COALESCE(
+                    (
+                        SELECT JSON_ARRAYAGG(
+                            JSON_OBJECT(
+                                'id', pv.id,
+                                'sold', pv.sold,
+                                'stock', pv.stock,
+                                'isActive', pv.is_active,
+                                'size', JSON_OBJECT(
+                                    'id', s.id,
+                                    'name', s.name,
+                                    'codeName', s.code_name,
+                                    'isActive', s.is_active
+                                )
+                            )
+                        )
+                        FROM product_variant pv
+                        JOIN sizes s ON s.id = pv.size_id
+                        WHERE pv.product_color_id = pc.id
+                    ), '[]'
+                ) AS product_variants
+            FROM product_color pc
+            JOIN colors c ON pc.color_id = c.id
+          "
+
+          jdbc_paging_enabled => true
+          jdbc_page_size => 1000
+        }
+      }
+
+      filter {
+        # Parse chuỗi JSON của trường promotions và product_variants
+        json {
+          source => "promotions"
+          target => "[promotions]"
+        }
+        json {
+          source => "product_variants"
+          target => "[productVariants]"
+        }
+
+        mutate {
+          rename => {
+            "product_color_id" => "[id]"
+            "product_id" => "[productId]"
+            "price" => "[price]"
+            "product_color_isActive" => "[isActive]"
+            "color_id" => "[color][id]"
+            "color_name" => "[color][name]"
+            "color_codeName" => "[color][codeName]"
+            "color_code" => "[color][colorCode]"
+            "color_description" => "[color][description]"
+            "color_isActive" => "[color][isActive]"
+          }
+          convert => {
+            "[isActive]" => "boolean"
+            "[color][isActive]" => "boolean"
+          }
+        }
+      }
+
+      output {
+        # Đồng bộ riêng vào index product_colors_index (nếu cần)
+        elasticsearch {
+          hosts => ["http://elasticsearch:9200"]
+          index => "product_colors_index"
+          document_id => "%{[id]}"
+          action => "update"
+          doc_as_upsert => true
+        }
+
+        # Cập nhật mảng productColors trong document của sản phẩm tại index products_index
+        elasticsearch {
+          hosts => ["http://elasticsearch:9200"]
+          index => "products_index"
+          document_id => "%{[productId]}"
+          action => "update"
+          script => "
+            if (ctx._source.productColors == null) {
+              ctx._source.productColors = [];
+            }
+            boolean found = false;
+            for (int i = 0; i < ctx._source.productColors.size(); i++) {
+              if (ctx._source.productColors[i].id == '%{[id]}') {
+                ctx._source.productColors[i].id = '%{[id]}';
+                ctx._source.productColors[i].price = '%{[price]}';
+                ctx._source.productColors[i].isActive = %{[isActive]};
+                ctx._source.productColors[i].color = %{[color]};
+                ctx._source.productColors[i].productVariants = %{[productVariants]};
+                ctx._source.productColors[i].promotions = %{[promotions]};
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              Map newProductColor = new HashMap();
+              newProductColor.put('id', '%{[id]}');
+              newProductColor.put('price', '%{[price]}');
+              newProductColor.put('isActive', %{[isActive]});
+              newProductColor.put('color', %{[color]});
+              newProductColor.put('productVariants', %{[productVariants]});
+              newProductColor.put('promotions', %{[promotions]});
+              ctx._source.productColors.add(newProductColor);
+            }
+          "
+          script_lang => "painless"
+          doc_as_upsert => true
+        }
+
+        stdout {
+          codec => rubydebug
+        }
+      }

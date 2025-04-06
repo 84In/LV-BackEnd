@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservicedb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservicedb
+  template:
+    metadata:
+      labels:
+        app: userservicedb
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "shop2425"
+            - name: MYSQL_USER
+              value: "userservice"
+            - name: MYSQL_PASSWORD
+              value: "userservice2425"
+            - name: MYSQL_DATABASE
+              value: "userservicedb"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-init-scripts-userservice
+              mountPath: /docker-entrypoint-initdb.d
+            - name: mysql-data-userservice
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - "--host=localhost"
+                - "--user=root"
+                - "--password=shop2425"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        - name: mysql-init-scripts-userservice
+          configMap:
+            name: mysql-init-scripts-userservice
+        - name: mysql-data-userservice
+          persistentVolumeClaim:
+            claimName: mysql-data-userservice
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservicedb
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: userservicedb
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-data-userservice
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-scripts-userservice
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS userservicedb;
