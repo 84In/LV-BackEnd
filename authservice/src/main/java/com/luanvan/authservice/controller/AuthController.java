@@ -97,10 +97,10 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ApiResponse<?> refresh(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
-        // if (refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
-        //     throw new AppException(ErrorCode.INVALID_KEY);
-        // }
-        //Dont use, because it need secure by method https and config
+        if (refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
+            throw new AppException(ErrorCode.INVALID_KEY);
+        }
+        // Dont use, because it need secure by method https and config
 
         String username = jwtUtil.extractClaims(refreshToken).getSubject();
         String role = (String) jwtUtil.extractClaims(refreshToken).get("role");
