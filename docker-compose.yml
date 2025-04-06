@@ -136,14 +136,6 @@ services:
         condition: service_healthy
       productservicedb:
         condition: service_started
-      # discoveryserver:
-      #   condition: service_started
-      # productservice:
-      #   condition: service_started
-      # orderservice:
-      #   condition: service_started
-      # userservice:
-      #   condition: service_started
 
 
   axonserver:
@@ -161,7 +153,7 @@ services:
       timeout: 60s
       retries: 5
     networks:
-      - microservice-networks
+      - microservice-networks 
     volumes:
       - axon_data:/data
       - axon_events:/events
@@ -235,170 +227,35 @@ services:
       context: .
       dockerfile: discoveryserver/Dockerfile
     container_name: discoveryserver
-    ports:
-      - "8761:8761"
-    networks:
-      - microservice-networks
 
   userservice:
     build:
       context: .
       dockerfile: userservice/Dockerfile
-    ports:
-      - "9000:9000"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
-    depends_on:
-      redis:
-        condition: service_healthy
-      discoveryserver:
-        condition: service_started
-      userservicedb:
-        condition: service_started
-      axonserver:
-        condition: service_healthy
-      broker:
-        condition: service_started
   mediaservice:
     build:
       context: .
       dockerfile: mediaservice/Dockerfile
-    ports:
-      - "9001:9001"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-    depends_on:
-      - discoveryserver
-      - broker
-      - axonserver
-      - userservicedb
-      - productservicedb
-
   productservice:
     build:
       context: .
       dockerfile: productservice/Dockerfile
-    ports:
-      - "9002:9002"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-    depends_on:
-      redis:
-        condition: service_healthy
-      discoveryserver:
-        condition: service_started
-      productservicedb:
-        condition: service_started
-      axonserver:
-        condition: service_healthy
-      broker:
-        condition: service_started
-
-  orderservice:
-    build:
-      context: .
-      dockerfile: orderservice/Dockerfile
-    ports:
-      - "9003:9003"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-    depends_on:
-      redis:
-        condition: service_healthy
-      discoveryserver:
-        condition: service_started
-      orderservicedb:
-        condition: service_started
-      axonserver:
-        condition: service_healthy
-      broker:
-        condition: service_started
   notificationservice:
     build:
       context: .
       dockerfile: notificationservice/Dockerfile
-    ports:
-      - "9004:9004"
-    networks:
-      - microservice-networks
-    depends_on:
-      - discoveryserver
-      - broker
   searchservice:
     build:
       context: .
       dockerfile: searchservice/Dockerfile
-    ports:
-      - "9005:9005"
-    networks:
-      - microservice-networks
-    environment:
-      - ELASTICSEARCH_HOST=elasticsearch:9200
-    depends_on:
-      logstash:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
-  chatservice:
-    build:
-      context: .
-      dockerfile: chatservice/Dockerfile
-    ports:
-      - "9006:9006"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
-    depends_on:
-      - discoveryserver
-      - productservice
-      - axonserver
   authservice:
     build:
       context: .
       dockerfile: authservice/Dockerfile
-    ports:
-      - "9009:9009"
-    networks:
-      - microservice-networks
-    environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
-    depends_on:
-      - discoveryserver
-      - userservice
-      - axonserver
-      - broker
   apigateway:
     build:
       context: .
       dockerfile: apigateway/Dockerfile
-    ports:
-      - "8080:8080"
-    networks:
-      - microservice-networks
-    depends_on:
-      - discoveryserver
-      - userservice
-      - orderservice
-      - productservice
-      - searchservice
 volumes:
   userservicedb_data:
   productservicedb_data:
