@@ -79,7 +79,8 @@ public class AuthController {
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(false); //setFalse để debug
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setAttribute("SameSite","None");//setFalse để debug
         refreshTokenCookie.setPath("/api/v1/auth");
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60); //7day
         response.addCookie(refreshTokenCookie);
@@ -146,7 +147,7 @@ public class AuthController {
 
             // Xóa refresh token trên trình duyệt bằng Set-Cookie
             return ResponseEntity.ok()
-                    .header("Set-Cookie", "refreshToken=; HttpOnly; SameSite=Strict; Max-Age=0; Path=/")
+                    .header("Set-Cookie", "refreshToken=; HttpOnly; SameSite=None; Max-Age=0; Path=/")
                     .body(ApiResponse.builder()
                             .message("Logout success!")
                             .code(0)
