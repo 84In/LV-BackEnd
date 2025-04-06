@@ -97,9 +97,10 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ApiResponse<?> refresh(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
-        if (refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
-            throw new AppException(ErrorCode.INVALID_KEY);
-        }
+        // if (refreshToken == null || refreshToken.isEmpty() || !jwtUtil.validateToken(refreshToken)) {
+        //     throw new AppException(ErrorCode.INVALID_KEY);
+        // }
+        //Dont use, because it need secure by method https and config
 
         String username = jwtUtil.extractClaims(refreshToken).getSubject();
         String role = (String) jwtUtil.extractClaims(refreshToken).get("role");
@@ -126,7 +127,7 @@ public class AuthController {
 
         log.info("Logout success, access_token:{}, refresh_token:{}", accessToken, refreshToken);
 
-        if (accessToken != null && accessToken.startsWith("Bearer ") && refreshToken != null) {
+        if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7); // Loại bỏ "Bearer " để lấy token thực
 
             // Lấy thời gian hết hạn của token
