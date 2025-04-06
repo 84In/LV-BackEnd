@@ -132,14 +132,14 @@ public class AuthController {
 
             // Lấy thời gian hết hạn của token
             Instant accessTokenExpiry = jwtUtil.getTokenExpiration(accessToken);
-            Instant refreshTokenExpiry = jwtUtil.getTokenExpiration(refreshToken);
+            // Instant refreshTokenExpiry = jwtUtil.getTokenExpiration(refreshToken);
 
             long accessTokenTtl = Math.max(0, accessTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
-            long refreshTokenTtl = Math.max(0, refreshTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
+            // long refreshTokenTtl = Math.max(0, refreshTokenExpiry.getEpochSecond() - Instant.now().getEpochSecond());
 
             // Lưu vào Redis với TTL
             redisService.storeToken(accessToken, accessTokenTtl);
-            redisService.storeToken(refreshToken, refreshTokenTtl);
+            // redisService.storeToken(refreshToken, refreshTokenTtl);
 
             // Xóa thông tin đăng nhập khỏi SecurityContext
             SecurityContextHolder.clearContext();
