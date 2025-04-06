@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class IntentService {
 
-    @Value("${app.base-url:http://localhost:4000/}")
+    @Value("${app.base-url:http://localhost:80/}")
     private String baseUrl;
 
     @Autowired

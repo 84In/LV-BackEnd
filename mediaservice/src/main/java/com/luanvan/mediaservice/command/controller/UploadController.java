@@ -26,7 +26,7 @@ public class UploadController {
     private final KafkaService kafkaService;
     private final KafkaTemplate<String, CallBackUploadProductImagesCommand> kafkaTemplate;
 
-    @PostMapping("avatar/{userId}")
+    @PutMapping("/avatar/{userId}")
     public ApiResponse<?> uploadAvatar(@PathVariable String userId, @RequestParam("avatar") MultipartFile avatar) throws AppException {
 
         try {
@@ -39,7 +39,7 @@ public class UploadController {
             log.info("Send message to kafka topic avatar-uploaded-topic with user-id {}", userId);
 
             kafkaService.sendMessage("avatar-uploaded-topic", avatarUpdateModel);
-            return ApiResponse.builder()
+            return ApiResponse.<String>builder()
                     .message("Cập nhật hình ảnh thành công!")
                     .build();
         }catch (Exception e) {
@@ -51,7 +51,7 @@ public class UploadController {
 
     }
 
-    @PostMapping("categories/{categoryId}")
+    @PutMapping("/categories/{categoryId}")
     public ApiResponse<?> uploadCategoriesImage(@PathVariable String categoryId, @RequestParam("images") MultipartFile images) throws AppException {
 
         try{
@@ -65,7 +65,7 @@ public class UploadController {
 
             kafkaService.sendMessage("category-image-uploaded-topic", categoryImageUpdateModel);
 
-            return ApiResponse.builder()
+            return ApiResponse.<String>builder()
                     .message("Cập nhật hình ảnh thành công!")
                     .build();
         }catch (Exception e) {
@@ -75,7 +75,7 @@ public class UploadController {
         }
     }
 
-    @PostMapping("products/{productId}")
+    @PutMapping("/products/{productId}")
     public ApiResponse<?> uploadProductImages(@PathVariable String productId, @RequestParam("images") ArrayList<MultipartFile> images) {
 
         log.info("Saved uploadProductImage: {}", productId);
@@ -83,7 +83,7 @@ public class UploadController {
                 .map(image -> cloudinaryService.uploadFile(image, "products/" + productId))
                 .toList();
         log.info("Upload products images successful productId: {}", productId);
-        return ApiResponse.builder()
+        return ApiResponse.<String>builder()
                 .data(String.join(",", imageUrls))
                 .build();
     }

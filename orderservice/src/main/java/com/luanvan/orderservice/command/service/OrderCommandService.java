@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class OrderCommandService {
-    @Value("${client.url}")
+    @Value("${app.base-url:http://localhost:80}")
     @NonFinal
     String clientUrl;
     @Autowired
