@@ -235,6 +235,8 @@ services:
       context: .
       dockerfile: discoveryserver/Dockerfile
     container_name: discoveryserver
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     ports:
       - "8761:8761"
     networks:
@@ -252,6 +254,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=broker:9092
       - KAFKA_GROUP_ID=default-group
       - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       redis:
         condition: service_healthy
@@ -274,6 +277,7 @@ services:
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=broker:9092
       - KAFKA_GROUP_ID=default-group
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       - discoveryserver
       - broker
@@ -292,6 +296,8 @@ services:
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=broker:9092
       - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       redis:
         condition: service_healthy
@@ -315,6 +321,8 @@ services:
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=broker:9092
       - KAFKA_GROUP_ID=default-group
+      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       redis:
         condition: service_healthy
@@ -330,6 +338,8 @@ services:
     build:
       context: .
       dockerfile: notificationservice/Dockerfile
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     ports:
       - "9004:9004"
     networks:
@@ -347,6 +357,7 @@ services:
       - microservice-networks
     environment:
       - ELASTICSEARCH_HOST=elasticsearch:9200
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       logstash:
         condition: service_healthy
@@ -361,9 +372,10 @@ services:
     networks:
       - microservice-networks
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=broker:9092
-      - KAFKA_GROUP_ID=default-group
-      - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+          - KAFKA_BOOTSTRAP_SERVERS=broker:9092
+          - KAFKA_GROUP_ID=default-group
+          - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+          - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       - discoveryserver
       - productservice
@@ -380,6 +392,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=broker:9092
       - KAFKA_GROUP_ID=default-group
       - BACKUP_ROOT_DIR=./app/data/backup-scripts/
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     depends_on:
       - discoveryserver
       - userservice
@@ -389,6 +402,8 @@ services:
     build:
       context: .
       dockerfile: apigateway/Dockerfile
+    environment:
+      - JAVA_TOOL_OPTIONS=-Xmx256m -Xms256m
     ports:
       - "8080:8080"
     networks:
