@@ -1,266 +1,76 @@
-version: "3.8"
-
-networks:
-  microservice-networks:
-    driver: bridge
-
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    hostname: redis
-    ports:
-      - "6379:6379"
-    networks:
-      - microservice-networks
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      retries: 3
-
-  userservicedb:
-    image: mysql:8.0
-    container_name: userservicedb
-    environment:
-      MYSQL_ROOT_PASSWORD: shop2425
-      MYSQL_USER: userservice
-      MYSQL_PASSWORD: userservice2425
-      MYSQL_DATABASE: userservicedb
-    ports:
-      - "3306:3306"
-    volumes:
-      - userservicedb_data:/var/lib/mysql
-      - ./data/init-scripts/userservice:/docker-entrypoint-initdb.d
-    networks:
-      - microservice-networks
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=shop2425"]
-      interval: 30s
-      retries: 3
-    depends_on:
-      redis:
-        condition: service_healthy
-
-  productservicedb:
-    image: mysql:8.0
-    container_name: productservicedb
-    environment:
-      MYSQL_ROOT_PASSWORD: shop2425
-      MYSQL_USER: productservice
-      MYSQL_PASSWORD: productservice2425
-      MYSQL_DATABASE: productservicedb
-    ports:
-      - "3307:3306"
-    volumes:
-      - productservicedb_data:/var/lib/mysql
-      - ./data/init-scripts/productservice:/docker-entrypoint-initdb.d
-    networks:
-      - microservice-networks
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=shop2425"]
-      interval: 30s
-      retries: 3
-    depends_on:
-      redis:
-        condition: service_healthy
-
-  orderservicedb:
-    image: mysql:8.0
-    container_name: orderservicedb
-    environment:
-      MYSQL_ROOT_PASSWORD: shop2425
-      MYSQL_USER: orderservice
-      MYSQL_PASSWORD: orderservice2425
-      MYSQL_DATABASE: orderservicedb
-    ports:
-      - "3308:3306"
-    volumes:
-      - orderservicedb_data:/var/lib/mysql
-      - ./data/init-scripts/orderservice:/docker-entrypoint-initdb.d
-    networks:
-      - microservice-networks
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=shop2425"]
-      interval: 30s
-      retries: 3
-    depends_on:
-      redis:
-        condition: service_healthy
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.2
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
-    healthcheck:
-      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
-      interval: 10s
-      timeout: 10s
-      retries: 30
-    networks:
-      - microservice-networks
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.17.2
-    container_name: logstash
-    volumes:
-      - ./data/logstash/pipeline:/usr/share/logstash/pipeline
-      - ./data/mysql-connector-java-8.0.30.jar:/usr/share/logstash/mysql-connector-java.jar
-    ports:
-      - '5000:5000'
-    environment:
-      LS_JAVA_OPTS: '-Xmx256m -Xms256m'
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-      XPACK_MONITORING_ENABLED: "false"
-    networks:
-      - microservice-networks
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9600" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-      productservicedb:
-        condition: service_started
-
-
-  axonserver:
-    image: axoniq/axonserver:latest
-    container_name: axonserver
-    environment:
-      - "AXONIQ_AXONSERVER_STANDALONE=TRUE"
-    ports:
-      - "8024:8024"
-      - "8124:8124"
-      - "8224:8224"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8024/actuator/health"]
-      interval: 100s
-      timeout: 60s
-      retries: 5
-    networks:
-      - microservice-networks 
-    volumes:
-      - axon_data:/data
-      - axon_events:/events
-      - axon_config:/config
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.7.0
-    hostname: zookeeper
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - microservice-networks
-
-  broker:
-    image: confluentinc/cp-server:7.7.0
-    hostname: broker
-    container_name: broker
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-      - "9101:9101"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://broker:9092
-      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_JMX_PORT: 9101
-      KAFKA_JMX_HOSTNAME: localhost
-      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
-      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-      CONFLUENT_METRICS_ENABLE: "true"
-      CONFLUENT_SUPPORT_CUSTOMER_ID: "anonymous"
-      # Các cấu hình tăng kích thước message (ví dụ: 100MB)
-      KAFKA_MESSAGE_MAX_BYTES: 104857600
-      KAFKA_REPLICA_FETCH_MAX_BYTES: 104857600
-      KAFKA_SOCKET_REQUEST_MAX_BYTES: 104857600
-    networks:
-      - microservice-networks
-
-  control-center:
-    image: confluentinc/cp-enterprise-control-center:7.7.0
-    hostname: control-center
-    container_name: control-center
-    depends_on:
-      - broker
-    ports:
-      - "9021:9021"
-    environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: "broker:29092"
-      CONTROL_CENTER_REPLICATION_FACTOR: 1
-      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
-      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
-      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
-      PORT: 9021
-    networks:
-      - microservice-networks
   discoveryserver:
     build:
       context: .
       dockerfile: discoveryserver/Dockerfile
-    container_name: discoveryserver
+    image: ntt23042003/discoveryserver:latest
+    ports:
+      - "8761:8761"
 
   userservice:
     build:
       context: .
       dockerfile: userservice/Dockerfile
+    image: ntt23042003/userservice:latest
+    ports:
+      - "9000:9000"
+
   mediaservice:
     build:
       context: .
       dockerfile: mediaservice/Dockerfile
+    image: ntt23042003/mediaservice:latest
+    ports:
+      - "9001:9001"
+
   productservice:
     build:
       context: .
       dockerfile: productservice/Dockerfile
+    image: ntt23042003/productservice:latest
+    ports:
+      - "9002:9002"
+  orderservice:
+    build:
+      context: .
+      dockerfile: orderservice/Dockerfile
+    image: ntt23042003/orderservice:latest
+    ports:
+      - "9003:9003"
   notificationservice:
     build:
       context: .
       dockerfile: notificationservice/Dockerfile
+    image: ntt23042003/notificationservice:latest
+    ports:
+      - "9004:9004"
+
   searchservice:
     build:
       context: .
       dockerfile: searchservice/Dockerfile
+    image: ntt23042003/searchservice:latest
+    ports:
+      - "9005:9005"
+  chatservice:
+    build:
+      context: .
+      dockerfile: chatservice/Dockerfile
+    image: ntt23042003/chatservice:latest
+    ports:
+      - "9006:9006"
   authservice:
     build:
       context: .
       dockerfile: authservice/Dockerfile
+    image: ntt23042003/authservice:latest
+    ports:
+      - "9009:9009"
+
   apigateway:
     build:
       context: .
       dockerfile: apigateway/Dockerfile
-volumes:
-  userservicedb_data:
-  productservicedb_data:
-  orderservicedb_data:
-  elasticsearch_data:
-  axon_data:
-  axon_events:
-  axon_config:
+    image: ntt23042003/apigateway:latest
+    ports:
+      - "8080:8080"

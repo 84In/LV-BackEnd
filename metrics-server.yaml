@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: metrics
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-server
+  namespace: metrics
+  labels:
+    k8s-app: metrics-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: metrics-server
+  template:
+    metadata:
+      labels:
+        k8s-app: metrics-server
+    spec:
+      containers:
+        - name: metrics-server
+          image: registry.k8s.io/metrics-server/metrics-server:v0.7.2
+          imagePullPolicy: IfNotPresent
+          args:
+            - --cert-dir=/tmp
+            - --secure-port=4443
+            - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+            - --kubelet-use-node-status-port
+            - --kubelet-insecure-tls
+            - --metric-resolution=30s
+          ports:
+            - containerPort: 4443
+              name: https
+          volumeMounts:
+            - name: tmp-dir
+              mountPath: /tmp
+      volumes:
+        - name: tmp-dir
+          emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-server
+  namespace: metrics
+  labels:
+    k8s-app: metrics-server
+spec:
+  selector:
+    k8s-app: metrics-server
+  ports:
+    - port: 443
+      targetPort: https

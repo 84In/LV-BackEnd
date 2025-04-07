@@ -14,10 +14,8 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: "discoveryserver:latest"  # Dùng biến từ ConfigMap
-          env:
-             - name: DOCKER_USERNAME
-               value: ntt23042003
+          image: ntt23042003/discoveryserver:latest 
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8761
 ---

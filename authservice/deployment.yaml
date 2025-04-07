@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: authservice
 spec:
-  replicas: 2  # Tăng số lượng replicas lên 2
+  replicas: 1  # Tăng số lượng replicas lên 2
   selector:
     matchLabels:
       app: authservice
@@ -14,12 +14,11 @@ spec:
     spec:
       containers:
         - name: authservice
-          image: "$(DOCKER_USERNAME)/authservice:latest"  # Dùng biến từ ConfigMap
+          image: ntt23042003/authservice:latest
+          imagePullPolicy: IfNotPresent
           env:
-            - name: DOCKER_USERNAME
-              value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker:9092"
+              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
@@ -38,3 +37,22 @@ spec:
   selector:
     app: authservice
   type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: authservice-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: authservice
+  minReplicas: 1
+  maxReplicas: 2  # Tự động scale tối đa 5 replicas
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%

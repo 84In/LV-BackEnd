@@ -18,7 +18,7 @@ logging:
     org.springframework: INFO
 spring:
   kafka:
-    bootstrap-servers: broker:9092
+    bootstrap-servers: broker-kafka-bootstrap.kafka.svc.cluster.local:9092
     consumer:
       group-id: upload-group
   config:
