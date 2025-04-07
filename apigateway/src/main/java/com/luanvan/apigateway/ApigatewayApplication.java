@@ -17,9 +17,23 @@ public class ApigatewayApplication {
         SpringApplication.run(ApigatewayApplication.class, args);
     }
 
+    // @Bean
+    // public KeyResolver keyResolver() {
+    // return exchange ->
+    // Mono.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+    // }
+
     @Bean
-    public KeyResolver keyResolver() {
-        return exchange -> Mono.just(Objects.requireNonNull(exchange.getRequest().getRemoteAddress()).getAddress().getHostAddress());
+    public KeyResolver ipKeyResolver() {
+        return exchange -> {
+            String ip = exchange.getRequest().getHeaders().getFirst("X-Forwarded-For");
+            if (ip != null && !ip.isEmpty()) {
+                return Mono.just(ip.split(",")[0]);
+            }
+            return Mono.just(
+                    Objects.requireNonNull(exchange.getRequest().getRemoteAddress())
+                            .getAddress().getHostAddress());
+        };
     }
 
 }
