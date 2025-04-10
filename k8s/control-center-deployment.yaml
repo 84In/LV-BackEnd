@@ -21,7 +21,7 @@ spec:
             - name: CONTROL_CENTER_BOOTSTRAP_SERVERS
               value: "kafka:29092"
             - name: CONTROL_CENTER_REPLICATION_FACTOR
-              value: "3"  # Set this value according to your needs
+              value: "1"  # ⚠️ Đặt là 1 nếu chỉ có 1 broker
             - name: PORT
               value: "9021"
           livenessProbe:
@@ -36,7 +36,10 @@ kind: Service
 metadata:
   name: control-center
 spec:
-  ports:
-    - port: 9021
+  type: NodePort  # ✅ Expose service ra ngoài
   selector:
     app: control-center
+  ports:
+    - port: 9021
+      targetPort: 9021
+      nodePort: 30021  # ✅ Truy cập ngoài bằng http://<IP>:30021

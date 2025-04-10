@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://discoveryserver:8761/eureka
+      defaultZone: http://hdan-2:8761/eureka
 
 spring:
   mail:
@@ -22,7 +22,7 @@ spring:
   #   import: optional:file:../commonservice/src/main/resources/application.yml
   kafka:
     enabled: true
-    bootstrap-servers: broker-kafka-bootstrap.kafka.svc.cluster.local:9092
+    bootstrap-servers: hdan-1:30992
   config:
     import: classpath:application-common.yml
     #consumer:

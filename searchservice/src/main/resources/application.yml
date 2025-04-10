@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://discoveryserver:8761/eureka
+      defaultZone: http://hdan-1:8761/eureka
 
 #Dataconfig
 spring:
@@ -14,16 +14,16 @@ spring:
     import: classpath:application-common.yml
   kafka:
     enable: true
-    bootstrap-servers: broker:9092
+    bootstrap-servers: 30379
   elasticsearch:
-    uris: elasticsearch:9200
+    uris: hdan-1:30920
   data:
     web:
       pageable:
         default-page-size: 15
     redis:
-      port: 6379
-      host: redis
+      port: 30379
+      host: hdan-1
 logging:
   level:
     org.hibernate.SQL: OFF # Tắt log câu truy vấn SQL

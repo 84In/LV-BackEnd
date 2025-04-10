@@ -54,10 +54,13 @@ kind: Service
 metadata:
   name: orderservicedb
 spec:
-  ports:
-    - port: 3306
+  type: NodePort
   selector:
     app: orderservicedb
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30308  # ✅ Đã đổi sang 30308
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

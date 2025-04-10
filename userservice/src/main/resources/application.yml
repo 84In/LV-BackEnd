@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://discoveryserver:8761/eureka
+      defaultZone: http://hdan-2:8761/eureka
 
 axon:
   eventhandling:
@@ -26,13 +26,13 @@ spring:
   config:
     import: classpath:application-common.yml
   datasource:
-    url: jdbc:mysql://userservicedb:3306/userservicedb
+    url: jdbc:mysql://hdan-1:30306/userservicedb
     username: userservice
     password: userservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
   kafka:
     enable: true
-    bootstrap-servers: broker:9092
+    bootstrap-servers: hdan-1:30992
     consumer:
       group-id: user-group
   jpa:

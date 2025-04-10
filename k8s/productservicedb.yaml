@@ -54,10 +54,13 @@ kind: Service
 metadata:
   name: productservicedb
 spec:
-  ports:
-    - port: 3306
+  type: NodePort  # ✅ Thêm để expose ra ngoài
   selector:
     app: productservicedb
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30307  # ✅ Truy cập từ ngoài qua <IP>:30307
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

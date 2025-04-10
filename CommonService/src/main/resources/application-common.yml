@@ -7,8 +7,8 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
   data:
     redis:
-      port: 6379
-      host: redis
+      port: 30379
+      host: hdan-1
   
 axon:
   eventhandling:

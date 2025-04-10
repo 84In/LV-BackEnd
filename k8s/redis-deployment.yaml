@@ -30,7 +30,10 @@ kind: Service
 metadata:
   name: redis
 spec:
-  ports:
-    - port: 6379
+  type: NodePort  # ✅ Thêm dòng này để expose Redis ra ngoài
   selector:
     app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+      nodePort: 30379  # ✅ Redis sẽ truy cập qua <cloud3-ip>:30379

@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://discoveryserver:8761/eureka
+      defaultZone: http://hdan-2:8761/eureka
 
 app:
   base-url: ${CLIENT_URL:http://localhost:4000/}

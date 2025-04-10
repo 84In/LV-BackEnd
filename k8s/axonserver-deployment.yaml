@@ -31,15 +31,19 @@ kind: Service
 metadata:
   name: axonserver
 spec:
+  type: NodePort   # 👉 Expose để gọi từ bên ngoài
   selector:
     app: axonserver
   ports:
     - name: http
       port: 8024
       targetPort: 8024
+      nodePort: 30024   # 👉 Truy cập Axon Dashboard tại http://<IP>:30024
     - name: grpc
       port: 8124
       targetPort: 8124
+      nodePort: 30012   # 👉 gRPC port cho client kết nối
     - name: internal
       port: 8224
       targetPort: 8224
+      nodePort: 30022   # 👉 Port nội bộ (nếu dùng clustering)

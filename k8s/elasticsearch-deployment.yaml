@@ -48,13 +48,18 @@ kind: Service
 metadata:
   name: elasticsearch
 spec:
-  ports:
-    - port: 9200
-      name: http
-    - port: 9300
-      name: transport
+  type: NodePort  # ✅ Expose ra ngoài cho Cloud khác truy cập
   selector:
     app: elasticsearch
+  ports:
+    - port: 9200
+      targetPort: 9200
+      name: http
+      nodePort: 30920  # ✅ Truy cập qua: http://<IP>:30920
+    - port: 9300
+      targetPort: 9300
+      name: transport
+      nodePort: 30930  # ✅ Truy cập gRPC/transport nếu cần
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

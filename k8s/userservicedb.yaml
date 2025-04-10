@@ -54,10 +54,13 @@ kind: Service
 metadata:
   name: userservicedb
 spec:
-  ports:
-    - port: 3306
+  type: NodePort
   selector:
     app: userservicedb
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30306  # ✅ NodePort đã đổi sang 30306
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
