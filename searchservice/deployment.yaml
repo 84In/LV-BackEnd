@@ -15,7 +15,7 @@ spec:
       containers:
         - name: searchservice
           image: ntt23042003/searchservice:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "hdan-1:30992"  # ✅ Trỏ về Cloud1 Kafka

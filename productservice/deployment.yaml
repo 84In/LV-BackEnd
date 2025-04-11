@@ -15,7 +15,7 @@ spec:
       containers:
         - name: productservice
           image: ntt23042003/productservice:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: "hdan-1:30992"

@@ -15,7 +15,7 @@ spec:
       containers:
         - name: orderservice
           image: ntt23042003/orderservice:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Never
           env:
             - name: DOCKER_USERNAME
               value: ntt23042003
