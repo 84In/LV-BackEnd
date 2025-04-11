@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: notificationservice
-          image: ntt23042003/notificationservice:latest
+          image: notificationservice:local
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS

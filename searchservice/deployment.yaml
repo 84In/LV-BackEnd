@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: searchservice
-          image: ntt23042003/searchservice:latest
+          image: searchservice:local
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS

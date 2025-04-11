@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: orderservice
-          image: ntt23042003/orderservice:latest
+          image: orderservice:local
           imagePullPolicy: Never
           env:
             - name: DOCKER_USERNAME

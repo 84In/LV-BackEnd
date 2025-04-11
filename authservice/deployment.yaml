@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: authservice
-          image: ntt23042003/authservice:latest
+          image: authservice:local
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS

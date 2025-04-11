@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: ntt23042003/discoveryserver:latest
+          image: discoveryserver:local
           imagePullPolicy: Never
           ports:
             - containerPort: 8761

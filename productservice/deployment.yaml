@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: productservice
-          image: ntt23042003/productservice:latest
+          image: productservice:local
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
