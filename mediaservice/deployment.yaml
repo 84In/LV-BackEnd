@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: mediaservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: mediaservice
@@ -14,31 +14,51 @@ spec:
     spec:
       containers:
         - name: mediaservice
-          image: ntt23042003/mediaservice:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/mediaservice:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: DOCKER_USERNAME
               value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "hdan-1:30992"  # Sử dụng Kafka NodePort từ Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9001
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9001
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9001
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mediaservice
 spec:
+  type: NodePort  # ✅ Để các service khác có thể gọi qua Cloud 3
+  selector:
+    app: mediaservice
   ports:
     - port: 9001
       targetPort: 9001
-  selector:
-    app: mediaservice
-  type: ClusterIP # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30901  # ✅ Truy cập từ ngoài qua http://hdan-3:30901
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -50,11 +70,11 @@ spec:
     kind: Deployment
     name: mediaservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 3 replicas
+  maxReplicas: 3
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

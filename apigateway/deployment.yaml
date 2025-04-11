@@ -16,10 +16,16 @@ spec:
     spec:
       containers:
         - name: apigateway
-          image: ntt23042003/apigateway:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/apigateway:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          readinessProbe:  # ✅ Đảm bảo pod sẵn sàng nhận request
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
           resources:
             requests:
               cpu: "250m"
@@ -39,7 +45,8 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-  type: LoadBalancer
+      nodePort: 30080  # ✅ Truy cập qua http://<cloud2-ip>:30080
+  type: NodePort  # ✅ LoadBalancer nếu bạn dùng cloud provider, NodePort nếu chạy local hoặc K3s
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

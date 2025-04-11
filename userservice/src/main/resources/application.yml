@@ -3,8 +3,15 @@ server:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: false
     service-url:
       defaultZone: http://hdan-2:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: hdan-3
+    non-secure-port: 30900
+    instance-id: userservice:${random.uuid}
 
 axon:
   eventhandling:
@@ -12,29 +19,30 @@ axon:
       default:
         mode: tracking
         token-store:
-          type: jdbc   # Lưu trạng thái vào database
+          type: jdbc
         retry-max-attempts: 3
         retry-exponential-backoff:
-          initial-interval: 1000  # Lần đầu retry sau 1s
-          max-interval: 60000     # Giới hạn tối đa 60s
-          multiplier: 2.0         # Tăng dần thời gian retry (1s, 2s, 4s, ...)
-#        error-handler: logging  # Chỉ log lỗi, không retry
+          initial-interval: 1000
+          max-interval: 60000
+          multiplier: 2.0
+#        error-handler: logging
 
-
-#Dataconfig
 spring:
   config:
     import: classpath:application-common.yml
+
   datasource:
     url: jdbc:mysql://hdan-1:30306/userservicedb
     username: userservice
     password: userservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   kafka:
     enable: true
     bootstrap-servers: hdan-1:30992
     consumer:
       group-id: user-group
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -42,17 +50,13 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  # config:
-  #   import:
-  #     - optional:file:../commonservice/src/main/resources/application.yml
 
 logging:
   level:
-    org.hibernate.SQL: off                     # Tắt log câu truy vấn SQL
-    org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
-    org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
-    org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: INFO               # Kiểm soát log của Spring
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql: OFF
+    org.hibernate.engine.jdbc.batch.internal: OFF
+    org.hibernate.engine.transaction.internal: OFF
+    org.springframework: INFO
     org.axonframework.eventhandling: DEBUG
     org.axonframework.commandhandling: DEBUG
-

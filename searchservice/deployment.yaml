@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: searchservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1  # ✅ Khởi tạo 1 pod, auto scale sẽ scale thêm khi cần
   selector:
     matchLabels:
       app: searchservice
@@ -14,29 +14,51 @@ spec:
     spec:
       containers:
         - name: searchservice
-          image: ntt23042003/searchservice:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/searchservice:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "hdan-1:30992"  # ✅ Trỏ về Cloud1 Kafka
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9005
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9005
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9005
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: searchservice
 spec:
+  type: NodePort  # ✅ Cho phép các cloud khác gọi qua IP + port
+  selector:
+    app: searchservice
   ports:
     - port: 9005
       targetPort: 9005
-  selector:
-    app: searchservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30905  # ✅ Dùng port cố định để gọi từ ngoài http://<cloud3-ip>:30905
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -48,11 +70,11 @@ spec:
     kind: Deployment
     name: searchservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 5 replicas
+  maxReplicas: 5  # ✅ Scale tối đa 5 pods nếu CPU tăng cao
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

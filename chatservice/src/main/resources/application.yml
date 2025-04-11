@@ -1,21 +1,27 @@
 server:
-  port: 9006
+  port: 9006  # Đổi tùy theo service, ví dụ 9006 cho chatservice
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:8761/eureka
-
-app:
-  base-url: ${CLIENT_URL:http://localhost:4000/}
+      defaultZone: http://hdan-2:8761/eureka  # Cloud 2: Discovery Server
+  instance:
+    prefer-ip-address: true
+    ip-address: hdan-3                       # 👈 Đặt là IP hoặc tên định danh Cloud 3 (có trong /etc/hosts Cloud 2)
+    non-secure-port: 30906                    # 👈 NodePort mà bạn expose service ra ngoài
+    instance-id: ${spring.application.name}:${random.uuid}
 
 spring:
+  application:
+    name: chatservice                         # 👈 Đặt đúng tên service
+
   kafka:
     enabled: false
+
   config:
     import: classpath:application-common.yml
 
-#Dataconfig
-# spring:
-#   config:
-#     import: optional:file:../commonservice/src/main/resources/application.yml
+app:
+  base-url: ${CLIENT_URL:http://localhost:4000/}

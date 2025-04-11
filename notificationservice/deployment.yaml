@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: notificationservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: notificationservice
@@ -14,17 +14,36 @@ spec:
     spec:
       containers:
         - name: notificationservice
-          image: ntt23042003/notificationservice:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/notificationservice:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "hdan-1:30992"  # Kafka exposed NodePort ở Cloud 1
             - name: KAFKA_GROUP_ID
-              value: "default-group"
+              value: "mail-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9004
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9004
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9004
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 
 ---
 apiVersion: v1
@@ -32,12 +51,14 @@ kind: Service
 metadata:
   name: notificationservice
 spec:
+  type: NodePort  # ✅ Để các service/gateway ngoài cluster gọi vào
+  selector:
+    app: notificationservice
   ports:
     - port: 9004
       targetPort: 9004
-  selector:
-    app: notificationservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30904  # ✅ Truy cập qua http://hdan-3:30904
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -49,11 +70,11 @@ spec:
     kind: Deployment
     name: notificationservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 5 replicas
+  maxReplicas: 5  # ✅ Sửa theo mô tả
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

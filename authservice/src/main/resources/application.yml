@@ -4,8 +4,15 @@ server:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: false
+    instance:
+      prefer-ip-address: true
+      ip-address: hdan-3
+      nonSecurePort: 30909
+      instance-id: ${spring.cloud.client.ip-address}:${random.uuid}
     service-url:
-      defaultZone: http://hdan-2:8761/eureka
+      defaultZone: http://hdan-2:30861/eureka
 
 spring:
   security:

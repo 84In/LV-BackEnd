@@ -3,31 +3,39 @@ server:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: false
     service-url:
-      defaultZone: http://hdan-1:8761/eureka
+      defaultZone: http://hdan-2:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: hdan-3
+    non-secure-port: 30905
+    instance-id: searchservice:${random.uuid}
 
-#Dataconfig
 spring:
-  # config:
-  #   import: optional:file:../commonservice/src/main/resources/application.yml
   config:
     import: classpath:application-common.yml
+
   kafka:
     enable: true
-    bootstrap-servers: 30379
+    bootstrap-servers: hdan-1:30992  # ✅ NodePort Kafka tại Cloud 1
+
   elasticsearch:
-    uris: hdan-1:30920
+    uris: http://hdan-1:30920  # ✅ NodePort Elasticsearch tại Cloud 1
+
   data:
     web:
       pageable:
         default-page-size: 15
     redis:
-      port: 30379
-      host: hdan-1
+      host: hdan-1           # ✅ Redis Host (Cloud 1)
+      port: 30379            # ✅ Redis NodePort (Cloud 1)
+
 logging:
   level:
-    org.hibernate.SQL: OFF # Tắt log câu truy vấn SQL
-    org.hibernate.type.descriptor.sql: OFF # Tắt log thông tin ràng buộc tham số
-    org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
-    org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: INFO # Kiểm soát log của Spring
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql: OFF
+    org.hibernate.engine.jdbc.batch.internal: OFF
+    org.hibernate.engine.transaction.internal: OFF
+    org.springframework: INFO

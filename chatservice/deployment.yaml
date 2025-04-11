@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: chatservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: chatservice
@@ -18,18 +18,38 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9006
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9006
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9006
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: chatservice
 spec:
+  type: NodePort  # ✅ Expose ra ngoài cho Eureka & API Gateway
+  selector:
+    app: chatservice
   ports:
     - port: 9006
       targetPort: 9006
-  selector:
-    app: chatservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30906  # ✅ Truy cập từ bên ngoài qua http://hdan-3:30906
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -41,11 +61,11 @@ spec:
     kind: Deployment
     name: chatservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 3 replicas
+  maxReplicas: 3  # ✅ Sửa lại đúng mô tả
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

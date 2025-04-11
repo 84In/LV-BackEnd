@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: discoveryserver
-          image: ntt23042003/discoveryserver:latest 
+          image: ntt23042003/discoveryserver:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8761
@@ -24,9 +24,10 @@ kind: Service
 metadata:
   name: discoveryserver
 spec:
+  type: NodePort  # ✅ Đổi từ ClusterIP thành NodePort để truy cập được từ ngoài
+  selector:
+    app: discoveryserver
   ports:
     - port: 8761
       targetPort: 8761
-  selector:
-    app: discoveryserver
-  type: ClusterIP
+      nodePort: 30861  # ✅ Truy cập từ bên ngoài qua http://<Cloud3-IP>:30861

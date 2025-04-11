@@ -1,6 +1,6 @@
 spring:
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:broker-kafka-bootstrap.kafka.svc.cluster.local:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:10.32.2.21:30750}
     consumer:
       group-id: ${KAFKA_GROUP_ID:default-group}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

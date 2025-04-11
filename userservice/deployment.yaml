@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: userservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: userservice
@@ -14,29 +14,32 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: ntt23042003/userservice:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/userservice:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "hdan-1:30992"  # ✅ Sửa lại đúng địa chỉ kafka bên Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9000
---- 
+
+---
 apiVersion: v1
 kind: Service
 metadata:
   name: userservice
 spec:
+  type: NodePort  # ✅ Expose để gateway hoặc discovery bên ngoài có thể truy cập
+  selector:
+    app: userservice
   ports:
     - port: 9000
       targetPort: 9000
-  selector:
-    app: userservice
-  type: ClusterIP # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30900  # ✅ Truy cập từ ngoài qua http://hdan-3:30900
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -48,11 +51,11 @@ spec:
     kind: Deployment
     name: userservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 5 replicas
+  maxReplicas: 2
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

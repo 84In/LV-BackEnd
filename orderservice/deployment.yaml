@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: orderservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: orderservice
@@ -14,31 +14,53 @@ spec:
     spec:
       containers:
         - name: orderservice
-          image: ntt23042003/orderservice:latest  # Dùng biến từ ConfigMap
+          image: ntt23042003/orderservice:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: DOCKER_USERNAME
               value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "hdan-1:30992"  # Kết nối Kafka ngoài cụm
             - name: KAFKA_GROUP_ID
-              value: "default-group"
+              value: "order-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9003
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9003
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9003
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "256Mi"
+            limits:
+              cpu: "600m"
+              memory: "512Mi"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: orderservice
 spec:
+  type: NodePort  # ✅ Expose ra ngoài
+  selector:
+    app: orderservice
   ports:
     - port: 9003
       targetPort: 9003
-  selector:
-    app: orderservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30903  # ✅ Truy cập từ Cloud 2 qua http://hdan-3:30903
+
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -50,11 +72,11 @@ spec:
     kind: Deployment
     name: orderservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 3 replicas
+  maxReplicas: 3
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

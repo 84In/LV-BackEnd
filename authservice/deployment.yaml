@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: authservice
 spec:
-  replicas: 1  # Tăng số lượng replicas lên 2
+  replicas: 1
   selector:
     matchLabels:
       app: authservice
@@ -18,25 +18,45 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "broker-kafka-bootstrap.kafka.svc.cluster.local:9092"
+              value: "10.32.2.21:30750"  # Kafka NodePort ở Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
               value: "./app/data/backup-scripts/"
           ports:
             - containerPort: 9009
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9009
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 9009
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: authservice
 spec:
+  type: NodePort
+  selector:
+    app: authservice
   ports:
     - port: 9009
       targetPort: 9009
-  selector:
-    app: authservice
-  type: ClusterIP  # Đảm bảo service có thể được truy cập nội bộ
+      nodePort: 30909  # Truy cập từ bên ngoài qua http://<cloud3-ip>:30909
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -48,11 +68,11 @@ spec:
     kind: Deployment
     name: authservice
   minReplicas: 1
-  maxReplicas: 2  # Tự động scale tối đa 5 replicas
+  maxReplicas: 5
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75  # Scale khi CPU sử dụng vượt quá 75%
+          averageUtilization: 75

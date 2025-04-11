@@ -3,8 +3,15 @@ server:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: false
     service-url:
       defaultZone: http://hdan-2:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: hdan-3
+    non-secure-port: 30904
+    instance-id: notificationservice:${random.uuid}
 
 spring:
   mail:
@@ -13,24 +20,22 @@ spring:
     username: vanouscompany@gmail.com
     password: deuxfgnsgporftew
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-  # config:
-  #   import: optional:file:../commonservice/src/main/resources/application.yml
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
   kafka:
     enabled: true
     bootstrap-servers: hdan-1:30992
+    consumer:
+      group-id: mail-group
+
   config:
     import: classpath:application-common.yml
-    #consumer:
-     # group-id: mail-group
+
 logging:
   level:
-    org.hibernate.SQL: OFF                       # Tắt log câu truy vấn SQL
-    org.hibernate.type.descriptor.sql: OFF       # Tắt log thông tin ràng buộc tham số
-    org.hibernate.engine.jdbc.batch.internal: OFF # Tắt log về batch SQL
-    org.hibernate.engine.transaction.internal: OFF # Tắt log về transaction
-    org.springframework: ERROR                    # Kiểm soát log của Spring
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql: OFF
+    org.hibernate.engine.jdbc.batch.internal: OFF
+    org.hibernate.engine.transaction.internal: OFF
+    org.springframework: ERROR
