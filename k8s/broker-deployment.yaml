@@ -22,7 +22,7 @@ spec:
             - name: KAFKA_CFG_ZOOKEEPER_CONNECT
               value: zookeeper:2181
             - name: KAFKA_CFG_ADVERTISED_LISTENERS
-              value: PLAINTEXT://kafka:9092,EXTERNAL://<Cloud1-IP>:30092
+              value: PLAINTEXT://kafka:9092,EXTERNAL://10.32.2.21:30092
             - name: KAFKA_CFG_LISTENERS
               value: PLAINTEXT://:9092,EXTERNAL://:30092
             - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
