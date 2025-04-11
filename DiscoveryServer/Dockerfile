@@ -1,6 +1,6 @@
 # Build: Use Maven for building
 
-FROM maven:3.9.9-eclipse-temurin-21-alpine as build
+FROM maven:3.9.9-eclipse-temurin-21-alpine AS build
 WORKDIR /app
 COPY ./discoveryserver ./discoveryserver
 WORKDIR /app/discoveryserver
