@@ -23,10 +23,10 @@ sudo k3s ctr images import orderservice.tar
 sudo k3s ctr images import mediaservice.tar
 sudo k3s ctr images import notificationservice.tar
 sudo k3s ctr images import authservice.tar
-sudo k3s ctr images import searchservice.tar
+sudo k3s ctr images import searchservice.tar    
 echo "Images loaded into k3s container runtime."
 
-# Finally, it cleans up the tar files. 
+#x Finally, it cleans up the tar files. 
 echo "start deploying services..."
 kubectl apply -f userservice/deployment.yaml
 kubectl apply -f productservice/deployment.yaml
