@@ -21,7 +21,7 @@ sudo k3s ctr images import productservice.tar
 sudo k3s ctr images import orderservice.tar
 sudo k3s ctr images import mediaservice.tar
 sudo k3s ctr images import notificationservice.tar
-saved k3s ctr images import authservice.tar
+sudo k3s ctr images import authservice.tar
 sudo k3s ctr images import searchservice.tar
 
 # Finally, it cleans up the tar files.  
