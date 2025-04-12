@@ -6,7 +6,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:8761/eureka  # Discovery Server ở Cloud 2
+      defaultZone: http://hdan-2:30861/eureka  # Discovery Server ở Cloud 2
   instance:
     prefer-ip-address: true
     ip-address: hdan-3                         # 👈 Hostname của Cloud 3

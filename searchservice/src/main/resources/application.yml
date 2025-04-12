@@ -6,7 +6,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:8761/eureka
+      defaultZone: http://hdan-2:30861/eureka
   instance:
     prefer-ip-address: true
     ip-address: hdan-3
