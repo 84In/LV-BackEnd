@@ -6,10 +6,10 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:30861/eureka
+      defaultZone: http://10.32.2.32:30861/eureka
   instance:
     prefer-ip-address: true
-    ip-address: hdan-3
+    ip-address: 10.32.2.54
     non-secure-port: 30900
     instance-id: userservice:${random.uuid}
 
@@ -32,14 +32,14 @@ spring:
     import: classpath:application-common.yml
 
   datasource:
-    url: jdbc:mysql://hdan-1:30306/userservicedb
+    url: jdbc:mysql://10.32.2.21:30306/userservicedb
     username: userservice
     password: userservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   kafka:
     enable: true
-    bootstrap-servers: hdan-1:30992
+    bootstrap-servers: 10.32.2.21:30992
     consumer:
       group-id: user-group
 

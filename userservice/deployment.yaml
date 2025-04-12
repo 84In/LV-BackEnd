@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "hdan-1:30992"  # ✅ Sửa lại đúng địa chỉ kafka bên Cloud 1
+              value: "10.32.2.21:30992"  # ✅ Sửa lại đúng địa chỉ kafka bên Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
@@ -46,7 +46,7 @@ spec:
   ports:
     - port: 9000
       targetPort: 9000
-      nodePort: 30900  # ✅ Truy cập từ ngoài qua http://hdan-3:30900
+      nodePort: 30900  # ✅ Truy cập từ ngoài qua http://10.32.2.54:30900
 
 ---
 apiVersion: autoscaling/v2

@@ -49,7 +49,7 @@ spec:
   ports:
     - port: 9006
       targetPort: 9006
-      nodePort: 30906  # ✅ Truy cập từ bên ngoài qua http://hdan-3:30906
+      nodePort: 30906  # ✅ Truy cập từ bên ngoài qua http://10.32.2.54:30906
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

@@ -8,7 +8,7 @@ spring:
   data:
     redis:
       port: 30379
-      host: hdan-1
+      host: 10.32.2.21
   
 axon:
   eventhandling:

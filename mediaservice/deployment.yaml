@@ -20,7 +20,7 @@ spec:
             - name: DOCKER_USERNAME
               value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "hdan-1:30992"  # Sử dụng Kafka NodePort từ Cloud 1
+              value: "10.32.2.21:30992"  # Sử dụng Kafka NodePort từ Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
@@ -58,7 +58,7 @@ spec:
   ports:
     - port: 9001
       targetPort: 9001
-      nodePort: 30901  # ✅ Truy cập từ ngoài qua http://hdan-3:30901
+      nodePort: 30901  # ✅ Truy cập từ ngoài qua http://10.32.2.54:30901
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

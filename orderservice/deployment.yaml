@@ -20,7 +20,7 @@ spec:
             - name: DOCKER_USERNAME
               value: ntt23042003
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "hdan-1:30992"  # Kết nối Kafka ngoài cụm
+              value: "10.32.2.21:30992"  # Kết nối Kafka ngoài cụm
             - name: KAFKA_GROUP_ID
               value: "order-group"
             - name: BACKUP_ROOT_DIR
@@ -59,7 +59,7 @@ spec:
   ports:
     - port: 9003
       targetPort: 9003
-      nodePort: 30903  # ✅ Truy cập từ Cloud 2 qua http://hdan-3:30903
+      nodePort: 30903  # ✅ Truy cập từ Cloud 2 qua http://10.32.2.54:30903
 
 ---
 apiVersion: autoscaling/v2

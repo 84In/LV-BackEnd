@@ -8,11 +8,11 @@ eureka:
     fetch-registry: false
     instance:
       prefer-ip-address: true
-      ip-address: hdan-3
+      ip-address: 10.32.2.54
       nonSecurePort: 30909
       instance-id: ${spring.cloud.client.ip-address}:${random.uuid}
     service-url:
-      defaultZone: http://hdan-2:30861/eureka
+      defaultZone: http://10.32.2.32:30861/eureka
 
 spring:
   security:

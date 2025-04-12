@@ -6,10 +6,10 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:30861/eureka
+      defaultZone: http://10.32.2.32:30861/eureka
   instance:
     prefer-ip-address: true
-    ip-address: hdan-3
+    ip-address: 10.32.2.54
     non-secure-port: 30905
     instance-id: searchservice:${random.uuid}
 
@@ -19,17 +19,17 @@ spring:
 
   kafka:
     enable: true
-    bootstrap-servers: hdan-1:30992  # ✅ NodePort Kafka tại Cloud 1
+    bootstrap-servers: 10.32.2.21:30992  # ✅ NodePort Kafka tại Cloud 1
 
   elasticsearch:
-    uris: http://hdan-1:30920  # ✅ NodePort Elasticsearch tại Cloud 1
+    uris: http://10.32.2.21:30920  # ✅ NodePort Elasticsearch tại Cloud 1
 
   data:
     web:
       pageable:
         default-page-size: 15
     redis:
-      host: hdan-1           # ✅ Redis Host (Cloud 1)
+      host: 10.32.2.21           # ✅ Redis Host (Cloud 1)
       port: 30379            # ✅ Redis NodePort (Cloud 1)
 
 logging:

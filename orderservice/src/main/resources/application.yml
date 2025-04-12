@@ -9,23 +9,23 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:30861/eureka
+      defaultZone: http://10.32.2.32:30861/eureka
   instance:
     prefer-ip-address: true
-    ip-address: hdan-3              # Hostname của Cloud 3
+    ip-address: 10.32.2.54              # Hostname của Cloud 3
     non-secure-port: 30903          # NodePort dự định expose
     instance-id: orderservice:${random.uuid}
 
 spring:
   datasource:
-    url: jdbc:mysql://hdan-1:30308/orderservicedb  # NodePort exposed từ orderservicedb ở Cloud 1
+    url: jdbc:mysql://10.32.2.21:30308/orderservicedb  # NodePort exposed từ orderservicedb ở Cloud 1
     username: orderservice
     password: orderservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   kafka:
     enable: true
-    bootstrap-servers: hdan-1:30992  # Kafka exposed ở Cloud 1
+    bootstrap-servers: 10.32.2.21:30992  # Kafka exposed ở Cloud 1
     consumer:
       group-id: order-group
 

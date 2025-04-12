@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "hdan-1:30992"  # Kafka exposed NodePort ở Cloud 1
+              value: "10.32.2.21:30992"  # Kafka exposed NodePort ở Cloud 1
             - name: KAFKA_GROUP_ID
               value: "mail-group"
             - name: BACKUP_ROOT_DIR
@@ -57,7 +57,7 @@ spec:
   ports:
     - port: 9004
       targetPort: 9004
-      nodePort: 30904  # ✅ Truy cập qua http://hdan-3:30904
+      nodePort: 30904  # ✅ Truy cập qua http://10.32.2.54:30904
 
 ---
 apiVersion: autoscaling/v2

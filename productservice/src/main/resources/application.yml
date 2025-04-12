@@ -6,23 +6,23 @@ eureka:
     register-with-eureka: true
     fetch-registry: false
     service-url:
-      defaultZone: http://hdan-2:30861/eureka
+      defaultZone: http://10.32.2.32:30861/eureka
   instance:
     prefer-ip-address: true
-    ip-address: hdan-3
+    ip-address: 10.32.2.54
     non-secure-port: 30902
     instance-id: productservice:${random.uuid}
 
 spring:
   datasource:
-    url: jdbc:mysql://hdan-1:30307/productservicedb
+    url: jdbc:mysql://10.32.2.21:30307/productservicedb
     username: productservice
     password: productservice2425
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   kafka:
     enable: true
-    bootstrap-servers: hdan-1:30992
+    bootstrap-servers: 10.32.2.21:30992
     consumer:
       group-id: product-group
 
@@ -35,7 +35,7 @@ spring:
         format_sql: true
 
   elasticsearch:
-    uris: http://hdan-1:30920  # Elasticsearch NodePort từ Cloud 1
+    uris: http://10.32.2.21:30920  # Elasticsearch NodePort từ Cloud 1
 
   data:
     web:
@@ -43,7 +43,7 @@ spring:
         default-page-size: 15
     redis:
       port: 30379             # Redis exposed tại Cloud 1
-      host: hdan-1
+      host: 10.32.2.21
 
   config:
     import: classpath:application-common.yml

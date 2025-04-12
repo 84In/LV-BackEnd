@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "hdan-1:30992"  # ✅ Trỏ về Cloud1 Kafka
+              value: "10.32.2.21:30992"  # ✅ Trỏ về Cloud1 Kafka
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
