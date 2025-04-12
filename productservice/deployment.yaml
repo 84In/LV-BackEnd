@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: productservice
 spec:
-  replicas: 3  # ✅ Bắt đầu với 3 pod thay vì 1
+  replicas: 2  # ✅ Bắt đầu với 2 pod thay vì 1
   selector:
     matchLabels:
       app: productservice
@@ -39,10 +39,10 @@ spec:
             periodSeconds: 30
           resources:
             requests:
-              cpu: "1"
+              cpu: "1000m"  # Tối thiểu 1 core CPU
               memory: "512Mi"
             limits:
-              cpu: "2"
+              cpu: "1500m"
               memory: "2Gi"
 
 ---
@@ -69,8 +69,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: productservice
-  minReplicas: 3  # ✅ Tối thiểu vẫn giữ 3 pod chạy
-  maxReplicas: 8
+  minReplicas: 2  # ✅ Tối thiểu vẫn giữ 3 pod chạy
+  maxReplicas: 4
   metrics:
     - type: Resource
       resource:
