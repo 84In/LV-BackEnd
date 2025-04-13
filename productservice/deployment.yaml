@@ -18,7 +18,7 @@ spec:
           imagePullPolicy: Never
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "10.32.2.21:30992"
+              value: "10.32.2.21:30992"  # ✅ Sửa lại đúng địa chỉ kafka bên Cloud 1
             - name: KAFKA_GROUP_ID
               value: "default-group"
             - name: BACKUP_ROOT_DIR
