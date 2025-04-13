@@ -24,7 +24,7 @@ spring:
     enable: true
     bootstrap-servers: 10.32.2.21:30992
     consumer:
-      group-id: default-group
+      group-id: "default-group"
 
   jpa:
     hibernate:
