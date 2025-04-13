@@ -20,12 +20,6 @@ spec:
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
-          readinessProbe:  # ✅ Đảm bảo pod sẵn sàng nhận request
-            httpGet:
-              path: /actuator/health
-              port: 8080
-            initialDelaySeconds: 10
-            periodSeconds: 10
           resources:
             requests:
               cpu: "250m"
