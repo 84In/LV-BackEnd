@@ -107,6 +107,10 @@ public class IntentService {
         JsonArray richContent = new JsonArray();
         JsonArray contentArray = new JsonArray();
 
+        if (data.isEmpty()){
+            response.addProperty("fulfillmentText", "Xin lỗi, chúng tôi chưa có loại sản phẩm này.");
+            return response;
+        }
         data.stream().limit(3).forEach(product -> {
             JsonObject infoCard = new JsonObject();
             infoCard.addProperty("type", "info");
