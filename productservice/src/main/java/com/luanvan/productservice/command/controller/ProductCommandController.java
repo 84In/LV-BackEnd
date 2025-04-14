@@ -6,12 +6,14 @@ import com.luanvan.productservice.command.model.ProductChangeStatusModel;
 import com.luanvan.productservice.command.model.ProductCreateModel;
 import com.luanvan.productservice.command.model.ProductUpdateModel;
 import com.luanvan.productservice.command.service.ProductCommandService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductCommandController {
@@ -39,7 +41,8 @@ public class ProductCommandController {
 
     @PutMapping("/{productId}")
     public ApiResponse<?> update(@PathVariable String productId, @RequestBody ProductUpdateModel model) {
-
+        log.info(productId);
+        log.info(model.toString());
         var response = productCommandService.update(productId, model);
         return ApiResponse.builder()
                 .data(response)

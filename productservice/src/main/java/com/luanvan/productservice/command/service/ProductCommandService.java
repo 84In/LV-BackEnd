@@ -252,7 +252,7 @@ public class ProductCommandService {
                                         .id(productVariantId)
                                         .sizeId(variantItem.getSizeId())
                                         .stock(variantItem.getStock())
-                                        .sold(existingVariantOpt.get().getSold())
+                                        .sold(existingVariantOpt.map(ProductVariant::getSold).orElse(0L))
                                         .isActive(true)
                                         .build();
                             }).collect(Collectors.toList());
