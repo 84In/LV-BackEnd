@@ -83,8 +83,9 @@ public class UploadController {
                 .map(image -> cloudinaryService.uploadFile(image, "products/" + productId))
                 .toList();
         log.info("Upload products images successful productId: {}", productId);
+//        log.info(String.join(",", imageUrls));
         return ApiResponse.<String>builder()
-                .data(String.join(",", imageUrls))
+                .data(imageUrls.toString())
                 .build();
     }
 }

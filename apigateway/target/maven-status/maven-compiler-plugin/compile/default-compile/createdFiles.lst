@@ -1,1 +1,2 @@
 com\luanvan\apigateway\ApigatewayApplication.class
+com\luanvan\apigateway\controller\FallbackController.class
